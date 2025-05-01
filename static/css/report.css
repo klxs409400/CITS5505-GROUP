@@ -1,0 +1,106 @@
+
+
+.summary-cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 200px 0 40px 0;
+    padding: 0 20px;
+  }
+  
+  .summary-card {
+    background-color: #1e2749;
+    color: #ffffff;
+    width: 220px;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  
+  .summary-card:hover {
+    transform: translateY(-5px);
+    background-color: #27355d;
+  }
+  
+  .card-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  
+  .chart-card {
+    background-color: #1a1f3c;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 30px 20px;
+    margin: 40px auto;
+    max-width: 700px;
+    text-align: center;
+  }
+  
+  .content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px 40px;
+    background-color: rgba(176, 184, 209, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 2;
+    margin-top: 200px;
+  }
+  
+  .top-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s;
+  }
+  
+  .top-button:hover {
+    background-color: #3730a3;
+  }
+  
+  .back-button-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+  }
+  
+  .back-button {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4f6cf5;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    font-size: 0.95em;
+  }
+  
+  .back-button:hover {
+    background-color: #3b54c2;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .center-heading {
+    text-align: center;
+    margin-top: 200px; 
+  }
+  

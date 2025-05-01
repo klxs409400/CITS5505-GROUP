@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sleep Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../../static/css/styles.css">
+    <link rel="stylesheet" href="../../static/css/report.css">    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+        <div class="back-button-container">
+            <a href="dashboard.html" class="back-button">← Back to Dashboard</a>
+        </div>
+    
+    <div class="center-heading">
+    <h1>Sleep Report</h1>
+
+    <p class="subtitle">Here’s a summary of your recent sleep data:</p>
+    </div>
+
+    <div class="summary-cards">
+    <a href="#chart1" class="summary-card">
+      <div class="card-icon"></div>
+      <h3>Daily Sleep Duration</h3>
+      <p>Track your total sleep hours day by day for the current week.</p>
+    </a>
+    <a href="#chart2" class="summary-card">
+      <div class="card-icon"></div>
+      <h3>Sleep Quality Trend</h3>
+      <p>View how your sleep quality fluctuated during the week.</p>
+    </a>
+    <a href="#chart3" class="summary-card">
+      <div class="card-icon"></div>
+      <h3>Sleep Quality Distribution</h3>
+      <p>Explore the overall distribution of your sleep quality levels.</p>
+    </a>
+    <a href="#chart4" class="summary-card">
+      <div class="card-icon"></div>
+      <h3>Impact of Factors</h3>
+      <p>Analyze which factors most significantly affect your sleep.</p>
+    </a>
+    </div>
+  
+<div class="content-wrapper">
+  <div class="content-inner">
+    <div id="chart1">
+    <div class="chart-card">
+        <h3>Daily Sleep Duration</h3>
+        <p>This chart shows your total sleep hours recorded each day this week.</p>
+        <canvas id="sleepDurationChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+    </div>
+    </div>
+
+    <div id="chart2">
+    <div class="chart-card">
+        <h3>Sleep Quality Trend</h3>
+        <p>This line graph illustrates how your sleep quality has varied across the week.</p>
+        <canvas id="sleepQualityChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+    </div>
+    </div>
+
+    <div id="chart3">
+    <div class="chart-card">
+        <h3>Sleep Quality Distribution</h3>
+        <p>This pie chart summarizes the proportion of good, average, and poor sleep nights.</p>
+        <canvas id="sleepQualityPieChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+    </div>
+    </div>
+
+    <div id="chart4">
+    <div class="chart-card">
+        <h3>Impact of Factors on Sleep Quality</h3>
+        <p>This bar chart compares how different habits influenced your sleep quality.</p>
+        <canvas id="factorsImpactChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>    
+    </div>
+    </div>
+  </div>
+    <script>
+        const ctx = document.getElementById('sleepDurationChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar', 
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], 
+                datasets: [{
+                    label: 'Sleep Duration (hours)', 
+                    data: [7, 6.5, 8, 5.5, 7, 8.5, 6], 
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)' 
+                }]
+            }
+        });
+    </script>
+    
+    <script>
+        const ctx2 = document.getElementById('sleepQualityChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'line', 
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], 
+                datasets: [{
+                    label: 'Sleep Quality (1–5)', 
+                    data: [4, 3, 5, 2, 4, 5, 3], 
+                    borderColor: 'rgba(255, 99, 132, 0.8)', 
+                    backgroundColor: 'rgba(255, 99, 132, 0.3)', 
+                    fill: true, 
+                    tension: 0.4 
+                }]
+            }
+        });
+    </script>
+    
+    <script>
+        const ctx3 = document.getElementById('sleepQualityPieChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'pie', 
+            data: {
+                labels: ['Good (4-5)', 'Average (2-3)', 'Poor (0-1)'], 
+                datasets: [{
+                    label: 'Sleep Quality Distribution',
+                    data: [4, 2, 1], 
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',  
+                        'rgba(255, 205, 86, 0.6)',  
+                        'rgba(255, 99, 132, 0.6)'  
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+    </script>
+    
+    <script>
+        const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
+        new Chart(ctx4, {
+            type: 'bar', 
+            data: {
+                labels: ['Had Caffeine', 'Exercised', 'Screen Time', 'Outdoor Time', 'Late-night Eating'], 
+                datasets: [{
+                    label: 'Average Sleep Quality',
+                    data: [2.5, 4, 2, 4.5, 2.8], 
+                    backgroundColor: [
+                        'rgba(255, 159, 64, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 205, 86, 0.6)',
+                        'rgba(201, 203, 207, 0.6)'
+                    ]
+                }]
+            },
+            options: {
+                indexAxis: 'y', 
+            }
+        });
+    </script>    
+    </div>
+
+    <button onclick="scrollToTop()" class="top-button">↑ Top</button>
+
+    <script>
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    </script>
+        
+</body>
+</html>
