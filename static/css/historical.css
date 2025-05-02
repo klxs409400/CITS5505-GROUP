@@ -1,0 +1,323 @@
+/* Historical page specific layout components */
+/* Note: We're using variables from styles.css and only defining page-specific styles here */
+
+/* Sidebar and layout specific to historical page */
+.wrapper {
+  display: flex;
+  width: 100%;
+}
+
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  background-color: var(--dark-card);
+  color: var(--text-light);
+  transition: all 0.3s;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+#sidebar.active {
+  margin-left: -250px;
+}
+
+.sidebar-header {
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-header h3 {
+  color: var(--text-light);
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.user-profile {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.user-profile img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+  border: 3px solid var(--dark-border);
+}
+
+.user-profile h5 {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+#sidebar ul.components {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--dark-border);
+  flex-grow: 1;
+}
+
+#sidebar ul li a {
+  padding: 12px 20px;
+  font-size: 1.1em;
+  display: block;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+#sidebar ul li a:hover {
+  color: var(--text-light);
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+#sidebar ul li.active > a {
+  color: var(--text-light);
+  background-color: rgba(0, 0, 0, 0.3);
+  border-left: 4px solid var(--primary);
+}
+
+.sidebar-footer {
+  padding: 20px;
+  text-align: center;
+}
+
+.btn-logout {
+  color: var(--text-light);
+  background-color: transparent;
+  border: 1px solid var(--dark-border);
+  transition: all 0.3s;
+}
+
+.btn-logout:hover {
+  background-color: var(--danger);
+  border-color: var(--danger);
+  color: #fff !important;
+}
+
+/* Main content container */
+#content {
+  width: calc(100% - 250px);
+  min-height: 100vh;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0;
+  background-color: var(--dark);
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+#content.active {
+  width: 100%;
+}
+
+/* Quality and Mood tag styles - specific to historical page */
+.quality,
+.mood {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  min-width: 80px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Base styles with explicit text colors */
+.quality.excellent,
+.mood.refreshed {
+  background-color: var(--success);
+  color: #fff !important;
+}
+
+.quality.good,
+.mood.neutral {
+  background-color: var(--info);
+  color: #fff !important;
+}
+
+.quality.fair,
+.mood.tired {
+  background-color: var(--warning);
+  color: #212529 !important;
+}
+
+.quality.poor,
+.mood.exhausted {
+  background-color: var(--danger);
+  color: #fff !important;
+}
+
+/* Hover effects - maintain text colors with high specificity */
+.quality.excellent:hover,
+.mood.refreshed:hover {
+  background-color: var(--success);
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.quality.good:hover,
+.mood.neutral:hover {
+  background-color: var(--info);
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.quality.fair:hover,
+.mood.tired:hover {
+  background-color: var(--warning);
+  color: #212529 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.quality.poor:hover,
+.mood.exhausted:hover {
+  background-color: var(--danger);
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Sleep goal card - specific to history page */
+.goal-card {
+  background: linear-gradient(45deg, #2b3252, #4d5382);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+}
+
+.goal-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
+}
+
+.goal-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Progress circle visualization - specific to history page */
+.progress-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+}
+
+.progress-circle-fill {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: var(--dark-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Chart container styles - specific to history page */
+.chart-container {
+  position: relative;
+  margin: auto;
+  height: 300px !important;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem;
+  padding: 10px;
+}
+
+#weeklyChart {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Stats cards with colored borders - specific to history page */
+.border-left-primary {
+  border-left: 0.25rem solid var(--primary) !important;
+}
+
+.border-left-success {
+  border-left: 0.25rem solid var(--success) !important;
+}
+
+.border-left-info {
+  border-left: 0.25rem solid var(--info) !important;
+}
+
+.border-left-warning {
+  border-left: 0.25rem solid var(--warning) !important;
+}
+
+/* Ensure buttons keep white text on hover */
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  color: #fff !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  color: #fff !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  color: #fff !important;
+}
+
+/* Toast notification container - specific to history page */
+#toastContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.toast {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  min-width: 250px;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* Responsive adjustments specifically for historical page */
+@media (max-width: 768px) {
+  #sidebar {
+    margin-left: -250px;
+  }
+  #sidebar.active {
+    margin-left: 0;
+  }
+  #content {
+    width: 100%;
+  }
+  #content.active {
+    width: calc(100% - 250px);
+  }
+
+  .chart-container {
+    height: 250px;
+  }
+}
