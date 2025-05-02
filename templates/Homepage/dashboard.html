@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Sleep Tracker</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../static/css/styles.css" />
+    <link rel="stylesheet" href="../../static/css/dashboard.css" />
+    
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <i class="fas fa-moon"></i>
+          <h3>Sleep Tracker</h3>
+        </div>
+
+        <div class="user-profile">
+          <img src="../../templates/demo.jpg" alt="User Profile" />
+          <h5>John Doe</h5>
+          <p>Sleep Enthusiast</p>
+        </div>
+
+        <ul class="sidebar-menu">
+          <li>
+            <a href="dashboard.html" class="active">
+              <i class="fas fa-tachometer-alt"></i>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="sleep_entry.html">
+              <i class="fas fa-plus-circle"></i>
+              Record Sleep
+            </a>
+          </li>
+          <li>
+            <a href="historical.html">
+              <i class="fas fa-history"></i>
+              Sleep History
+            </a>
+          </li>
+          <li>
+            <a href="report.html">
+              <i class="fas fa-chart-line"></i>
+              Sleep Reports
+            </a>
+          </li>
+          <li>
+            <a href="settings.html">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer">
+          <a href="logout.html" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Navbar -->
+        <nav class="navbar">
+          <div class="d-flex justify-content-between w-100">
+            <button id="sidebarToggle" class="navbar-toggler">
+              <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav flex-row ms-auto">
+              <li class="nav-item me-3">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-search"></i>
+                </a>
+              </li>
+              <li class="nav-item dropdown me-3">
+                <a
+                  class="nav-link"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i class="fas fa-bell"></i>
+                  <span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >
+                    3
+                  </span>
+                </a>
+                <ul
+                  class="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="navbarDropdown"
+                >
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-trophy me-2"></i> Sleep goal
+                      achieved!</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-exclamation-circle me-2"></i> Record
+                      yesterday's sleep</a
+                    >
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-envelope me-2"></i> Weekly report
+                      ready</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link d-flex align-items-center"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                <img src="../../templates/demo.jpg" class="rounded-circle me-2" alt="User" width="30" height="30" />
+
+                  <span class="d-none d-lg-inline text-white">John Doe</span>
+                </a>
+                <ul
+                  class="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="userDropdown"
+                >
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-user me-2"></i> Profile</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-cog me-2"></i> Settings</a
+                    >
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="logout.html"
+                      ><i class="fas fa-sign-out-alt me-2"></i> Logout</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="container-fluid py-4">
+          <!-- Welcome Banner -->
+          <div class="welcome-banner">
+            <h1>Welcome back, John!</h1>
+            <p>
+              Track your sleep patterns, improve your sleep quality, and enhance
+              your overall health.
+            </p>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-6 col-xl-3">
+              <div class="stats-card stats-primary">
+                <div class="icon">
+                  <i class="fas fa-bed"></i>
+                </div>
+                <h2>7.5h</h2>
+                <p>Average Sleep Duration</p>
+                <small class="text-muted">Last 30 days</small>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+              <div class="stats-card stats-success">
+                <div class="icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <h2>83%</h2>
+                <p>Sleep Quality</p>
+                <small class="text-muted">Up 5% from last week</small>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+              <div class="stats-card stats-info">
+                <div class="icon">
+                  <i class="fas fa-trophy"></i>
+                </div>
+                <h2>16</h2>
+                <p>Goal Achievement</p>
+                <small class="text-muted">Days this month</small>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+              <div class="stats-card stats-warning">
+                <div class="icon">
+                  <i class="fas fa-moon"></i>
+                </div>
+                <h2>23:15</h2>
+                <p>Average Bedtime</p>
+                <small class="text-muted">Last 7 days</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sleep Trend Chart -->
+          <div class="chart-card">
+            <div class="card-header">
+              <h3><i class="fas fa-chart-line"></i> Sleep Trend</h3>
+              <div class="dropdown">
+                <button
+                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  id="chartRangeDropdown"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Last 7 Days
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="chartRangeDropdown">
+                  <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
+                  <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
+                  <li><a class="dropdown-item" href="#">Last 90 Days</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="sleepTrendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Quick Actions and Sleep Tip -->
+          <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="quick-action">
+                    <div class="quick-action-icon">
+                      <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h3>Record Sleep</h3>
+                    <p>Log your sleep data for today or previous days.</p>
+                    <a href="sleep_entry.html" class="btn btn-primary"
+                      >Log Sleep</a
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="quick-action">
+                    <div class="quick-action-icon">
+                      <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Sleep Report</h3>
+                    <p>View detailed analysis of your sleep patterns.</p>
+                    <a href="report.html" class="btn btn-primary"
+                      >View Report</a
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="quick-action">
+                    <div class="quick-action-icon">
+                      <i class="fas fa-history"></i>
+                    </div>
+                    <h3>Sleep History</h3>
+                    <p>Browse your complete sleep record history.</p>
+                    <a href="historical.html" class="btn btn-primary"
+                      >View History</a
+                    >
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="quick-action">
+                    <div class="quick-action-icon">
+                      <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Set Goals</h3>
+                    <p>Establish sleep targets to improve your habits.</p>
+                    <a href="#" class="btn btn-primary">Set Goals</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="sleep-tip">
+                <h3><i class="fas fa-lightbulb"></i> Sleep Tip of the Day</h3>
+                <p>
+                  Consistency is key: Try to go to bed and wake up at the same
+                  time every day, even on weekends. This helps regulate your
+                  body's internal clock and can help you fall asleep and stay
+                  asleep for the night.
+                </p>
+                <a href="tips.html" class="btn btn-outline-warning mt-3"
+                  >More Tips</a
+                >
+              </div>
+
+              <div class="chart-card">
+                <div class="card-header">
+                  <h3><i class="fas fa-chart-pie"></i> Sleep Quality</h3>
+                </div>
+                <div class="chart-container" style="height: 200px">
+                  <canvas id="sleepQualityChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Sleep Records -->
+          <div class="data-table-card">
+            <div class="card-header">
+              <h3><i class="fas fa-list"></i> Recent Sleep Records</h3>
+              <a href="historical.html" class="btn btn-sm btn-outline-primary"
+                >View All</a
+              >
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Duration</th>
+                    <th>Bedtime</th>
+                    <th>Wake Up</th>
+                    <th>Quality</th>
+                    <th>Mood</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Apr 28, 2025</td>
+                    <td>7h 30m</td>
+                    <td>23:30</td>
+                    <td>07:00</td>
+                    <td>
+                      <span class="badge-quality badge-excellent"
+                        >Excellent</span
+                      >
+                    </td>
+                    <td>
+                      <span class="badge-mood badge-refreshed">Refreshed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Apr 27, 2025</td>
+                    <td>6h 45m</td>
+                    <td>00:15</td>
+                    <td>07:00</td>
+                    <td><span class="badge-quality badge-good">Good</span></td>
+                    <td>
+                      <span class="badge-mood badge-neutral">Neutral</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Apr 26, 2025</td>
+                    <td>8h 15m</td>
+                    <td>22:45</td>
+                    <td>07:00</td>
+                    <td>
+                      <span class="badge-quality badge-excellent"
+                        >Excellent</span
+                      >
+                    </td>
+                    <td>
+                      <span class="badge-mood badge-refreshed">Refreshed</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Apr 25, 2025</td>
+                    <td>6h 00m</td>
+                    <td>00:00</td>
+                    <td>06:00</td>
+                    <td><span class="badge-quality badge-fair">Fair</span></td>
+                    <td><span class="badge-mood badge-tired">Tired</span></td>
+                  </tr>
+                  <tr>
+                    <td>Apr 24, 2025</td>
+                    <td>5h 30m</td>
+                    <td>01:30</td>
+                    <td>07:00</td>
+                    <td><span class="badge-quality badge-poor">Poor</span></td>
+                    <td>
+                      <span class="badge-mood badge-exhausted">Exhausted</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+              <span>&copy; 2025 Sleep Tracker | CITS5505 GROUP PROJECT</span>
+              <span>Version 1.0.0</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Sidebar Toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const sidebarToggle = document.getElementById("sidebarToggle");
+        const sidebar = document.querySelector(".sidebar");
+        const mainContent = document.querySelector(".main-content");
+
+        sidebarToggle.addEventListener("click", function () {
+          sidebar.classList.toggle("collapsed");
+          mainContent.classList.toggle("expanded");
+        });
+
+        // Sleep Trend Chart
+        const sleepTrendCtx = document
+          .getElementById("sleepTrendChart")
+          .getContext("2d");
+        const sleepTrendChart = new Chart(sleepTrendCtx, {
+          type: "line",
+          data: {
+            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            datasets: [
+              {
+                label: "Sleep Duration (hours)",
+                data: [7.5, 6.75, 8.25, 6, 5.5, 7.75, 7.5],
+                backgroundColor: "rgba(78, 115, 223, 0.1)",
+                borderColor: "rgba(78, 115, 223, 1)",
+                borderWidth: 2,
+                pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                pointBorderColor: "#ffffff",
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.3,
+                fill: true,
+              },
+              {
+                label: "Sleep Goal",
+                data: [8, 8, 8, 8, 8, 8, 8],
+                borderColor: "rgba(28, 200, 138, 0.6)",
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointStyle: false,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "top",
+                labels: {
+                  color: "#f8f9fa",
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(45, 45, 45, 0.9)",
+                titleColor: "#ffffff",
+                bodyColor: "#ffffff",
+                callbacks: {
+                  label: function (context) {
+                    return (
+                      context.dataset.label + ": " + context.raw + " hours"
+                    );
+                  },
+                },
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 12,
+                grid: {
+                  color: "rgba(66, 66, 66, 0.5)",
+                  drawBorder: true,
+                  borderDash: [2, 2],
+                },
+                ticks: {
+                  color: "#adb5bd",
+                  stepSize: 2,
+                },
+              },
+              x: {
+                grid: {
+                  color: "rgba(66, 66, 66, 0.5)",
+                  drawBorder: true,
+                  borderDash: [2, 2],
+                },
+                ticks: {
+                  color: "#adb5bd",
+                },
+              },
+            },
+          },
+        });
+
+        // Sleep Quality Chart
+        const sleepQualityCtx = document
+          .getElementById("sleepQualityChart")
+          .getContext("2d");
+        const sleepQualityChart = new Chart(sleepQualityCtx, {
+          type: "doughnut",
+          data: {
+            labels: ["Excellent", "Good", "Fair", "Poor"],
+            datasets: [
+              {
+                data: [12, 8, 5, 3],
+                backgroundColor: [
+                  "rgba(28, 200, 138, 0.8)",
+                  "rgba(54, 185, 204, 0.8)",
+                  "rgba(246, 194, 62, 0.8)",
+                  "rgba(231, 74, 59, 0.8)",
+                ],
+                borderColor: [
+                  "rgba(28, 200, 138, 1)",
+                  "rgba(54, 185, 204, 1)",
+                  "rgba(246, 194, 62, 1)",
+                  "rgba(231, 74, 59, 1)",
+                ],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  color: "#f8f9fa",
+                  padding: 15,
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(45, 45, 45, 0.9)",
+                titleColor: "#ffffff",
+                bodyColor: "#ffffff",
+              },
+            },
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

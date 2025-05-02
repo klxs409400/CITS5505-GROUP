@@ -1,0 +1,82 @@
+/* auth.css - Modern clean frosted UI */
+
+.auth-page {
+    background: linear-gradient(to right, #0f172a, #1e293b);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .auth-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(18px);
+    border-radius: 1.25rem;
+    padding: 3rem 2.5rem;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    color: #fff;
+  }
+  
+  /* Typography */
+  .auth-container h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+  
+  .auth-container label {
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Input styles */
+  .auth-container input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    color: #fff;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .auth-container input::placeholder {
+    color: #bbb;
+  }
+  
+  /* Button */
+  .auth-container .btn-primary {
+    background-color: #7c3aed;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+  }
+  
+  .auth-container .btn-primary:hover {
+    background-color: #6d28d9;
+  }
+  
+  /* Home button */
+  .home-button {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+  }
+  
+  .home-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  

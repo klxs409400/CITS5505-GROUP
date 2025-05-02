@@ -1,0 +1,86 @@
+:root {
+    --gradient-primary: linear-gradient(90deg, #7c3aed, #3b82f6);
+  }
+  
+  /* Hero Section */
+  .hero-section {
+    background: linear-gradient(90deg, #0d0c1d 0%, #1a1c34 100%);
+    padding-top: 100px;
+    padding-bottom: 60px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  
+  
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #6366f1;
+  }
+  
+  .hero-description {
+    font-size: 1.2rem;
+    color: #cbd5e1;
+    margin-top: 1rem;
+    max-width: 540px;
+  }
+  
+  .hero-buttons .btn-primary {
+    background: linear-gradient(to right, #8b5cf6, #3b82f6);
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .hero-buttons .btn-outline {
+    border: 2px solid #64748b;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+  
+  .hero-dashboard {
+    max-width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    transition: transform 0.5s ease;
+  }
+  
+  .hero-dashboard:hover {
+    transform: scale(1.03);
+  }
+  
+  
+  /* Section Spacing */
+  .section-spacing {
+    padding: 6rem 0;
+  }
+  
+  /* Alternate Background */
+  .alt-bg {
+    background-color: #111827;
+  }
+  
+  /* Feature Cards */
+  .feature-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    color: #e5e7eb;
+    transition: all 0.3s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
+    color: #a78bfa;
+    margin-bottom: 1rem;
+  }
+  
