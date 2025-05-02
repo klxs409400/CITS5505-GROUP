@@ -157,6 +157,12 @@ $(document).ready(function () {
 
   console.log("Chart initialized:", weeklyChart); // Confirm chart is initialized
 
+  // Updated: Sidebar toggle for new sidebar structure
+  $("#sidebarToggle").on("click", function () {
+    $(".sidebar").toggleClass("collapsed");
+    $(".main-content").toggleClass("expanded");
+  });
+
   // Handle weekly chart toggle between line and bar
   $("#chartTypeToggle").on("change", function () {
     console.log("Chart type toggle clicked"); // Debug info
@@ -314,11 +320,6 @@ $(document).ready(function () {
     console.log("Clear filters clicked"); // Debug info
     $("#filterForm")[0].reset();
     sleepTable.search("").columns().search("").draw();
-  });
-
-  // Toggle sidebar
-  $("#sidebarCollapse").on("click", function () {
-    $("#sidebar, #content").toggleClass("active");
   });
 
   // Edit button click handler
