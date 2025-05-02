@@ -21,10 +21,12 @@
     />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom CSS -->
-    <link href="/static/CSS/historical.css" rel="stylesheet" />
+    <!-- Main Styles - Note: fixed case to lowercase css -->
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <!-- Page Specific Styles - Note: fixed case to lowercase css -->
+    <link href="/static/css/historical.css" rel="stylesheet" />
   </head>
-  <body>
+  <body class="historical-page">
     <div class="wrapper">
       <!-- Sidebar -->
       <nav id="sidebar">
@@ -856,6 +858,6 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <!-- Custom Javascript -->
-    <script src="historical.js"></script>
+    <script src="/static/js/Historical/historical.js"></script>
   </body>
 </html>
