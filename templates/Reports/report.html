@@ -34,6 +34,7 @@
       <h3>Sleep Quality Trend</h3>
       <p>View how your sleep quality fluctuated during the week.</p>
     </a>
+    
     <a href="#chart3" class="summary-card">
       <div class="card-icon"></div>
       <h3>Sleep Quality Distribution</h3>
@@ -64,6 +65,23 @@
     </div>
     </div>
 
+    <div class="scoring-guide">
+        <h3>Sleep Quality Scoring Criteria (0–3, higher is better)</h3>
+        <p style="font-style: italic; color: #666;">
+          Based on the Pittsburgh Sleep Quality Index (PSQI) — Buysse et al., 1989. Scores are reversed so that higher values indicate better sleep quality.
+        </p>
+        <ul>
+          <li><b>Subjective Quality:</b> Very good = 3, Fair = 2, Poor = 1, Very poor = 0</li>
+          <li><b>Sleep Latency:</b> ≤15min = 3, 16–60min = 1, >60min = 0</li>
+          <li><b>Duration:</b> ≥7h = 3, 6–7h = 2, 5–6h = 1, &lt;5h = 0</li>
+          <li><b>Efficiency:</b> ≥85% = 3, 75–84% = 2, 65–74% = 1, &lt;65% = 0</li>
+          <li><b>Disturbances:</b> None = 3, Occasionally = 2, Often = 1, Frequent = 0</li>
+          <li><b>Sleep Meds:</b> None = 3, Occasionally = 2, Often = 1, Daily = 0</li>
+          <li><b>Daytime Dysfunction:</b> None = 3, Sometimes = 2, Often = 1, Severe = 0</li>
+        </ul>
+      </div>
+      
+    
     <div id="chart3">
     <div class="chart-card">
         <h3>Sleep Quality Distribution</h3>
@@ -78,7 +96,24 @@
         <p>This bar chart compares how different habits influenced your sleep quality.</p>
         <canvas id="factorsImpactChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>    
     </div>
+    
+    <div class="scoring-guide">
+        <h3>Behavioral Factors Scoring Criteria for Sleep Quality (0–2, higher is better)</h3>
+        <ul>
+            <li><b>Had Caffeine:</b> No intake = 2, Daytime only = 1, Nighttime = 0</li>
+            <li><b>Exercised:</b> Intense night exercise = 0, Moderate daytime exercise = 2, No exercise = 1</li>
+            <li><b>Screen Time (Before Bed):</b> ≤15min = 2, 15–60min = 1, >60min = 0</li>
+            <li><b>Late-night Eating:</b> None = 2, Occasionally = 1, Often = 0</li>
+          </ul>          
     </div>
+
+    <p class="chart-explanation">
+        <strong>Explanation:</strong> These scoring criteria are designed based on evidence from sleep behavior research. 
+        Studies suggest that late-night caffeine intake and prolonged screen exposure can negatively affect sleep quality, 
+        while moderate daytime exercise and healthy eating habits are linked to better sleep. By quantifying these factors, 
+        the chart helps users understand how their daily habits contribute to overall sleep performance.
+    </p>
+      
   </div>
     <script>
         const ctx = document.getElementById('sleepDurationChart').getContext('2d');
@@ -138,16 +173,15 @@
         new Chart(ctx4, {
             type: 'bar', 
             data: {
-                labels: ['Had Caffeine', 'Exercised', 'Screen Time', 'Outdoor Time', 'Late-night Eating'], 
+                labels: ['Had Caffeine', 'Exercised', 'Screen Time', 'Late-night Eating'], 
                 datasets: [{
                     label: 'Average Sleep Quality',
-                    data: [2.5, 4, 2, 4.5, 2.8], 
+                    data: [2.5, 4, 2, 2.8], 
                     backgroundColor: [
                         'rgba(255, 159, 64, 0.6)',
                         'rgba(75, 192, 192, 0.6)',
                         'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 205, 86, 0.6)',
-                        'rgba(201, 203, 207, 0.6)'
+                        'rgba(255, 205, 86, 0.6)'
                     ]
                 }]
             },
@@ -165,6 +199,20 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     </script>
-        
+
+<section class="references">
+    <h2>References</h2>
+    <ul>
+      <li>Buysse, D. J., Reynolds, C. F., Monk, T. H., et al. (1989). The Pittsburgh Sleep Quality Index (PSQI): A New Instrument for Psychiatric Practice and Research. <em>Psychiatry Research, 28</em>(2), 193–213. <a href="https://doi.org/10.1016/0165-1781(89)90047-4" target="_blank">https://doi.org/10.1016/0165-1781(89)90047-4</a></li>
+      
+      <li>Knutson, K. L., & Van Cauter, E. (2008). Associations Between Sleep Loss and Increased Risk of Obesity and Diabetes. <em>Annals of the New York Academy of Sciences, 1129</em>, 287–304. <a href="https://doi.org/10.1196/annals.1417.033" target="_blank">https://doi.org/10.1196/annals.1417.033</a></li>
+  
+      <li>Grandner, M. A., et al. (2010). Social and Behavioral Determinants of Perceived Insufficient Sleep. <em>Frontiers in Neurology, 1</em>, 8. <a href="https://doi.org/10.3389/fneur.2010.00008" target="_blank">https://doi.org/10.3389/fneur.2010.00008</a></li>
+      <li>Clark, I., & Landolt, H. P. (2017). Coffee, caffeine, and sleep: A systematic review of epidemiological studies and randomized controlled trials. <em>Sleep Medicine Reviews</em>, 31, 70–78. <a href="https://www.sciencedirect.com/science/article/pii/S1087079216000150" target="_blank"></a></li>
+    <li>Chang, A. M., et al. (2015). Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness. <em>Proceedings of the National Academy of Sciences</em>, 112(4), 1232–1237. <a href="https://www.pnas.org/content/112/4/1232" target="_blank"></a></li>
+    <li>St-Onge, M. P., et al. (2016). Meal timing and frequency: Implications for cardiovascular disease prevention: A scientific statement from the American Heart Association. <em>Circulation</em>, 135(9), e96–e121. <a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000000476" target="_blank"></a></li>
+    </ul>
+  </section>
+  
 </body>
 </html>

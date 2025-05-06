@@ -137,6 +137,58 @@
     text-align: center;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
   }
+
+  .references {
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 24px 32px;
+    margin: 40px auto 60px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #374151; /* 深灰色，更清晰 */
+    max-width: 800px; /* 与上面图表统一 */
+  }
+  
+  .references h2 {
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #10b981; /* 深绿色强调 */
+    padding-bottom: 6px;
+    color: #111827;
+  }
+  
+  .references ul {
+    list-style-type: decimal;
+    padding-left: 20px;
+    margin: 0;
+  }
+  
+  .references li {
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  
+  .references a {
+    color: #059669;
+    text-decoration: underline;
+  }
+  
+  .references a:hover {
+    color: #047857;
+  }
+
+  .chart-explanation {
+    color: #d1d5db;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-top: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: justify;  
+  }
+  
   
   
   
