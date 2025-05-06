@@ -159,8 +159,19 @@ $(document).ready(function () {
 
   // Updated: Sidebar toggle for new sidebar structure
   $("#sidebarToggle").on("click", function () {
-    $(".sidebar").toggleClass("collapsed");
-    $(".main-content").toggleClass("expanded");
+    $(".sidebar").toggleClass("active");
+
+    if ($(".sidebar").hasClass("active")) {
+      $(".main-content").css({
+        "margin-left": "0",
+        width: "100%",
+      });
+    } else {
+      $(".main-content").css({
+        "margin-left": "280px",
+        width: "calc(100% - 280px)",
+      });
+    }
   });
 
   // Handle weekly chart toggle between line and bar
