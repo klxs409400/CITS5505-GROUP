@@ -39,6 +39,18 @@
   color: var(--text-light);
 }
 
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+.sidebar.active {
+  margin-left: -280px;
+}
+
+.main-content {
+  transition: all 0.3s ease;
+}
+
 .user-profile {
   padding: 1.5rem;
   text-align: center;
@@ -178,20 +190,31 @@
   color: var(--text-light);
 }
 
+/* Update dropdown menu styles to match dashboard appearance */
 .navbar .dropdown-menu {
-  background-color: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  box-shadow: var(--shadow-md);
+  background-color: #fff !important; /* Change background to white instead of dark */
+  border: 1px solid rgba(0, 0, 0, 0.15) !important; /* Add subtle border */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175) !important; /* Add depth with shadow */
+  color: #212529 !important; /* Set text color to dark */
 }
 
 .navbar .dropdown-item {
-  color: var(--text-secondary);
-  transition: var(--transition-normal);
+  color: #212529 !important; /* Set menu item text to dark */
+  transition: var(--transition-normal); /* Keep transition effect */
 }
 
 .navbar .dropdown-item:hover {
-  background-color: var(--dark-hover);
-  color: var(--text-light);
+  background-color: #f8f9fa !important; /* Light gray background on hover */
+  color: #212529 !important; /* Maintain dark text on hover */
+}
+
+.navbar .dropdown-item i {
+  color: #6c757d !important; /* Set icon color to medium gray */
+}
+
+/* Adjust dropdown divider color */
+.navbar .dropdown-divider {
+  border-top: 1px solid #e9ecef !important; /* Light gray divider line */
 }
 
 /* Footer styling */
@@ -395,19 +418,18 @@
 @media (max-width: 992px) {
   .sidebar {
     margin-left: -280px;
+    transition: all 0.3s;
   }
 
   .sidebar.active {
     margin-left: 0;
+    z-index: 1030;
   }
 
   .main-content {
     margin-left: 0;
     width: 100%;
-  }
-
-  .chart-container {
-    height: 250px;
+    transition: all 0.3s;
   }
 }
 
@@ -435,4 +457,34 @@
     margin-top: 0.75rem;
     width: 100%;
   }
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(94, 114, 228, 0.1) !important;
+  color: var(--text-light) !important;
+}
+
+.table-hover tbody tr:hover td {
+  color: var(--text-light) !important;
+}
+
+/* 确保在悬停时质量和情绪标签保持各自的颜色 */
+.table-hover tbody tr:hover .quality.excellent,
+.table-hover tbody tr:hover .mood.refreshed {
+  color: #fff !important;
+}
+
+.table-hover tbody tr:hover .quality.good,
+.table-hover tbody tr:hover .mood.neutral {
+  color: #fff !important;
+}
+
+.table-hover tbody tr:hover .quality.fair,
+.table-hover tbody tr:hover .mood.tired {
+  color: #212529 !important;
+}
+
+.table-hover tbody tr:hover .quality.poor,
+.table-hover tbody tr:hover .mood.exhausted {
+  color: #fff !important;
 }
