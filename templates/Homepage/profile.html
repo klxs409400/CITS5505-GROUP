@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile - Sleep Tracker</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="../../static/css/styles.css" />
+    <!-- Page Specific Styles -->
+    <link href="../../static/css/profile.css" rel="stylesheet" />
+  </head>
+  <body class="profile-page">
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <i class="fas fa-moon"></i>
+          <h3>Sleep Tracker</h3>
+        </div>
+
+        <div class="user-profile">
+          <img
+            src="../../templates/demo.jpg"
+            class="rounded-circle"
+            alt="User Profile"
+          />
+          <h5>John Doe</h5>
+          <p>Sleep Enthusiast</p>
+        </div>
+
+        <ul class="sidebar-menu">
+          <li>
+            <a href="../../templates/Homepage/dashboard.html">
+              <i class="fas fa-tachometer-alt"></i>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="../../templates/Historical/historical.html">
+              <i class="fas fa-history"></i>
+              Sleep History
+            </a>
+          </li>
+          <li>
+            <a href="../../templates/Settings/pages/settings.html">
+              <i class="fas fa-cog"></i>
+              Settings
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer">
+          <a href="../../templates/Homepage/login.html" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </a>
+          <br />
+          <a href="../../templates/Homepage/index.html" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Homepage
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Top navigation -->
+        <nav class="navbar">
+          <div class="d-flex justify-content-between w-100">
+            <button id="sidebarToggle" class="navbar-toggler">
+              <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav flex-row ms-auto">
+              <li class="nav-item me-3">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-search"></i>
+                </a>
+              </li>
+              <li class="nav-item dropdown me-3">
+                <a
+                  class="nav-link"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i class="fas fa-bell"></i>
+                  <span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >
+                    3
+                  </span>
+                </a>
+                <ul
+                  class="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="navbarDropdown"
+                >
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-trophy me-2"></i> Sleep goal
+                      achieved!</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-exclamation-circle me-2"></i> Record
+                      yesterday's sleep</a
+                    >
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-envelope me-2"></i> Weekly report
+                      ready</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link d-flex align-items-center"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <img
+                    src="../../templates/demo.jpg"
+                    class="rounded-circle me-2"
+                    alt="User"
+                    width="30"
+                    height="30"
+                  />
+                  <span class="d-none d-lg-inline text-white">John Doe</span>
+                </a>
+                <ul
+                  class="dropdown-menu dropdown-menu-end"
+                  aria-labelledby="userDropdown"
+                >
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-user me-2"></i> Profile</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#"
+                      ><i class="fas fa-cog me-2"></i> Settings</a
+                    >
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="logout.html"
+                      ><i class="fas fa-sign-out-alt me-2"></i> Logout</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="container-fluid">
+          <div
+            class="d-sm-flex align-items-center justify-content-between mb-4"
+          >
+            <h1 class="h3 mb-0">User Profile</h1>
+            <a
+              href="#"
+              class="d-none d-sm-inline-block btn btn-primary shadow-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#editProfileModal"
+            >
+              <i class="fas fa-user-edit fa-sm text-white-50 me-2"></i>Edit
+              Profile
+            </a>
+          </div>
+
+          <!-- Profile Overview Card -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card shadow">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col-md-3 text-center">
+                      <img
+                        src="../../templates/demo.jpg"
+                        class="profile-avatar mb-3"
+                        alt="User Profile"
+                      />
+                      <h4 class="mb-1">John Doe</h4>
+                      <p class="text-secondary mb-2">Sleep Enthusiast</p>
+                      <div
+                        class="d-flex justify-content-center profile-social-links"
+                      ></div>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <h6 class="text-secondary">Full Name</h6>
+                          <p>John Anthony Doe</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <h6 class="text-secondary">Email</h6>
+                          <p>john.doe@example.com</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <h6 class="text-secondary">Phone</h6>
+                          <p>+1 (555) 123-4567</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <h6 class="text-secondary">Location</h6>
+                          <p>New York, USA</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <h6 class="text-secondary">Member Since</h6>
+                          <p>January 15, 2023</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <h6 class="text-secondary">Timezone</h6>
+                          <p>Eastern Time (ET)</p>
+                        </div>
+                        <div class="col-12 mt-2">
+                          <h6 class="text-secondary">Bio</h6>
+                          <p>
+                            Passionate about optimizing sleep patterns and
+                            sharing knowledge about sleep health. I've been
+                            tracking my sleep for over 2 years and have seen
+                            significant improvements in my energy levels and
+                            overall productivity.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sleep Stats Cards -->
+          <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                      >
+                        Total Entries
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">365</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                      >
+                        Current Streak
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">28 days</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-trophy fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                      >
+                        Achievement Points
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">875</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-medal fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                      >
+                        Goal Success Rate
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">82%</div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-bullseye fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Achievements and Badges -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card shadow mb-4">
+                <div
+                  class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+                >
+                  <h6 class="m-0 font-weight-bold">Achievements & Badges</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="badge-card text-center">
+                        <div class="badge-icon">
+                          <i class="fas fa-star"></i>
+                        </div>
+                        <h5>Early Bird</h5>
+                        <p>Wake up before 6 AM for 7 days</p>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="badge-card text-center">
+                        <div class="badge-icon">
+                          <i class="fas fa-moon"></i>
+                        </div>
+                        <h5>Sleep Master</h5>
+                        <p>Log 100 nights of excellent sleep</p>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="badge-card text-center">
+                        <div class="badge-icon">
+                          <i class="fas fa-certificate"></i>
+                        </div>
+                        <h5>Goal Crusher</h5>
+                        <p>Meet sleep goal for 30 consecutive days</p>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="badge-card text-center">
+                        <div class="badge-icon">
+                          <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5>Data Analyst</h5>
+                        <p>Track detailed sleep data for 50 days</p>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="badge-card text-center">
+                        <div class="badge-icon locked">
+                          <i class="fas fa-bed"></i>
+                        </div>
+                        <h5>Perfect Week</h5>
+                        <p>7 days of 8+ hour sleep</p>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="badge-card text-center">
+                        <div class="badge-icon locked">
+                          <i class="fas fa-clock"></i>
+                        </div>
+                        <h5>Consistent Sleeper</h5>
+                        <p>Same bed time (±15min) for 14 days</p>
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                      <div class="badge-card text-center">
+                        <div class="badge-icon locked">
+                          <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h5>Yearly Tracker</h5>
+                        <p>Track sleep for 365 days</p>
+                      </div>
+                    </div>
+                    <!-- Community Guide badge removed as requested -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- No additional cards here - removed Sleep Quality Trends and Account Preferences as requested -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+              <span>Copyright © Sleep Tracker 2025 CITS5505 GROUP PROJECT</span>
+              <span>Version 1.0.0</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div
+      class="modal fade"
+      id="editProfileModal"
+      tabindex="-1"
+      aria-labelledby="editProfileModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editProfileForm">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="editFullName" class="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="editFullName"
+                    value="John Anthony Doe"
+                    required
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="editEmail" class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="editEmail"
+                    value="john.doe@example.com"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="editPhone" class="form-label">Phone</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="editPhone"
+                    value="+1 (555) 123-4567"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="editLocation" class="form-label">Location</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="editLocation"
+                    value="New York, USA"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="editTimezone" class="form-label">Timezone</label>
+                  <select class="form-select" id="editTimezone">
+                    <option value="ET" selected>Eastern Time (ET)</option>
+                    <option value="CT">Central Time (CT)</option>
+                    <option value="MT">Mountain Time (MT)</option>
+                    <option value="PT">Pacific Time (PT)</option>
+                    <option value="GMT">Greenwich Mean Time (GMT)</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="editProfilePic" class="form-label"
+                    >Profile Picture</label
+                  >
+                  <input type="file" class="form-control" id="editProfilePic" />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="editBio" class="form-label">Bio</label>
+                <textarea class="form-control" id="editBio" rows="4">
+Passionate about optimizing sleep patterns and sharing knowledge about sleep health. I've been tracking my sleep for over 2 years and have seen significant improvements in my energy levels and overall productivity.</textarea
+                >
+              </div>
+              
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" id="updateProfileBtn">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Custom Javascript -->
+    <script src="../../static/js/Homepage/profile.js"></script>
+  </body>
+</html>

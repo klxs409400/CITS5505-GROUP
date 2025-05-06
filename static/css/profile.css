@@ -1,0 +1,436 @@
+/* Profile page specific layout components */
+/* Note: We're using variables from styles.css and only defining page-specific styles here */
+
+/* Sidebar and layout structure - reused from historical.css */
+.wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar {
+  width: 280px;
+  background-color: var(--dark-component);
+  border-right: 1px solid var(--dark-border);
+  color: var(--text-light);
+  transition: all 0.3s;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--dark-border);
+}
+
+.sidebar-header i {
+  color: var(--primary);
+  font-size: 1.8rem;
+  margin-right: 1rem;
+}
+
+.sidebar-header h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0;
+  color: var(--text-light);
+}
+
+.user-profile {
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--dark-border);
+}
+
+.user-profile img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  border: 3px solid var(--primary);
+  padding: 3px;
+  background-color: var(--dark-card);
+}
+
+.user-profile h5 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.user-profile p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 1.5rem 0;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.5rem;
+  color: var(--text-secondary);
+  transition: var(--transition-normal);
+  border-left: 4px solid transparent;
+  text-decoration: none;
+}
+
+.sidebar-menu a i {
+  margin-right: 0.75rem;
+  width: 20px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.sidebar-menu a:hover {
+  color: var(--text-light);
+  background-color: rgba(94, 114, 228, 0.1);
+  border-left-color: var(--primary);
+}
+
+.sidebar-menu a.active {
+  color: var(--text-light);
+  background-color: rgba(94, 114, 228, 0.15);
+  border-left-color: var(--primary);
+}
+
+.sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--dark-border);
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  background-color: transparent;
+  border: 1px solid var(--dark-border);
+  color: var(--text-secondary);
+  border-radius: 0.5rem;
+  transition: var(--transition-normal);
+  width: 100%;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-logout i {
+  margin-right: 0.5rem;
+}
+
+.btn-logout:hover {
+  background-color: var(--danger);
+  border-color: var(--danger);
+  color: var(--text-light);
+}
+
+/* Main Content */
+.main-content {
+  width: calc(100% - 280px);
+  margin-left: 280px;
+  min-height: 100vh;
+  transition: all 0.3s;
+  background-color: var(--dark);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: var(--dark-component);
+  border-bottom: 1px solid var(--dark-border);
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar-toggler {
+  background-color: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  transition: var(--transition-normal);
+}
+
+.navbar-toggler:hover {
+  color: var(--text-light);
+  transform: scale(1.1);
+}
+
+.navbar .nav-link {
+  color: var(--text-secondary);
+  padding: 0.5rem;
+  transition: var(--transition-normal);
+  position: relative;
+}
+
+.navbar .nav-link:hover {
+  color: var(--text-light);
+}
+
+/* Update dropdown menu styles to match dashboard appearance */
+.navbar .dropdown-menu {
+  background-color: #fff !important; /* Change background to white instead of dark */
+  border: 1px solid rgba(0, 0, 0, 0.15) !important; /* Add subtle border */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175) !important; /* Add depth with shadow */
+  color: #212529 !important; /* Set text color to dark */
+}
+
+.navbar .dropdown-item {
+  color: #212529 !important; /* Set menu item text to dark */
+  transition: var(--transition-normal); /* Keep transition effect */
+}
+
+.navbar .dropdown-item:hover {
+  background-color: #f8f9fa !important; /* Light gray background on hover */
+  color: #212529 !important; /* Maintain dark text on hover */
+}
+
+.navbar .dropdown-item i {
+  color: #6c757d !important; /* Set icon color to medium gray */
+}
+
+/* Adjust dropdown divider color */
+.navbar .dropdown-divider {
+  border-top: 1px solid #e9ecef !important; /* Light gray divider line */
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--dark-component);
+  border-top: 1px solid var(--dark-border);
+  padding: 1rem 1.5rem;
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+/* Profile specific styles */
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 4px solid var(--primary);
+  padding: 4px;
+  background-color: var(--dark-card);
+  box-shadow: var(--shadow-lg);
+}
+
+.profile-social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: var(--dark-hover);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  transition: var(--transition-normal);
+}
+
+.profile-social-links a:hover {
+  background-color: var(--primary);
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* Badge cards */
+.badge-card {
+  background-color: var(--dark-card);
+  border-radius: 0.75rem;
+  padding: 1.5rem 1rem;
+  height: 100%;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.badge-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 20px rgba(94, 114, 228, 0.3);
+}
+
+.badge-icon.locked {
+  background: linear-gradient(135deg, #4b4b4b, #6c757d);
+  opacity: 0.7;
+}
+
+.badge-card h5 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.badge-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+/* Stats cards with colored borders */
+.border-left-primary {
+  border-left: 0.25rem solid var(--primary) !important;
+}
+
+.border-left-success {
+  border-left: 0.25rem solid var(--success) !important;
+}
+
+.border-left-info {
+  border-left: 0.25rem solid var(--info) !important;
+}
+
+.border-left-warning {
+  border-left: 0.25rem solid var(--warning) !important;
+}
+
+/* Form controls */
+.form-switch .form-check-input {
+  background-color: var(--dark-input);
+  border-color: var(--dark-border);
+}
+
+.form-switch .form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Table hover styles (for consistency with historical page) */
+.table-hover tbody tr:hover {
+  background-color: rgba(94, 114, 228, 0.1) !important;
+  color: var(--text-light) !important;
+}
+
+.table-hover tbody tr:hover td {
+  color: var(--text-light) !important;
+}
+
+/* Ensure in hover time quality and mood tags keep their colors */
+.table-hover tbody tr:hover .quality.excellent,
+.table-hover tbody tr:hover .mood.refreshed {
+  color: #fff !important;
+}
+
+.table-hover tbody tr:hover .quality.good,
+.table-hover tbody tr:hover .mood.neutral {
+  color: #fff !important;
+}
+
+.table-hover tbody tr:hover .quality.fair,
+.table-hover tbody tr:hover .mood.tired {
+  color: #212529 !important;
+}
+
+.table-hover tbody tr:hover .quality.poor,
+.table-hover tbody tr:hover .mood.exhausted {
+  color: #fff !important;
+}
+
+/* Toast notification container */
+#toastContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.toast {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  min-width: 250px;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* Add sidebar toggle functionality */
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+.sidebar.active {
+  margin-left: -280px;
+}
+
+.main-content {
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+
+/* 侧边栏切换功能 */
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .sidebar {
+    margin-left: -280px;
+    transition: all 0.3s;
+  }
+
+  .sidebar.active {
+    margin-left: 0;
+    z-index: 1030;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    transition: all 0.3s;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .badge-card {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .user-name {
+    display: none !important;
+  }
+}

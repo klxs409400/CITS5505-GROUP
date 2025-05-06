@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Record Sleep | Sleep Tracker</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../static/css/styles.css" />
+    <link rel="stylesheet" href="../../static/css/recordsleep.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Top navigation -->
+        <nav class="navbar">
+          <div class="d-flex justify-content-between w-100">
+            <a href="dashboard.html" class="btn btn-outline-primary">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <!-- Empty div for flex spacing -->
+          </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="container py-4">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="sleep-card">
+                <div class="card-header">
+                  <h3><i class="fas fa-moon"></i> Record Your Sleep</h3>
+                </div>
+                <div class="card-body">
+                  <form id="sleepEntryForm">
+                    <!-- Date Selection -->
+                    <div class="mb-4">
+                      <label for="sleepDate" class="form-label"
+                        >Sleep Date</label
+                      >
+                      <input
+                        type="date"
+                        class="form-control"
+                        id="sleepDate"
+                        name="sleepDate"
+                        required
+                      />
+                    </div>
+
+                    <!-- Sleep Time and Wake Time -->
+                    <div class="row mb-4">
+                      <div class="col-md-6 mb-3 mb-md-0">
+                        <label for="sleepTime" class="form-label"
+                          >Bedtime</label
+                        >
+                        <input
+                          type="time"
+                          class="form-control"
+                          id="sleepTime"
+                          name="sleepTime"
+                          required
+                        />
+                      </div>
+                      <div class="col-md-6">
+                        <label for="wakeTime" class="form-label"
+                          >Wake-up Time</label
+                        >
+                        <input
+                          type="time"
+                          class="form-control"
+                          id="wakeTime"
+                          name="wakeTime"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Sleep Efficiency (Auto-calculated) -->
+                    <div class="mb-4">
+                      <label for="sleepDuration" class="form-label"
+                        >Sleep Duration</label
+                      >
+                      <div class="input-group">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="sleepDurationHours"
+                          name="sleepDurationHours"
+                          min="0"
+                          max="24"
+                          placeholder="Hours"
+                          required
+                        />
+                        <span class="input-group-text">h</span>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="sleepDurationMinutes"
+                          name="sleepDurationMinutes"
+                          min="0"
+                          max="59"
+                          placeholder="Minutes"
+                          required
+                        />
+                        <span class="input-group-text">min</span>
+                      </div>
+                    </div>
+
+                    <!-- Sleep Disturbances -->
+                    <div class="mb-4">
+                      <label class="form-label"
+                        >Night Disturbances (bathroom trips, nightmares,
+                        etc.)</label
+                      >
+                      <div class="d-flex">
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="sleepDisturbances"
+                            id="disturbancesNone"
+                            value="None"
+                            checked
+                            required
+                          />
+                          <label class="form-check-label" for="disturbancesNone"
+                            >Yes</label
+                          >
+                        </div>
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="sleepDisturbances"
+                            id="disturbancesOccasional"
+                            value="Occasional"
+                          />
+                          <label
+                            class="form-check-label"
+                            for="disturbancesOccasional"
+                            >No</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Sleep Aid -->
+                    <div class="mb-4">
+                      <label class="form-label">Sleep Aid Used</label>
+                      <div class="d-flex">
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="sleepAid"
+                            id="aidNone"
+                            value="None"
+                            checked
+                            required
+                          />
+                          <label class="form-check-label" for="aidNone"
+                            >Yes</label
+                          >
+                        </div>
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="sleepAid"
+                            id="aidOccasional"
+                            value="Occasional"
+                          />
+                          <label class="form-check-label" for="aidOccasional"
+                            >No</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Daytime Dysfunction -->
+                    <div class="mb-4">
+                      <label class="form-label"
+                        >Daytime Fatigue/Difficulty Concentrating</label
+                      >
+                      <div class="d-flex">
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="daytimeDysfunction"
+                            id="dysfunctionNone"
+                            value="None"
+                            checked
+                            required
+                          />
+                          <label class="form-check-label" for="dysfunctionNone"
+                            >None</label
+                          >
+                        </div>
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="daytimeDysfunction"
+                            id="dysfunctionOccasional"
+                            value="Occasional"
+                          />
+                          <label
+                            class="form-check-label"
+                            for="dysfunctionOccasional"
+                            >Occasional</label
+                          >
+                        </div>
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="daytimeDysfunction"
+                            id="dysfunctionRegular"
+                            value="Regular"
+                          />
+                          <label
+                            class="form-check-label"
+                            for="dysfunctionRegular"
+                            >Regular</label
+                          >
+                        </div>
+                        <div class="form-check form-check-inline flex-grow-1">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="daytimeDysfunction"
+                            id="dysfunctionSevere"
+                            value="Severe"
+                          />
+                          <label
+                            class="form-check-label"
+                            for="dysfunctionSevere"
+                            >Severe Impact</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="text-center mt-4">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Sleep Record
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+              <span>&copy; 2025 Sleep Tracker | CITS5505 GROUP PROJECT</span>
+              <span>Version 1.0.0</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Custom javascript-->
+    <script src="js/recordsleep.js"></script>
+  </body>
+</html>
