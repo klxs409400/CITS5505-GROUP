@@ -106,33 +106,38 @@
   
   .center-heading h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: 3.5rem;
+    font-size: 3.75rem;
     font-weight: 700;
-    color: #ffffff;
     letter-spacing: -1px;
-    line-height: 1.1;
+    line-height: 1.2;
     margin-bottom: 1rem;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-    background: linear-gradient(to right, #7f5af0, #2ecbba);
+    background: linear-gradient(90deg, #7f5af0, #38bdf8);
+    background-clip: text;
     -webkit-background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+    text-align: center;
   }
-  
+
   .center-heading p {
-    font-family: 'Poppins', sans-serif; 
-    font-size: 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
     font-weight: 500;
     line-height: 1.6;
-    margin-bottom: 2rem;
-    max-width: 700px;
+    margin-bottom: 2.5rem;
+    max-width: 720px;
     margin-left: auto;
     margin-right: auto;
-    background: linear-gradient(to right, #38bdf8, #a78bfa);
+    background: linear-gradient(90deg, #a78bfa, #2ecbba);
+    background-clip: text;
     -webkit-background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
     text-align: center;
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
   }
+  
   
   
   
