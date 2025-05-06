@@ -1,0 +1,156 @@
+/* 
+ * Sleep Tracker - Simple Record Sleep Page Styles
+ */
+
+/* Base styles */
+body {
+  background-color: var(--dark);
+  color: var(--text-primary);
+}
+
+.navbar {
+  background-color: rgba(12, 14, 27, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Card styling */
+.sleep-card {
+  background-color: var(--dark-card);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
+  border: none;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.card-header {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--dark-border);
+  padding: 1.25rem;
+}
+
+.card-header h3 {
+  margin-bottom: 0;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+}
+
+.card-header h3 i {
+  margin-right: 0.75rem;
+  color: var(--primary);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Form elements */
+.form-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.form-control {
+  background-color: var(--dark-input);
+  border: 1px solid var(--dark-border);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.form-control:focus {
+  background-color: var(--dark-hover);
+  border-color: var(--primary);
+  color: var(--text-light);
+  box-shadow: 0 0 0 0.25rem rgba(94, 114, 228, 0.25);
+}
+
+/* Make input text visible against dark background */
+input.form-control {
+  color: white; /* Light text color */
+  background-color: #1e2142; /* Same as the card background */
+  border: 1px solid #3f4785; /* Slightly lighter border */
+}
+
+input.form-control::placeholder {
+  color: rgba(
+    255,
+    255,
+    255,
+    0.6
+  ); /* Visible but slightly dimmed placeholder text */
+}
+
+/* Style for the hours/minutes labels */
+.input-group-text {
+  color: white;
+  background-color: #2a2f4a; /* Slightly lighter than the input background */
+  border: 1px solid #3f4785;
+}
+
+.form-text {
+  color: var(--text-muted);
+}
+
+/* Duration field */
+#sleepDuration {
+  font-weight: bold;
+  color: var(--primary);
+  background-color: var(--dark-component);
+}
+
+/* Radio button styling */
+.form-check-input {
+  background-color: var(--dark-input);
+  border: 1px solid var(--dark-border);
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.form-check-label {
+  padding-left: 0.25rem;
+}
+
+/* Submit button */
+.btn-primary {
+  background: var(--gradient-primary);
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4e62d4, #724dd4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Footer */
+.footer {
+  background-color: rgba(12, 14, 27, 0.95);
+  border-top: 1px solid var(--dark-border);
+  padding: 1rem 0;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-check-inline {
+    margin-right: 0.25rem;
+  }
+
+  .form-check-label {
+    font-size: 0.85rem;
+  }
+}
