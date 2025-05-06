@@ -104,3 +104,35 @@
     margin-top: 200px; 
   }
   
+  .center-heading h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    background: linear-gradient(to right, #7f5af0, #2ecbba);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .center-heading p {
+    font-family: 'Poppins', sans-serif; 
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(to right, #38bdf8, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  
+  
