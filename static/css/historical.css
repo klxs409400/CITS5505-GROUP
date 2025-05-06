@@ -190,20 +190,31 @@
   color: var(--text-light);
 }
 
+/* Update dropdown menu styles to match dashboard appearance */
 .navbar .dropdown-menu {
-  background-color: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  box-shadow: var(--shadow-md);
+  background-color: #fff !important; /* Change background to white instead of dark */
+  border: 1px solid rgba(0, 0, 0, 0.15) !important; /* Add subtle border */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175) !important; /* Add depth with shadow */
+  color: #212529 !important; /* Set text color to dark */
 }
 
 .navbar .dropdown-item {
-  color: var(--text-secondary);
-  transition: var(--transition-normal);
+  color: #212529 !important; /* Set menu item text to dark */
+  transition: var(--transition-normal); /* Keep transition effect */
 }
 
 .navbar .dropdown-item:hover {
-  background-color: var(--dark-hover);
-  color: var(--text-light);
+  background-color: #f8f9fa !important; /* Light gray background on hover */
+  color: #212529 !important; /* Maintain dark text on hover */
+}
+
+.navbar .dropdown-item i {
+  color: #6c757d !important; /* Set icon color to medium gray */
+}
+
+/* Adjust dropdown divider color */
+.navbar .dropdown-divider {
+  border-top: 1px solid #e9ecef !important; /* Light gray divider line */
 }
 
 /* Footer styling */
