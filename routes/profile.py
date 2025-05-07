@@ -11,7 +11,7 @@ def view_profile():
     # Get user achievements
     achievements = Achievement.query.filter_by(user_id=current_user.id).all()
     
-    return render_template('profile.html', user=current_user, achievements=achievements)
+    return render_template('Homepage/profile.html', user=current_user, achievements=achievements)
 
 @profile.route('/profile/edit', methods=['GET', 'POST'])
 @login_required
