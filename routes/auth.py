@@ -14,21 +14,18 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        
         user = User.query.filter_by(email=email).first()
         
-        if user is None or not user.check_password(password):
-            flash('Invalid email or password')
-            return redirect(url_for('auth.login'))
-        
-        login_user(user)
-        
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.dashboard')
-        
-        return redirect(next_page)
-    
+        if user and user.check_password(password):
+            login_user(user)
+            next_page = request.args.get('next')
+            if not next_page or url_parse(next_page).netloc != '':
+                next_page = url_for('main.dashboard')
+            return redirect(next_page)
+        else:
+            flash('Invalid email or password.')
+
+    # Render the login page for GET requests
     return render_template('Homepage/login.html')
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -38,11 +35,13 @@ def register():
     
     if request.method == 'POST':
         email = request.form['email']
+        print("Form submitted with:", request.form)
         
         if User.query.filter_by(email=email).first():
             flash('Email already registered.')
             return redirect(url_for('auth.register'))
         
+
         username = email.split('@')[0]  
         user = User(
             username=username,
@@ -55,9 +54,10 @@ def register():
         db.session.add(user)
         db.session.commit()
         
+        print("Registration successful, redirecting to login page")
         flash('Registration successful! Please log in.')
         return redirect(url_for('auth.login'))
-    
+
     return render_template('Homepage/register.html')
 
 @auth.route('/logout')
