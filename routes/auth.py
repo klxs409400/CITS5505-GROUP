@@ -29,7 +29,7 @@ def login():
         
         return redirect(next_page)
     
-    return render_template('login.html')
+    return render_template('Homepage/login.html')
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -43,7 +43,7 @@ def register():
             flash('Email already registered.')
             return redirect(url_for('auth.register'))
         
-        username = email.split('@')[0]  # 简单的用户名生成
+        username = email.split('@')[0]  
         user = User(
             username=username,
             email=email,
@@ -58,7 +58,7 @@ def register():
         flash('Registration successful! Please log in.')
         return redirect(url_for('auth.login'))
     
-    return render_template('register.html')
+    return render_template('Homepage/register.html')
 
 @auth.route('/logout')
 def logout():

@@ -57,7 +57,7 @@ def record_sleep():
             return redirect(url_for('sleep.record_sleep'))
     
     # Render sleep record form
-    return render_template('recordsleep.html')
+    return render_template('Homepage/recordsleep.html')
 
 # Route to display user's sleep history
 @sleep.route('/sleep-history')
@@ -67,7 +67,7 @@ def sleep_history():
     sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
     
     return render_template(
-        'historical.html',
+        'Historical/historical.html',
         sleep_records=sleep_records
     )
 

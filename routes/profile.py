@@ -35,4 +35,4 @@ def edit_profile():
         flash('Your profile has been updated successfully.')
         return redirect(url_for('profile.view_profile'))
     
-    return render_template('profile.html', user=current_user)
+    return render_template('Homepage/profile.html', user=current_user)

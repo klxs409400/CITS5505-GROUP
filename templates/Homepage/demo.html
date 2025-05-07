@@ -21,8 +21,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../../static/css/styles.css" />
-    <link rel="stylesheet" href="../../static/css/dashboard.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
   </head>
   <body>
     <div class="wrapper">
@@ -35,7 +41,7 @@
 
         <div class="user-profile">
           <img
-            src="../../templates/demo.jpg"
+            src="{{ url_for('static', filename='images/demo.jpg') }}"
             class="rounded-circle"
             alt="User Profile"
           />
@@ -77,7 +83,7 @@
         </ul>
 
         <div class="sidebar-footer">
-          <a href="../../templates/Homepage/index.html" class="btn-logout">
+          <a href="{{ url_for('main.index') }}" class="btn-logout">
             <i class="fas fa-sign-out-alt"></i>
             Homepage
           </a>
@@ -150,7 +156,7 @@
                   aria-expanded="false"
                 >
                   <img
-                    src="../../templates/demo.jpg"
+                    src="{{ url_for('static', filename='images/demo.jpg') }}"
                     class="rounded-circle me-2"
                     alt="User"
                     width="30"
@@ -163,18 +169,18 @@
                   aria-labelledby="userDropdown"
                 >
                   <li>
-                    <a class="dropdown-item" href="profile.html"
+                    <a class="dropdown-item" href="#"
                       ><i class="fas fa-user me-2"></i> Profile</a
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item" href="settings.html"
+                    <a class="dropdown-item" href="#"
                       ><i class="fas fa-cog me-2"></i> Settings</a
                     >
                   </li>
                   <li><hr class="dropdown-divider" /></li>
                   <li>
-                    <a class="dropdown-item" href="login.html"
+                    <a class="dropdown-item" href="#"
                       ><i class="fas fa-sign-out-alt me-2"></i> Logout</a
                     >
                   </li>
@@ -289,9 +295,7 @@
                     </div>
                     <h3>Record Sleep</h3>
                     <p>Log your sleep data for today or previous days.</p>
-                    <a href="recordsleep.html" class="btn btn-primary"
-                      >Log Sleep</a
-                    >
+                    <a href="#" class="btn btn-primary">Log Sleep</a>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -301,9 +305,7 @@
                     </div>
                     <h3>Sleep Report</h3>
                     <p>View detailed analysis of your sleep patterns.</p>
-                    <a href="report.html" class="btn btn-primary"
-                      >View Report</a
-                    >
+                    <a href="#" class="btn btn-primary">View Report</a>
                   </div>
                 </div>
               </div>
@@ -317,9 +319,7 @@
                     </div>
                     <h3>Sleep History</h3>
                     <p>Browse your complete sleep record history.</p>
-                    <a href="historical.html" class="btn btn-primary"
-                      >View History</a
-                    >
+                    <a href="#" class="btn btn-primary">View History</a>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -378,9 +378,7 @@
           <div class="data-table-card">
             <div class="card-header">
               <h3><i class="fas fa-list"></i> Recent Sleep Records</h3>
-              <a href="historical.html" class="btn btn-sm btn-outline-primary"
-                >View All</a
-              >
+              <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
             </div>
             <div class="table-responsive">
               <table class="table">
@@ -534,19 +532,19 @@
                   </li>
                 </ul>
               </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-primary" id="saveGoalBtn">
+                  Save Goal
+                </button>
+              </div>
             </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button type="button" class="btn btn-primary" id="saveGoalBtn">
-              Save Goal
-            </button>
           </div>
         </div>
       </div>
@@ -557,6 +555,6 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- Custom javascript-->
-    <script src="../../static/js/Homepage/demo.js"></script>
+    <script src="{{ url_for('static', filename='js/Homepage/demo.js') }}"></script>
   </body>
 </html>

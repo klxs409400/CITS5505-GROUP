@@ -13,8 +13,17 @@ class User(UserMixin, db.Model):
     full_name = db.Column(db.String(120))
     date_joined = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # 关系
+    # Additional fields - retrieved from profile.html form
+    phone = db.Column(db.String(20))
+    location = db.Column(db.String(120))
+    timezone = db.Column(db.String(50))
+    bio = db.Column(db.Text)
+    profile_pic = db.Column(db.String(255), default='images/demo.jpg')  # Store image path
+    
+    # Relationships
     sleep_records = db.relationship('SleepRecord', backref='user', lazy='dynamic')
+    sleep_goals = db.relationship('SleepGoal', backref='user', lazy='dynamic')
+    achievements = db.relationship('Achievement', backref='user', lazy='dynamic')
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -30,10 +39,19 @@ class SleepRecord(db.Model):
     bedtime = db.Column(db.DateTime, nullable=False)
     wake_time = db.Column(db.DateTime, nullable=False)
     duration_hours = db.Column(db.Float, nullable=False)
-    quality = db.Column(db.String(20))       # "Excellent", "Good", "Fair", "Poor" 
+    quality = db.Column(db.String(20))       # "Excellent", "Good", "Fair", "Poor"
     mood = db.Column(db.String(20))          # "Refreshed", "Neutral", "Tired", "Exhausted"
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Additional fields - retrieved from recordsleep.html form
+    sleep_disturbances = db.Column(db.String(20))
+    sleep_aid = db.Column(db.String(20))
+    daytime_dysfunction = db.Column(db.String(20))
+    caffeine = db.Column(db.Integer)         # Values: 0, 1, 2
+    exercise = db.Column(db.Integer)         # Values: 0, 1, 2
+    screen = db.Column(db.Integer)           # Values: 0, 1, 2
+    eating = db.Column(db.Integer)           # Values: 0, 1, 2
 
 
 class SleepGoal(db.Model):
@@ -42,3 +60,13 @@ class SleepGoal(db.Model):
     target_hours = db.Column(db.Integer, default=8)
     target_minutes = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Achievement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.String(255))
+    icon = db.Column(db.String(64))          # e.g., "fa-star", "fa-moon", etc.
+    achieved_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_locked = db.Column(db.Boolean, default=True)

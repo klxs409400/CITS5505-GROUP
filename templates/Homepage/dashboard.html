@@ -77,11 +77,19 @@
         </ul>
 
         <div class="sidebar-footer">
-          <a href="{{ url_for('auth.index') }}" class="btn-logout">
+          <!-- Homepage button: link to index page -->
+          <a href="{{ url_for('main.index', force_index=1) }}" class="btn-logout">
             <i class="fas fa-sign-out-alt"></i>
             Homepage
           </a>
+          <br>
+          <!-- Logout button: triggers logout route -->
+          <a href="{{ url_for('auth.logout') }}" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </a>
         </div>
+        
       </div>
 
       <!-- Main Content -->
@@ -100,7 +108,7 @@
                 </a>
               </li>
               <li class="nav-item dropdown me-3">
-                
+              <a  
                   class="nav-link"
                   href="#"
                   id="navbarDropdown"
@@ -141,7 +149,7 @@
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                
+                <a
                   class="nav-link d-flex align-items-center"
                   href="#"
                   id="userDropdown"
@@ -171,7 +179,7 @@
                   </li>
                   <li><hr class="dropdown-divider" /></li>
                   <li>
-                    
+                    <a
                       class="dropdown-item"
                       href="{{ url_for('auth.logout') }}">
                       <i class="fas fa-sign-out-alt me-2"></i> Logout
@@ -351,9 +359,7 @@
                       your body's internal clock and can help you fall asleep
                       and stay asleep for the night.
                     </p>
-                    <a href="{{ url_for('main.tips') }}" class="btn btn-outline-warning"
-                      >More Tips</a
-                    >
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-warning">More Tips</a>
                   </div>
                 </div>
                 <div class="col-md-12">

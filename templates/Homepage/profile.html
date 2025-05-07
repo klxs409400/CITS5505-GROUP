@@ -17,9 +17,9 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Main Styles -->
-    <link rel="stylesheet" href="../../static/css/styles.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
     <!-- Page Specific Styles -->
-    <link href="../../static/css/profile.css" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" />
   </head>
   <body class="profile-page">
     <div class="wrapper">
@@ -32,7 +32,7 @@
 
         <div class="user-profile">
           <img
-            src="../../templates/demo.jpg"
+            src="{{ url_for('static', filename='images/demo.jpg') }}"
             class="rounded-circle"
             alt="User Profile"
           />
@@ -42,19 +42,19 @@
 
         <ul class="sidebar-menu">
           <li>
-            <a href="../../templates/Homepage/dashboard.html">
+            <a href="{{ url_for('main.dashboard') }}">
               <i class="fas fa-tachometer-alt"></i>
               Dashboard
             </a>
           </li>
           <li>
-            <a href="../../templates/Historical/historical.html">
+            <a href="{{ url_for('sleep.sleep_history') }}">
               <i class="fas fa-history"></i>
               Sleep History
             </a>
           </li>
           <li>
-            <a href="../../templates/Settings/pages/settings.html">
+            <a href="{{ url_for('settings.view_settings') }}">
               <i class="fas fa-cog"></i>
               Settings
             </a>
@@ -62,12 +62,12 @@
         </ul>
 
         <div class="sidebar-footer">
-          <a href="../../templates/Homepage/login.html" class="btn-logout">
+          <a href="{{ url_for('auth.logout') }}" class="btn-logout">
             <i class="fas fa-sign-out-alt"></i>
             Logout
           </a>
           <br />
-          <a href="../../templates/Homepage/index.html" class="btn-logout">
+          <a href="{{ url_for('main.index') }}" class="btn-logout">
             <i class="fas fa-sign-out-alt"></i>
             Homepage
           </a>
@@ -90,7 +90,7 @@
                 </a>
               </li>
               <li class="nav-item dropdown me-3">
-                <a
+                
                   class="nav-link"
                   href="#"
                   id="navbarDropdown"
@@ -131,7 +131,7 @@
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a
+                
                   class="nav-link d-flex align-items-center"
                   href="#"
                   id="userDropdown"
@@ -140,7 +140,7 @@
                   aria-expanded="false"
                 >
                   <img
-                    src="../../templates/demo.jpg"
+                    src="{{ url_for('static', filename='images/demo.jpg') }}"
                     class="rounded-circle me-2"
                     alt="User"
                     width="30"
@@ -158,13 +158,13 @@
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#"
+                    <a class="dropdown-item" href="{{ url_for('settings.view_settings') }}"
                       ><i class="fas fa-cog me-2"></i> Settings</a
                     >
                   </li>
                   <li><hr class="dropdown-divider" /></li>
                   <li>
-                    <a class="dropdown-item" href="logout.html"
+                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}"
                       ><i class="fas fa-sign-out-alt me-2"></i> Logout</a
                     >
                   </li>
@@ -179,7 +179,7 @@
             class="d-sm-flex align-items-center justify-content-between mb-4"
           >
             <h1 class="h3 mb-0">User Profile</h1>
-            <a
+            
               href="#"
               class="d-none d-sm-inline-block btn btn-primary shadow-sm"
               data-bs-toggle="modal"
@@ -198,7 +198,7 @@
                   <div class="row align-items-center">
                     <div class="col-md-3 text-center">
                       <img
-                        src="../../templates/demo.jpg"
+                        src="{{ url_for('static', filename='images/demo.jpg') }}"
                         class="profile-avatar mb-3"
                         alt="User Profile"
                       />
@@ -219,20 +219,8 @@
                           <p>john.doe@example.com</p>
                         </div>
                         <div class="col-md-6 mb-3">
-                          <h6 class="text-secondary">Phone</h6>
-                          <p>+1 (555) 123-4567</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <h6 class="text-secondary">Location</h6>
-                          <p>New York, USA</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
                           <h6 class="text-secondary">Member Since</h6>
                           <p>January 15, 2023</p>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <h6 class="text-secondary">Timezone</h6>
-                          <p>Eastern Time (ET)</p>
                         </div>
                         <div class="col-12 mt-2">
                           <h6 class="text-secondary">Bio</h6>
@@ -451,7 +439,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="editProfileForm">
+            <form id="editProfileForm" action="{{ url_for('profile.edit_profile') }}" method="post" enctype="multipart/form-data">
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="editFullName" class="form-label">Full Name</label>
@@ -459,6 +447,7 @@
                     type="text"
                     class="form-control"
                     id="editFullName"
+                    name="editFullName"
                     value="John Anthony Doe"
                     required
                   />
@@ -469,6 +458,7 @@
                     type="email"
                     class="form-control"
                     id="editEmail"
+                    name="editEmail"
                     value="john.doe@example.com"
                     required
                   />
@@ -481,6 +471,7 @@
                     type="tel"
                     class="form-control"
                     id="editPhone"
+                    name="editPhone"
                     value="+1 (555) 123-4567"
                   />
                 </div>
@@ -490,6 +481,7 @@
                     type="text"
                     class="form-control"
                     id="editLocation"
+                    name="editLocation"
                     value="New York, USA"
                   />
                 </div>
@@ -497,7 +489,7 @@
               <div class="row mb-3">
                 <div class="col-md-6">
                   <label for="editTimezone" class="form-label">Timezone</label>
-                  <select class="form-select" id="editTimezone">
+                  <select class="form-select" id="editTimezone" name="editTimezone">
                     <option value="ET" selected>Eastern Time (ET)</option>
                     <option value="CT">Central Time (CT)</option>
                     <option value="MT">Mountain Time (MT)</option>
@@ -509,30 +501,26 @@
                   <label for="editProfilePic" class="form-label"
                     >Profile Picture</label
                   >
-                  <input type="file" class="form-control" id="editProfilePic" />
+                  <input type="file" class="form-control" id="editProfilePic" name="editProfilePic" />
                 </div>
               </div>
               <div class="mb-3">
                 <label for="editBio" class="form-label">Bio</label>
-                <textarea class="form-control" id="editBio" rows="4">
-Passionate about optimizing sleep patterns and sharing knowledge about sleep health. I've been tracking my sleep for over 2 years and have seen significant improvements in my energy levels and overall productivity.</textarea
-                >
+                <textarea class="form-control" id="editBio" name="editBio" rows="4">Passionate about optimizing sleep patterns and sharing knowledge about sleep health. I've been tracking my sleep for over 2 years and have seen significant improvements in my energy levels and overall productivity.</textarea>
               </div>
-              
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  Save Changes
+                </button>
               </div>
             </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button type="button" class="btn btn-primary" id="updateProfileBtn">
-              Save Changes
-            </button>
           </div>
         </div>
       </div>
@@ -543,6 +531,6 @@ Passionate about optimizing sleep patterns and sharing knowledge about sleep hea
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- Custom Javascript -->
-    <script src="../../static/js/Homepage/profile.js"></script>
+    <script src="{{ url_for('static', filename='js/Homepage/profile.js') }}"></script>
   </body>
 </html>

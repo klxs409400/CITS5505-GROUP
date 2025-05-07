@@ -6,16 +6,16 @@ from models import db, User
 def create_app():
     app = Flask(__name__)
     
-    # 配置
+    # Configuration
     app.config['SECRET_KEY'] = 'your-secret-key-for-development'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sleeptracker.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
-    # 初始化扩展
+    # Initialize extensions
     db.init_app(app)
     migrate = Migrate(app, db)
     
-    # 初始化登录管理器
+    # Initialize login manager
     login_manager = LoginManager(app)
     login_manager.login_view = 'auth.login'
     
@@ -23,25 +23,27 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
     
-    # 注册蓝图
+    # Register blueprints
     from routes.auth import auth
     from routes.main import main
     from routes.sleep import sleep
     from routes.report import report
     from routes.settings import settings
+    from routes.profile import profile
     
     app.register_blueprint(auth)
     app.register_blueprint(main)
     app.register_blueprint(sleep)
     app.register_blueprint(report)
     app.register_blueprint(settings)
+    app.register_blueprint(profile)
     
     return app
 
 if __name__ == '__main__':
     app = create_app()
     
-    # 创建数据库表
+    # Create database tables
     with app.app_context():
         db.create_all()
         

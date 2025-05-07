@@ -6,4 +6,4 @@ report = Blueprint('report', __name__)
 @report.route('/report')
 @login_required
 def view_report():
-    return render_template('report.html')
+    return render_template('Reports/report.html')
