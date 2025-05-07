@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_required, current_user
 from models import db, SleepRecord
 from datetime import datetime, timedelta
+from collections import Counter
 
 # Create a Blueprint for sleep-related routes
 sleep = Blueprint('sleep', __name__)
@@ -59,16 +60,51 @@ def record_sleep():
     # Render sleep record form
     return render_template('Homepage/recordsleep.html')
 
-# Route to display user's sleep history
+# Route to display user's sleep history with dynamic data
 @sleep.route('/sleep-history')
 @login_required
 def sleep_history():
     # Retrieve all sleep records for the current user, newest first
     sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
     
+    # Calculate statistics based on user's sleep records
+    avg_duration = 0
+    most_common_quality = "Good"
+    usual_bedtime = "23:00"
+    usual_waketime = "07:00"
+    
+    if sleep_records:
+        # Calculate average sleep duration
+        total_duration = sum(record.duration_hours for record in sleep_records)
+        avg_duration = round(total_duration / len(sleep_records), 1)
+        
+        # Find most common sleep quality
+        quality_counts = {}
+        for record in sleep_records:
+            quality_counts[record.quality] = quality_counts.get(record.quality, 0) + 1
+        most_common_quality = max(quality_counts.items(), key=lambda x: x[1])[0] if quality_counts else "Good"
+        
+        # Calculate usual bedtime and wake time
+        bedtimes = [record.bedtime.strftime('%H:%M') for record in sleep_records]
+        waketimes = [record.wake_time.strftime('%H:%M') for record in sleep_records]
+        
+        from collections import Counter
+        usual_bedtime = Counter(bedtimes).most_common(1)[0][0] if bedtimes else "23:00"
+        usual_waketime = Counter(waketimes).most_common(1)[0][0] if waketimes else "07:00"
+    
+    # Add current date and timedelta for template usage
+    now = datetime.now()
+    
+    # Pass all data to the template
     return render_template(
         'Historical/historical.html',
-        sleep_records=sleep_records
+        sleep_records=sleep_records,
+        avg_duration=avg_duration,
+        most_common_quality=most_common_quality,
+        usual_bedtime=usual_bedtime,
+        usual_waketime=usual_waketime,
+        now=now,
+        timedelta=timedelta
     )
 
 # Route to handle deletion of a sleep record

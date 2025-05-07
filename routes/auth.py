@@ -47,7 +47,7 @@ def register():
         user = User(
             username=username,
             email=email,
-            full_name=request.form['name'],
+            full_name=request.form['username'],
             date_joined=datetime.utcnow()
         )
         user.set_password(request.form['password'])

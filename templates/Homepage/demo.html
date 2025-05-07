@@ -3,34 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Demo | Sleep Tracker</title>
-
+    <title>Sleep History - Dashboard</title>
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
+    <!-- DataTables CSS -->
+    <link
+      href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css"
+      rel="stylesheet"
+    />
     <!-- Font Awesome -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
-
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Custom CSS -->
+    <!-- Main Styles -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
     />
+    <!-- Page Specific Styles -->
     <link
+      href="{{ url_for('static', filename='css/historical.css') }}"
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/dashboard.css') }}"
     />
   </head>
-  <body>
+  <body class="historical-page">
     <div class="wrapper">
       <!-- Sidebar -->
       <div class="sidebar">
@@ -51,27 +53,16 @@
 
         <ul class="sidebar-menu">
           <li>
-            <a href="#" class="active">
+            <a href="#">
               <i class="fas fa-tachometer-alt"></i>
               Dashboard
             </a>
           </li>
+
           <li>
-            <a href="#">
-              <i class="fas fa-plus-circle"></i>
-              Record Sleep
-            </a>
-          </li>
-          <li>
-            <a href="#">
+            <a href="#" class="active">
               <i class="fas fa-history"></i>
               Sleep History
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <i class="fas fa-chart-line"></i>
-              Sleep Reports
             </a>
           </li>
           <li>
@@ -83,6 +74,11 @@
         </ul>
 
         <div class="sidebar-footer">
+          <a href="#" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </a>
+          <br />
           <a href="{{ url_for('main.index') }}" class="btn-logout">
             <i class="fas fa-sign-out-alt"></i>
             Homepage
@@ -190,267 +186,397 @@
           </div>
         </nav>
 
-        <!-- Content -->
-        <div class="container-fluid py-4">
-          <!-- Demo Banner -->
-          <div class="alert alert-info mb-4" role="alert">
-            <h5><i class="fas fa-info-circle me-2"></i> Demo Mode</h5>
-            <p class="mb-0">
-              This is a demonstration of the Sleep Tracker dashboard. All
-              features are displayed but buttons are non-functional in this
-              demo.
-            </p>
+        <div class="container-fluid">
+          <div
+            class="d-sm-flex align-items-center justify-content-between mb-4"
+          >
+            <h1 class="h3 mb-0">Sleep History</h1>
+            <a
+              href="#"
+              class="d-none d-sm-inline-block btn btn-primary shadow-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#sleepGoalModal"
+            >
+              <i class="fas fa-bed fa-sm text-white-50 me-2"></i>Set Sleep Goal
+            </a>
           </div>
 
-          <!-- Welcome Banner -->
-          <div class="welcome-banner">
-            <h1>Welcome back, John!</h1>
-            <p>
-              Track your sleep patterns, improve your sleep quality, and enhance
-              your overall health.
-            </p>
-          </div>
-
-          <!-- Stats Cards -->
-          <div class="row g-4 mb-4">
-            <div class="col-md-6 col-xl-3">
-              <div class="stats-card stats-primary">
-                <div class="icon">
-                  <i class="fas fa-bed"></i>
-                </div>
-                <h2>7.5h</h2>
-                <p>Average Sleep Duration</p>
-                <small class="text-muted">Last 30 days</small>
-              </div>
-            </div>
-
-            <div class="col-md-6 col-xl-3">
-              <div class="stats-card stats-success">
-                <div class="icon">
-                  <i class="fas fa-chart-line"></i>
-                </div>
-                <h2>83%</h2>
-                <p>Sleep Quality</p>
-                <small class="text-muted">Up 5% from last week</small>
-              </div>
-            </div>
-
-            <div class="col-md-6 col-xl-3">
-              <div class="stats-card stats-info">
-                <div class="icon">
-                  <i class="fas fa-trophy"></i>
-                </div>
-                <h2>16</h2>
-                <p>Goal Achievement</p>
-                <small class="text-muted">Days this month</small>
-              </div>
-            </div>
-
-            <div class="col-md-6 col-xl-3">
-              <div class="stats-card stats-warning">
-                <div class="icon">
-                  <i class="fas fa-moon"></i>
-                </div>
-                <h2>23:15</h2>
-                <p>Average Bedtime</p>
-                <small class="text-muted">Last 7 days</small>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sleep Trend Chart -->
-          <div class="chart-card">
-            <div class="card-header">
-              <h3><i class="fas fa-chart-line"></i> Sleep Trend</h3>
-              <div class="dropdown">
-                <button
-                  class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Last 7 Days
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
-                  <li><a class="dropdown-item" href="#">Last 30 Days</a></li>
-                  <li><a class="dropdown-item" href="#">Last 90 Days</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="chart-container">
-              <canvas id="sleepTrendChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Main Dashboard Features -->
-          <div class="row g-4 mb-4">
-            <!-- 1st Row: Record Sleep, Sleep Report -->
-            <div class="col-lg-6">
-              <div class="row g-4 mb-4">
-                <div class="col-md-6">
-                  <div class="feature-card">
-                    <div class="feature-icon">
-                      <i class="fas fa-plus-circle"></i>
+          <!-- Sleep Goal Card -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card goal-card shadow py-2">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                      <h5 class="text-white mb-3">Current Sleep Goal</h5>
+                      <div class="goal-value mb-2">
+                        <span id="currentGoalValue">8.0</span> hrs
+                      </div>
+                      <p class="text-white">Set your ideal sleep duration</p>
                     </div>
-                    <h3>Record Sleep</h3>
-                    <p>Log your sleep data for today or previous days.</p>
-                    <a href="#" class="btn btn-primary">Log Sleep</a>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="feature-card">
-                    <div class="feature-icon">
-                      <i class="fas fa-file-alt"></i>
+                    <div class="col-md-4 text-center">
+                      <div class="progress-circle">
+                        <svg height="120" width="120" viewBox="0 0 120 120">
+                          <circle
+                            cx="60"
+                            cy="60"
+                            r="55"
+                            stroke="#2d2d2d"
+                            stroke-width="10"
+                            fill="none"
+                          />
+                          <circle
+                            id="goalProgress"
+                            cx="60"
+                            cy="60"
+                            r="55"
+                            stroke="#4e73df"
+                            stroke-width="10"
+                            fill="none"
+                            stroke-dasharray="345 345"
+                            stroke-dashoffset="86"
+                            stroke-linecap="round"
+                            transform="rotate(-90 60 60)"
+                          />
+                          <text
+                            id="goalPercentage"
+                            x="60"
+                            y="65"
+                            text-anchor="middle"
+                            fill="white"
+                            font-size="20"
+                            font-weight="bold"
+                          >
+                            75%
+                          </text>
+                        </svg>
+                      </div>
+                      <p class="text-white mt-2">Goal Achievement</p>
                     </div>
-                    <h3>Sleep Report</h3>
-                    <p>View detailed analysis of your sleep patterns.</p>
-                    <a href="#" class="btn btn-primary">View Report</a>
+                    <div class="col-md-4 text-center">
+                      <h5 class="text-white mb-3">Sleep Tips</h5>
+                      <div id="sleepTip" class="text-white">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        Consistency is key. Try to go to bed and wake up at the
+                        same time every day.
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <!-- 2nd Row: Sleep History, Set Goals -->
-              <div class="row g-4">
-                <div class="col-md-6">
-                  <div class="feature-card">
-                    <div class="feature-icon">
-                      <i class="fas fa-history"></i>
-                    </div>
-                    <h3>Sleep History</h3>
-                    <p>Browse your complete sleep record history.</p>
-                    <a href="#" class="btn btn-primary">View History</a>
+          <!-- Weekly Sleep Summary (replacing Weekly Sleep Chart) -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold">Weekly Sleep Overview</h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                {% for i in range(7) %}
+                <div class="col-md-6 mb-3">
+                  <div class="small mb-1">
+                    {% set day = (now - timedelta(days=i)).strftime('%Y-%m-%d')
+                    %} {{ (now - timedelta(days=i)).strftime('%A (%Y-%m-%d)') }}
                   </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="feature-card">
-                    <div class="feature-icon">
-                      <i class="fas fa-bullseye"></i>
-                    </div>
-                    <h3>Set Goals</h3>
-                    <p>Establish sleep targets to improve your habits.</p>
-                    <a
-                      href="#"
-                      class="btn btn-primary"
-                      data-bs-toggle="modal"
-                      data-bs-target="#sleepGoalModal"
-                      >Set Goals</a
+                  {% set record = sleep_records|selectattr('date', 'eq',
+                  day)|first %} {% if record %}
+                  <div class="progress">
+                    <div
+                      class="progress-bar {% if record.quality == 'Excellent' %}bg-success {% elif record.quality == 'Good' %}bg-primary {% elif record.quality == 'Fair' %}bg-warning {% else %}bg-danger{% endif %}"
+                      role="progressbar"
+                      style="width: {{ (record.duration_hours/10)*100 }}%"
+                      aria-valuenow="{{ record.duration_hours }}"
+                      aria-valuemin="0"
+                      aria-valuemax="10"
                     >
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Sleep Tip & Sleep Quality -->
-            <div class="col-lg-6">
-              <div class="row g-4">
-                <div class="col-md-12 mb-4">
-                  <div class="feature-card sleep-tip">
-                    <div class="feature-icon">
-                      <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3>Sleep Tip of the Day</h3>
-                    <p>
-                      Consistency is key: Try to go to bed and wake up at the
-                      same time every day, even on weekends. This helps regulate
-                      your body's internal clock and can help you fall asleep
-                      and stay asleep for the night.
-                    </p>
-                    <a href="#" class="btn btn-outline-warning">More Tips</a>
-                  </div>
-                </div>
-                <div class="col-md-12">
-                  <div class="feature-card sleep-quality">
-                    <div class="feature-icon">
-                      <i class="fas fa-chart-pie"></i>
-                    </div>
-                    <h3>Sleep Quality</h3>
-                    <div class="chart-container" style="height: 200px">
-                      <canvas id="sleepQualityChart"></canvas>
+                      {{ record.duration_hours }} hours
                     </div>
                   </div>
+                  {% else %}
+                  <div class="progress">
+                    <div
+                      class="progress-bar bg-secondary"
+                      role="progressbar"
+                      style="width: 0%"
+                      aria-valuenow="0"
+                      aria-valuemin="0"
+                      aria-valuemax="10"
+                    >
+                      No record
+                    </div>
+                  </div>
+                  {% endif %}
                 </div>
+                {% endfor %}
               </div>
             </div>
           </div>
 
-          <!-- Recent Sleep Records -->
-          <div class="data-table-card">
-            <div class="card-header">
-              <h3><i class="fas fa-list"></i> Recent Sleep Records</h3>
-              <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+          <!-- Filters -->
+          <div class="card shadow mb-4">
+            <div
+              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
+            >
+              <h6 class="m-0 font-weight-bold">Filters</h6>
+              <button
+                class="btn btn-link btn-sm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#filterCollapse"
+                aria-expanded="true"
+                aria-controls="filterCollapse"
+              >
+                <i class="fas fa-chevron-down"></i>
+              </button>
             </div>
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Duration</th>
-                    <th>Bedtime</th>
-                    <th>Wake Up</th>
-                    <th>Quality</th>
-                    <th>Mood</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Apr 28, 2025</td>
-                    <td>7h 30m</td>
-                    <td>23:30</td>
-                    <td>07:00</td>
-                    <td>
-                      <span class="badge-quality badge-excellent"
-                        >Excellent</span
+            <div class="collapse show" id="filterCollapse">
+              <div class="card-body">
+                <form id="filterForm">
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <label for="dateFrom" class="form-label">Date From</label>
+                      <input type="date" class="form-control" id="dateFrom" />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="dateTo" class="form-label">Date To</label>
+                      <input type="date" class="form-control" id="dateTo" />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="durationMin" class="form-label"
+                        >Min Duration (hours)</label
                       >
-                    </td>
-                    <td>
-                      <span class="badge-mood badge-refreshed">Refreshed</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Apr 27, 2025</td>
-                    <td>6h 45m</td>
-                    <td>00:15</td>
-                    <td>07:00</td>
-                    <td><span class="badge-quality badge-good">Good</span></td>
-                    <td>
-                      <span class="badge-mood badge-neutral">Neutral</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Apr 26, 2025</td>
-                    <td>8h 15m</td>
-                    <td>22:45</td>
-                    <td>07:00</td>
-                    <td>
-                      <span class="badge-quality badge-excellent"
-                        >Excellent</span
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="durationMin"
+                        min="0"
+                        max="24"
+                        step="0.5"
+                      />
+                    </div>
+                    <div class="col-md-3">
+                      <label for="durationMax" class="form-label"
+                        >Max Duration (hours)</label
                       >
-                    </td>
-                    <td>
-                      <span class="badge-mood badge-refreshed">Refreshed</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Apr 25, 2025</td>
-                    <td>6h 00m</td>
-                    <td>00:00</td>
-                    <td>06:00</td>
-                    <td><span class="badge-quality badge-fair">Fair</span></td>
-                    <td><span class="badge-mood badge-tired">Tired</span></td>
-                  </tr>
-                  <tr>
-                    <td>Apr 24, 2025</td>
-                    <td>5h 30m</td>
-                    <td>01:30</td>
-                    <td>07:00</td>
-                    <td><span class="badge-quality badge-poor">Poor</span></td>
-                    <td>
-                      <span class="badge-mood badge-exhausted">Exhausted</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="durationMax"
+                        min="0"
+                        max="24"
+                        step="0.5"
+                      />
+                    </div>
+                  </div>
+                  <div class="row g-3 mt-2">
+                    <div class="col-md-3">
+                      <label for="qualityFilter" class="form-label"
+                        >Sleep Quality</label
+                      >
+                      <select class="form-select" id="qualityFilter">
+                        <option value="">All</option>
+                        <option value="excellent">Excellent</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label for="moodFilter" class="form-label"
+                        >Morning Mood</label
+                      >
+                      <select class="form-select" id="moodFilter">
+                        <option value="">All</option>
+                        <option value="refreshed">Refreshed</option>
+                        <option value="neutral">Neutral</option>
+                        <option value="tired">Tired</option>
+                        <option value="exhausted">Exhausted</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                      <button
+                        type="button"
+                        id="applyFilters"
+                        class="btn btn-primary me-2"
+                      >
+                        <i class="fas fa-filter me-1"></i> Apply Filters
+                      </button>
+                      <button
+                        type="button"
+                        id="clearFilters"
+                        class="btn btn-secondary"
+                      >
+                        <i class="fas fa-undo me-1"></i> Clear Filters
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sleep History Table - UPDATED FOR DYNAMIC DATA -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold">Sleep Records</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table
+                  class="table table-hover"
+                  id="sleepHistoryTable"
+                  width="100%"
+                  cellspacing="0"
+                >
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Sleep Time</th>
+                      <th>Wake Time</th>
+                      <th>Duration</th>
+                      <th>Quality</th>
+                      <th>Morning Mood</th>
+                      <th>Notes</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamic data from database -->
+                    {% if sleep_records %} {% for record in sleep_records %}
+                    <tr>
+                      <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                      <td>23:00</td>
+                      <td>07:30</td>
+                      <td>{{ record.duration_hours|round(1) }} hrs</td>
+                      <td>
+                        <span class="quality {{ record.quality.lower() }}"
+                          >{{ record.quality }}</span
+                        >
+                      </td>
+                      <td>
+                        <span class="mood refreshed">{{ record.mood }}</span>
+                      </td>
+                      <td>Your nodes</td>
+                      <td>
+                        <button
+                          class="btn btn-link btn-sm edit-btn"
+                          data-id="{{ loop.index }}"
+                          title="Edit"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button
+                          class="btn btn-link btn-sm delete-btn"
+                          data-id="{{ loop.index }}"
+                          title="Delete"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    {% endfor %} {% else %}
+                    <tr>
+                      <td colspan="8" class="text-center">
+                        No sleep records found. Start tracking your sleep!
+                      </td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Stats Cards - UPDATED FOR DYNAMIC DATA -->
+          <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                      >
+                        Average Sleep Duration
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ avg_duration }} hrs
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                      >
+                        Most Common Quality
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ most_common_quality }}
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-star fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-info text-uppercase mb-1"
+                      >
+                        Usual Bedtime
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ usual_bedtime }}
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-moon fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div
+                        class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                      >
+                        Usual Wake Time
+                      </div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ usual_waketime }}
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-sun fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -459,7 +585,7 @@
         <footer class="footer">
           <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
-              <span>&copy; 2025 Sleep Tracker | CITS5505 GROUP PROJECT</span>
+              <span>Copyright © Sleep Tracker 2025 CITS5505 GROUP PROJECT</span>
               <span>Version 1.0.0</span>
             </div>
           </div>
@@ -487,10 +613,15 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="sleepGoalForm">
+            <form id="sleepGoalForm" method="post" action="#">
               <div class="mb-3">
                 <label for="sleepGoalHours" class="form-label">Hours</label>
-                <select class="form-select" id="sleepGoalHours" required>
+                <select
+                  class="form-select"
+                  id="sleepGoalHours"
+                  name="sleepGoalHours"
+                  required
+                >
                   <option value="6">6 hours</option>
                   <option value="7">7 hours</option>
                   <option value="8" selected>8 hours</option>
@@ -500,7 +631,12 @@
               </div>
               <div class="mb-3">
                 <label for="sleepGoalMinutes" class="form-label">Minutes</label>
-                <select class="form-select" id="sleepGoalMinutes" required>
+                <select
+                  class="form-select"
+                  id="sleepGoalMinutes"
+                  name="sleepGoalMinutes"
+                  required
+                >
                   <option value="0" selected>0 minutes</option>
                   <option value="15">15 minutes</option>
                   <option value="30">30 minutes</option>
@@ -550,11 +686,204 @@
       </div>
     </div>
 
+    <!-- Edit Entry Modal -->
+    <div
+      class="modal fade"
+      id="editEntryModal"
+      tabindex="-1"
+      aria-labelledby="editEntryModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editEntryModalLabel">
+              Edit Sleep Entry
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editEntryForm" method="post" action="#">
+              <input type="hidden" id="editEntryId" name="editEntryId" />
+              <div class="mb-3">
+                <label for="editSleepDate" class="form-label">Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="editSleepDate"
+                  name="sleepDate"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editSleepTime" class="form-label">Sleep Time</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="editSleepTime"
+                  name="sleepTime"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editWakeTime" class="form-label">Wake Time</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="editWakeTime"
+                  name="wakeTime"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editSleepQuality" class="form-label"
+                  >Sleep Quality</label
+                >
+                <select
+                  class="form-select"
+                  id="editSleepQuality"
+                  name="quality"
+                  required
+                >
+                  <option value="">Select Quality</option>
+                  <option value="excellent">Excellent</option>
+                  <option value="good">Good</option>
+                  <option value="fair">Fair</option>
+                  <option value="poor">Poor</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editMorningMood" class="form-label"
+                  >Morning Mood</label
+                >
+                <select
+                  class="form-select"
+                  id="editMorningMood"
+                  name="mood"
+                  required
+                >
+                  <option value="">Select Mood</option>
+                  <option value="refreshed">Refreshed</option>
+                  <option value="neutral">Neutral</option>
+                  <option value="tired">Tired</option>
+                  <option value="exhausted">Exhausted</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editSleepNotes" class="form-label">Notes</label>
+                <textarea
+                  class="form-control"
+                  id="editSleepNotes"
+                  name="notes"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="updateEntryBtn"
+                >
+                  Update Entry
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteConfirmModal"
+      tabindex="-1"
+      aria-labelledby="deleteConfirmModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteConfirmModalLabel">
+              Confirm Delete
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Are you sure you want to delete this sleep entry? This action
+              cannot be undone.
+            </p>
+            <form id="deleteEntryForm" method="post">
+              <input type="hidden" id="deleteEntryId" name="record_id" />
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-danger"
+                  id="confirmDeleteBtn"
+                >
+                  Delete
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <!-- Custom javascript-->
-    <script src="{{ url_for('static', filename='js/Homepage/demo.js') }}"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Custom Javascript -->
+    <script src="{{ url_for('static', filename='js/Historical/historical.js') }}"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach(function (button) {
+          button.addEventListener("click", function () {
+            const recordId = this.getAttribute("data-id");
+            document.getElementById("deleteEntryId").value = recordId;
+
+            document.getElementById("deleteEntryForm").action =
+              "{{ url_for('sleep.delete_sleep', record_id=0) }}".replace(
+                "0",
+                recordId
+              );
+
+            new bootstrap.Modal(
+              document.getElementById("deleteConfirmModal")
+            ).show();
+          });
+        });
+      });
+    </script>
   </body>
 </html>

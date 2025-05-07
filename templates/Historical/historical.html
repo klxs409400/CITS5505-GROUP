@@ -271,26 +271,49 @@
             </div>
           </div>
 
-          <!-- Weekly Sleep Chart -->
+          <!-- Weekly Sleep Summary (replacing Weekly Sleep Chart) -->
           <div class="card shadow mb-4">
-            <div
-              class="card-header py-3 d-flex flex-row align-items-center justify-content-between"
-            >
-              <h6 class="m-0 font-weight-bold">Sleep Weekly Records</h6>
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="chartTypeToggle"
-                />
-                <label class="form-check-label" for="chartTypeToggle"
-                  >Toggle Chart Type</label
-                >
-              </div>
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold">Weekly Sleep Overview</h6>
             </div>
             <div class="card-body">
-              <div class="chart-container" style="height: 300px">
-                <canvas id="weeklyChart"></canvas>
+              <div class="row">
+                {% for i in range(7) %}
+                <div class="col-md-6 mb-3">
+                  <div class="small mb-1">
+                    {% set day = (now - timedelta(days=i)).strftime('%Y-%m-%d')
+                    %} {{ (now - timedelta(days=i)).strftime('%A (%Y-%m-%d)') }}
+                  </div>
+                  {% set record = sleep_records|selectattr('date', 'eq',
+                  day)|first %} {% if record %}
+                  <div class="progress">
+                    <div
+                      class="progress-bar {% if record.quality == 'Excellent' %}bg-success {% elif record.quality == 'Good' %}bg-primary {% elif record.quality == 'Fair' %}bg-warning {% else %}bg-danger{% endif %}"
+                      role="progressbar"
+                      style="width: {{ (record.duration_hours/10)*100 }}%"
+                      aria-valuenow="{{ record.duration_hours }}"
+                      aria-valuemin="0"
+                      aria-valuemax="10"
+                    >
+                      {{ record.duration_hours }} hours
+                    </div>
+                  </div>
+                  {% else %}
+                  <div class="progress">
+                    <div
+                      class="progress-bar bg-secondary"
+                      role="progressbar"
+                      style="width: 0%"
+                      aria-valuenow="0"
+                      aria-valuemin="0"
+                      aria-valuemax="10"
+                    >
+                      No record
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+                {% endfor %}
               </div>
             </div>
           </div>
@@ -398,7 +421,7 @@
             </div>
           </div>
 
-          <!-- Sleep History Table -->
+          <!-- Sleep History Table - UPDATED FOR DYNAMIC DATA -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold">Sleep Records</h6>
@@ -424,189 +447,55 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <!-- Sample data - this would be populated by backend -->
+                    <!-- Dynamic data from database -->
+                    {% if sleep_records %} {% for record in sleep_records %}
                     <tr>
-                      <td>2023-04-22</td>
-                      <td>23:30</td>
-                      <td>07:30</td>
-                      <td>8 hrs</td>
-                      <td><span class="quality excellent">Excellent</span></td>
-                      <td><span class="mood refreshed">Refreshed</span></td>
-                      <td>Great night's sleep after exercise</td>
+                      <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                      <td>{{ record.bedtime.strftime('%H:%M') }}</td>
+                      <td>{{ record.wake_time.strftime('%H:%M') }}</td>
+                      <td>{{ record.duration_hours|round(1) }} hrs</td>
+                      <td>
+                        <span class="quality {{ record.quality.lower() }}"
+                          >{{ record.quality }}</span
+                        >
+                      </td>
+                      <td>
+                        <span class="mood {{ record.mood.lower() }}"
+                          >{{ record.mood }}</span
+                        >
+                      </td>
+                      <td>{{ record.notes }}</td>
                       <td>
                         <button
                           class="btn btn-link btn-sm edit-btn"
-                          data-id="1"
+                          data-id="{{ record.id }}"
                           title="Edit"
                         >
                           <i class="fas fa-edit"></i>
                         </button>
                         <button
                           class="btn btn-link btn-sm delete-btn"
-                          data-id="1"
+                          data-id="{{ record.id }}"
                           title="Delete"
                         >
                           <i class="fas fa-trash"></i>
                         </button>
                       </td>
                     </tr>
+                    {% endfor %} {% else %}
                     <tr>
-                      <td>2023-04-21</td>
-                      <td>00:15</td>
-                      <td>06:45</td>
-                      <td>6.5 hrs</td>
-                      <td><span class="quality good">Good</span></td>
-                      <td><span class="mood neutral">Neutral</span></td>
-                      <td>Slightly restless in middle of night</td>
-                      <td>
-                        <button
-                          class="btn btn-link btn-sm edit-btn"
-                          data-id="2"
-                          title="Edit"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button
-                          class="btn btn-link btn-sm delete-btn"
-                          data-id="2"
-                          title="Delete"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
+                      <td colspan="8" class="text-center">
+                        No sleep records found. Start tracking your sleep!
                       </td>
                     </tr>
-                    <tr>
-                      <td>2023-04-20</td>
-                      <td>22:45</td>
-                      <td>06:15</td>
-                      <td>7.5 hrs</td>
-                      <td><span class="quality fair">Fair</span></td>
-                      <td><span class="mood tired">Tired</span></td>
-                      <td>Woke up several times</td>
-                      <td>
-                        <button
-                          class="btn btn-link btn-sm edit-btn"
-                          data-id="3"
-                          title="Edit"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button
-                          class="btn btn-link btn-sm delete-btn"
-                          data-id="3"
-                          title="Delete"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2023-04-19</td>
-                      <td>23:00</td>
-                      <td>05:00</td>
-                      <td>6 hrs</td>
-                      <td><span class="quality poor">Poor</span></td>
-                      <td><span class="mood exhausted">Exhausted</span></td>
-                      <td>Had caffeine too late in day</td>
-                      <td>
-                        <button
-                          class="btn btn-link btn-sm edit-btn"
-                          data-id="4"
-                          title="Edit"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button
-                          class="btn btn-link btn-sm delete-btn"
-                          data-id="4"
-                          title="Delete"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2023-04-18</td>
-                      <td>22:30</td>
-                      <td>07:00</td>
-                      <td>8.5 hrs</td>
-                      <td><span class="quality excellent">Excellent</span></td>
-                      <td><span class="mood refreshed">Refreshed</span></td>
-                      <td>Used sleep mask and earplugs</td>
-                      <td>
-                        <button
-                          class="btn btn-link btn-sm edit-btn"
-                          data-id="5"
-                          title="Edit"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button
-                          class="btn btn-link btn-sm delete-btn"
-                          data-id="5"
-                          title="Delete"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2023-04-17</td>
-                      <td>23:45</td>
-                      <td>07:15</td>
-                      <td>7.5 hrs</td>
-                      <td><span class="quality good">Good</span></td>
-                      <td><span class="mood neutral">Neutral</span></td>
-                      <td>Normal sleep night</td>
-                      <td>
-                        <button
-                          class="btn btn-link btn-sm edit-btn"
-                          data-id="6"
-                          title="Edit"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button
-                          class="btn btn-link btn-sm delete-btn"
-                          data-id="6"
-                          title="Delete"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2023-04-16</td>
-                      <td>00:30</td>
-                      <td>08:00</td>
-                      <td>7.5 hrs</td>
-                      <td><span class="quality fair">Fair</span></td>
-                      <td><span class="mood tired">Tired</span></td>
-                      <td>Went to bed too late</td>
-                      <td>
-                        <button
-                          class="btn btn-link btn-sm edit-btn"
-                          data-id="7"
-                          title="Edit"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button
-                          class="btn btn-link btn-sm delete-btn"
-                          data-id="7"
-                          title="Delete"
-                        >
-                          <i class="fas fa-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
+                    {% endif %}
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
 
-          <!-- Summary Stats Cards -->
+          <!-- Summary Stats Cards - UPDATED FOR DYNAMIC DATA -->
           <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
@@ -618,7 +507,9 @@
                       >
                         Average Sleep Duration
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">7.4 hrs</div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ avg_duration }} hrs
+                      </div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -638,7 +529,9 @@
                       >
                         Most Common Quality
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">Good</div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ most_common_quality }}
+                      </div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-star fa-2x text-gray-300"></i>
@@ -658,7 +551,9 @@
                       >
                         Usual Bedtime
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">23:15</div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ usual_bedtime }}
+                      </div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-moon fa-2x text-gray-300"></i>
@@ -678,7 +573,9 @@
                       >
                         Usual Wake Time
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">07:00</div>
+                      <div class="h5 mb-0 font-weight-bold">
+                        {{ usual_waketime }}
+                      </div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-sun fa-2x text-gray-300"></i>
@@ -982,7 +879,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <!-- Custom Javascript -->
-    <script src="{{ url_for('static', filename='js/historical.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/Historical/historical.js') }}"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {

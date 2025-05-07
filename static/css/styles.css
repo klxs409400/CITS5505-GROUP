@@ -543,3 +543,54 @@ label {
   margin-bottom: 1rem;
 }
 
+.quality-circle {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quality-circle.excellent {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.quality-circle.good {
+  background: linear-gradient(135deg, #007bff, #17a2b8);
+}
+
+.quality-circle.fair {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+.quality-circle.poor {
+  background: linear-gradient(135deg, #dc3545, #e83e8c);
+}
+
+.inner-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner-circle span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.progress {
+  height: 25px;
+  border-radius: 10px;
+}
+
+.progress-bar {
+  text-align: left;
+  padding-left: 10px;
+}
