@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="../../static/css/styles.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Additional styles for demo */
+        .navbar {
+            margin-bottom: 20px;
+        }
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        body.dark-mode {
+            background-color: #212529;
+            color: #f8f9fa;
+        }
+        body.dark-mode .card {
+            background-color: #343a40;
+            color: #f8f9fa;
+        }
+        body.dark-mode .table {
+            color: #f8f9fa;
+        }
+        body.dark-mode .nav-tabs .nav-link {
+            color: #f8f9fa;
+        }
+        body.dark-mode .nav-tabs .nav-link.active {
+            background-color: #343a40;
+            color: #ffffff;
+            border-color: #495057 #495057 #343a40;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="../index.html">Journal App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="../Dashboard/dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../Journal/journal.html">Journal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="./settings.html">Settings</a>
+                </li>
+            </ul>
+            <span class="navbar-text">
+                <a href="../Authentication/login.html" class="btn btn-outline-primary btn-sm">Logout</a>
+            </span>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Page Header -->
+    <header class="section mb-4">
+        <h1 class="title-lg">Settings</h1>
+        <hr>
+    </header>
+    
+    <!-- Demo Flash Message -->
+    <div class="alert alert-success alert-dismissible fade show d-none" id="demo-alert" role="alert">
+        <span id="alert-message">Settings updated successfully!</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sharing-tab" data-bs-toggle="tab" data-bs-target="#sharing" type="button" role="tab" aria-controls="sharing" aria-selected="false">Sharing</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">Security</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="danger-tab" data-bs-toggle="tab" data-bs-target="#danger" type="button" role="tab" aria-controls="danger" aria-selected="false">Danger Zone</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="settingsTabsContent">
+        <!-- Profile Tab -->
+        <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <section class="section">
+                <h2 class="title-md">Theme</h2>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                    <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
+                </div>
+                
+                <h2 class="title-md mt-4">Profile Information</h2>
+                <form id="profileForm" class="mt-3">
+                    <div class="mb-3">
+                        <label for="displayName" class="form-label">Display Name</label>
+                        <input type="text" class="form-control" id="displayName" value="John Doe">
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailAddress" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="emailAddress" value="john.doe@example.com" disabled>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+                </form>
+            </section>
+        </div>
+        
+        <!-- Sharing Tab -->
+        <div class="tab-pane fade" id="sharing" role="tabpanel" aria-labelledby="sharing-tab">
+            <section class="section">
+                <h2 class="title-md">Sharing Preferences</h2>
+                
+                <!-- Share Form -->
+                <form class="row g-3 section" id="shareForm">
+                    <div class="col-md-8">
+                        <label for="shareEmail" class="visually-hidden">User Email</label>
+                        <input type="email" class="form-control" id="shareEmail" placeholder="Enter user email to share with" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-primary" id="addUserBtn">Add User</button>
+                    </div>
+                </form>
+                
+                <!-- Shared Users Table -->
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">User</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sharedUsersTable">
+                        <tr>
+                            <td>user1@example.com</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm revoke-btn" data-user-email="user1@example.com">Revoke</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>user2@example.com</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm revoke-btn" data-user-email="user2@example.com">Revoke</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+        
+        <!-- Security Tab -->
+        <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+            <section class="section">
+                <h2 class="title-md">Password Settings</h2>
+                
+                <!-- Password Update Form -->
+                <form class="row g-3" id="passwordForm">
+                    <div class="col-md-8">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password" required>
+                    </div>
+                    <div class="col-md-8 mt-3">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" required>
+                    </div>
+                    <div class="col-md-8 mt-3">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password" required>
+                    </div>
+                    <div class="col-md-8 mt-3">
+                        <button type="button" class="btn btn-primary" id="updatePasswordBtn">Update Password</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+        
+        <!-- Danger Zone Tab -->
+        <div class="tab-pane fade" id="danger" role="tabpanel" aria-labelledby="danger-tab">
+            <section class="section">
+                <h2 class="title-md">Danger Zone</h2>
+                <div class="card border-danger mb-3">
+                    <div class="card-header bg-danger text-white">Delete Account</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Delete your account permanently</h5>
+                        <p class="card-text">Once you delete your account, there is no going back. Please be certain.</p>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete Account</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Revoke Confirmation Modal -->
+<div class="modal fade" id="revokeModal" tabindex="-1" aria-labelledby="revokeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="revokeModalLabel">Confirm Revoke Access</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to revoke access for <span id="revokeUserEmail"></span>?</p>
+                <p>This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmRevokeBtn">Confirm Revoke</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Confirmation Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger">Warning: This action cannot be undone.</p>
+                <p>Please type your password to confirm deletion:</p>
+                <div class="mb-3">
+                    <label for="confirmDeletePassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="confirmDeletePassword" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteAccountBtn">Delete My Account</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Theme toggle functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            // Set initial state based on localStorage
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            darkModeToggle.checked = isDarkMode;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            darkModeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', 'false');
+                }
+                
+                showAlert('Theme preference saved!', 'success');
+            });
+        }
+        
+        // Show alert function
+        function showAlert(message, type = 'success') {
+            const alertEl = document.getElementById('demo-alert');
+            const alertMessage = document.getElementById('alert-message');
+            
+            alertEl.classList.remove('d-none', 'alert-success', 'alert-danger', 'alert-warning');
+            alertEl.classList.add(`alert-${type}`);
+            alertMessage.textContent = message;
+            alertEl.classList.add('show');
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                alertEl.classList.add('d-none');
+            }, 3000);
+        }
+        
+        // Revoke modal handling
+        const revokeModal = document.getElementById('revokeModal');
+        const revokeButtons = document.querySelectorAll('.revoke-btn');
+        if (revokeModal && revokeButtons) {
+            revokeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const userEmail = this.getAttribute('data-user-email');
+                    document.getElementById('revokeUserEmail').textContent = userEmail;
+                    
+                    // Initialize the Bootstrap modal
+                    const modal = new bootstrap.Modal(revokeModal);
+                    modal.show();
+                });
+            });
+            
+            // Handle confirm revoke
+            document.getElementById('confirmRevokeBtn').addEventListener('click', function() {
+                const userEmail = document.getElementById('revokeUserEmail').textContent;
+                
+                // In a real app, this would call an API
+                console.log(`Revoking access for: ${userEmail}`);
+                
+                // Remove the row from the table (demo)
+                const rows = document.querySelectorAll('#sharedUsersTable tr');
+                rows.forEach(row => {
+                    if (row.cells[0].textContent === userEmail) {
+                        row.remove();
+                    }
+                });
+                
+                // Close modal and show message
+                bootstrap.Modal.getInstance(revokeModal).hide();
+                showAlert(`Access revoked for ${userEmail}`, 'success');
+            });
+        }
+        
+        // Add user button
+        document.getElementById('addUserBtn').addEventListener('click', function() {
+            const email = document.getElementById('shareEmail').value;
+            if (!email || !email.includes('@')) {
+                showAlert('Please enter a valid email address', 'danger');
+                return;
+            }
+            
+            // Add to table (demo)
+            const tbody = document.getElementById('sharedUsersTable');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${email}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm revoke-btn" data-user-email="${email}">Revoke</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+            
+            // Add event listener to new button
+            newRow.querySelector('.revoke-btn').addEventListener('click', function() {
+                const userEmail = this.getAttribute('data-user-email');
+                document.getElementById('revokeUserEmail').textContent = userEmail;
+                const modal = new bootstrap.Modal(document.getElementById('revokeModal'));
+                modal.show();
+            });
+            
+            // Clear input and show message
+            document.getElementById('shareEmail').value = '';
+            showAlert(`User ${email} added successfully!`, 'success');
+        });
+        
+        // Update password button
+        document.getElementById('updatePasswordBtn').addEventListener('click', function() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showAlert('Please fill in all password fields', 'danger');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('New passwords do not match', 'danger');
+                return;
+            }
+            
+            // In a real app, this would call an API
+            console.log('Password update request');
+            
+            // Clear form and show success
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            showAlert('Password updated successfully!', 'success');
+        });
+        
+        // Update profile button
+        document.getElementById('updateProfileBtn').addEventListener('click', function() {
+            const displayName = document.getElementById('displayName').value;
+            
+            if (!displayName) {
+                showAlert('Display name cannot be empty', 'danger');
+                return;
+            }
+            
+            // In a real app, this would call an API
+            console.log(`Updating profile name to: ${displayName}`);
+            
+            showAlert('Profile updated successfully!', 'success');
+        });
+        
+        // Delete account button
+        document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+            const password = document.getElementById('confirmDeletePassword').value;
+            
+            if (!password) {
+                showAlert('Please enter your password to confirm deletion', 'danger');
+                return;
+            }
+            
+            // In a real app, this would call an API
+            console.log('Account deletion requested');
+            
+            // Redirect to login page after deletion (demo)
+            alert('Account deleted. You will be redirected to the login page.');
+            window.location.href = '../Authentication/login.html';
+        });
+    });
+</script>
+</body>
+</html>
