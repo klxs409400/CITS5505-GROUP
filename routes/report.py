@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from flask import jsonify
-from models import SleepRecord
-from app import db
+from models import SleepRecord, db
 from datetime import datetime, timedelta
 
 report = Blueprint('report', __name__)
