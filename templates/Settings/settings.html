@@ -34,34 +34,36 @@
             color: #ffffff;
             border-color: #495057 #495057 #343a40;
         }
+        /* Back button style copied from report.css */
+        .back-button-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        
+        .back-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4f6cf5;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .back-button:hover {
+            background-color: #3b54c2;
+        }
     </style>
 </head>
 <body>
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-        <a class="navbar-brand" href="../index.html">Journal App</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="../Dashboard/dashboard.html">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../Journal/journal.html">Journal</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="./settings.html">Settings</a>
-                </li>
-            </ul>
-            <span class="navbar-text">
-                <a href="../Authentication/login.html" class="btn btn-outline-primary btn-sm">Logout</a>
-            </span>
-        </div>
-    </div>
-</nav>
+<!-- Back button similar to report.html -->
+<div class="back-button-container">
+    <a href="../Homepage/dashboard.html" class="back-button">← Back to Dashboard</a>
+</div>
 
 <div class="container">
     <!-- Page Header -->
