@@ -468,7 +468,6 @@
   color: var(--text-light) !important;
 }
 
-/* 确保在悬停时质量和情绪标签保持各自的颜色 */
 .table-hover tbody tr:hover .quality.excellent,
 .table-hover tbody tr:hover .mood.refreshed {
   color: #fff !important;

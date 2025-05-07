@@ -1,30 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Login | SleepTracker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="../../static/css/styles.css" />
-  <link rel="stylesheet" href="../../static/css/auth.css" />
-</head>
-<body class="auth-page">
-  <a href="index.html" class="home-button">← Home</a>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login | SleepTracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/auth.css') }}"
+    />
+  </head>
+  <body class="auth-page">
+    <a href="{{ url_for('main.index') }}" class="home-button">← Home</a>
 
-  <div class="auth-container">
-    <h2 class="text-center mb-4">Welcome Back</h2>
-    <form>
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="you@example.com" required />
+    <div class="auth-container">
+      <h2 class="text-center mb-4">Welcome Back</h2>
+      <form action="{{ url_for('auth.login') }}" method="post">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+        />
 
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="********" required />
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="********"
+          required
+        />
 
-      <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
-      <p class="text-center mt-3">
-        Don’t have an account?
-        <a href="register.html" class="text-decoration-underline text-light">Register</a>
-      </p>
-    </form>
-  </div>
-</body>
+        <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
+        <p class="text-center mt-3">
+          Don't have an account?
+          <a
+            href="{{ url_for('auth.register') }}"
+            class="text-decoration-underline text-light"
+            >Register</a
+          >
+        </p>
+      </form>
+    </div>
+  </body>
 </html>
