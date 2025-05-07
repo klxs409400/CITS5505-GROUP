@@ -25,6 +25,16 @@ class User(UserMixin, db.Model):
     sleep_goals = db.relationship('SleepGoal', backref='user', lazy='dynamic')
     achievements = db.relationship('Achievement', backref='user', lazy='dynamic')
     
+    # Relationships for data sharing
+    shared_with = db.relationship('DataSharing', 
+                                  foreign_keys='DataSharing.owner_id',
+                                  backref='owner', 
+                                  lazy='dynamic')
+    shared_to_me = db.relationship('DataSharing', 
+                                   foreign_keys='DataSharing.viewer_id',
+                                   backref='viewer', 
+                                   lazy='dynamic')
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         
@@ -71,3 +81,12 @@ class Achievement(db.Model):
     icon = db.Column(db.String(64))          # e.g., "fa-star", "fa-moon", etc.
     achieved_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_locked = db.Column(db.Boolean, default=True)
+
+
+class DataSharing(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    viewer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (db.UniqueConstraint('owner_id', 'viewer_id', name='unique_sharing'),)
