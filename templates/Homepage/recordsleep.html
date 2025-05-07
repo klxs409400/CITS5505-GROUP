@@ -130,7 +130,16 @@
                         <span class="input-group-text">min</span>
                       </div>
                     </div>
-
+                    
+                    <div class="record-container">
+                      <label for="sleep_latency" class="record-label">Sleep Latency:</label>
+                      <select id="sleep_latency" name="sleep_latency" class="record-input" required>
+                        <option value="3">≤ 15 minutes (Best)</option>
+                        <option value="1">16–60 minutes (Moderate)</option>
+                        <option value="0">> 60 minutes (Poor)</option>
+                      </select>
+                    </div>                                     
+                    
                     <!-- Sleep Disturbances -->
                     <div class="mb-4">
                       <label class="form-label"

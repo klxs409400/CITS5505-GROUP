@@ -46,12 +46,13 @@ class SleepRecord(db.Model):
     
     # Additional fields - retrieved from recordsleep.html form
     sleep_disturbances = db.Column(db.String(20))
-    sleep_aid = db.Column(db.String(20))
+    sleep_aid = db.Column(db.Integer)  
     daytime_dysfunction = db.Column(db.String(20))
     caffeine = db.Column(db.Integer)         # Values: 0, 1, 2
     exercise = db.Column(db.Integer)         # Values: 0, 1, 2
     screen = db.Column(db.Integer)           # Values: 0, 1, 2
     eating = db.Column(db.Integer)           # Values: 0, 1, 2
+    sleep_latency = db.Column(db.Integer)
 
 
 class SleepGoal(db.Model):
