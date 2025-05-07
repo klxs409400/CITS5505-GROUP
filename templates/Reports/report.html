@@ -56,7 +56,7 @@
         <canvas id="sleepDurationChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
     </div>
     </div>
-
+    
     <div id="chart2">
     <div class="chart-card">
         <h3>Sleep Quality Trend</h3>
@@ -115,19 +115,37 @@
     </p>
       
   </div>
-    <script>
+  <script>
+    fetch('/api/sleep/duration')
+      .then(res => res.json())
+      .then(data => {
+        const labels = data.map(d => d.date);        // ['Mon', 'Tue', ...]
+        const durations = data.map(d => d.duration); // [7, 6.5, ...]
+    
         const ctx = document.getElementById('sleepDurationChart').getContext('2d');
         new Chart(ctx, {
-            type: 'bar', 
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], 
-                datasets: [{
-                    label: 'Sleep Duration (hours)', 
-                    data: [7, 6.5, 8, 5.5, 7, 8.5, 6], 
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)' 
-                }]
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Sleep Duration (hours)',
+              data: durations,
+              backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 10
+              }
             }
+          }
         });
+      });
     </script>
     
     <script>
