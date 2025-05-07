@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>Sleep Report</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../../static/css/styles.css">
-    <link rel="stylesheet" href="../../static/css/report.css">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">        
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
 </head>
@@ -14,7 +14,7 @@
 <body>
 
         <div class="back-button-container">
-            <a href="../Homepage/dashboard.html" class="back-button">← Back to Dashboard</a>
+            <a href="{{ url_for('main.dashboard') }}" class="back-button">← Back to Dashboard</a>
         </div>
     
     <div class="center-heading">
