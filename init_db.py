@@ -189,4 +189,97 @@ with app.app_context():
     else:
         print("Test user already exists.")
 
+    # Add a second test user (if not already present)
+    if not User.query.filter_by(username='janesmith').first():
+        second_user = User(
+            username='janesmith',
+            email='jane.smith@example.com',
+            full_name='Jane Elizabeth Smith',
+            password_hash=generate_password_hash('password456'),
+            # Sample data for new fields
+            phone='+1 (555) 987-6543',
+            location='San Francisco, USA',
+            timezone='PT',
+            bio='Sleep researcher and wellness advocate. Looking to improve my sleep quality and helping others do the same.',
+            profile_pic='images/demo.jpg'
+        )
+        db.session.add(second_user)
+        db.session.commit()  # Commit the user first to retrieve user ID
+        
+        # Add sleep goal
+        sleep_goal = SleepGoal(
+            user_id=second_user.id,
+            target_hours=7,
+            target_minutes=30
+        )
+        db.session.add(sleep_goal)
+        
+        # Add some achievements (some unlocked, some locked)
+        achievements = [
+            Achievement(
+                user_id=second_user.id,
+                name="Night Owl",
+                description="Log 10 nights of going to bed after midnight but still getting good sleep",
+                icon="fa-owl",
+                is_locked=False
+            ),
+            Achievement(
+                user_id=second_user.id,
+                name="Consistency King",
+                description="Go to bed within 30 minutes of your target time for 14 consecutive days",
+                icon="fa-crown",
+                is_locked=False
+            ),
+            Achievement(
+                user_id=second_user.id,
+                name="Sleep Marathon",
+                description="Get 9+ hours of sleep for 5 consecutive days",
+                icon="fa-running",
+                is_locked=True
+            )
+        ]
+        db.session.add_all(achievements)
+        
+        # Add some sample sleep records
+        from datetime import date, time, timedelta
+        
+        # Create several sample entries
+        for i in range(5):
+            record_date = date.today() - timedelta(days=i)
+            bedtime = datetime.combine(record_date - timedelta(days=1), time(0, 15))  # 12:15 AM
+            wake_time = datetime.combine(record_date, time(7, 45))  # 7:45 AM
+            
+            quality = "Good"
+            mood = "Neutral"
+            if i % 2 == 0:
+                quality = "Excellent"
+                mood = "Refreshed"
+            elif i % 3 == 0:
+                quality = "Fair"
+                mood = "Tired"
+            
+            sleep_record = SleepRecord(
+                user_id=second_user.id,
+                date=record_date,
+                bedtime=bedtime,
+                wake_time=wake_time,
+                duration_hours=7.5,
+                quality=quality,
+                mood=mood,
+                notes="Jane's sleep record",
+                sleep_disturbances="Minor",
+                sleep_aid="Melatonin",
+                daytime_dysfunction="Slight",
+                caffeine=0,   # None
+                exercise=1,   # Light exercise
+                screen=2,     # >60 min
+                eating=1      # Sometimes
+            )
+            db.session.add(sleep_record)
+        
+        db.session.commit()
+        print("Second test user and sample data created.")
+    else:
+        print("Second test user already exists.")
+
 print("Database initialized.")
