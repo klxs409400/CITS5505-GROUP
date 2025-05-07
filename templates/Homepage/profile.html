@@ -32,12 +32,12 @@
 
         <div class="user-profile">
           <img
-            src="{{ url_for('static', filename='images/demo.jpg') }}"
+            src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='images/demo.jpg') }}"
             class="rounded-circle"
             alt="User Profile"
           />
-          <h5>John Doe</h5>
-          <p>Sleep Enthusiast</p>
+          <h5>{{ current_user.username }}</h5>
+          <p>{{ current_user.bio|truncate(20, true) if current_user.bio else "Sleep Enthusiast" }}</p>
         </div>
 
         <ul class="sidebar-menu">
@@ -90,7 +90,7 @@
                 </a>
               </li>
               <li class="nav-item dropdown me-3">
-                
+                <a
                   class="nav-link"
                   href="#"
                   id="navbarDropdown"
@@ -131,7 +131,7 @@
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                
+                <a
                   class="nav-link d-flex align-items-center"
                   href="#"
                   id="userDropdown"
@@ -140,20 +140,20 @@
                   aria-expanded="false"
                 >
                   <img
-                    src="{{ url_for('static', filename='images/demo.jpg') }}"
+                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='images/demo.jpg') }}"
                     class="rounded-circle me-2"
                     alt="User"
                     width="30"
                     height="30"
                   />
-                  <span class="d-none d-lg-inline text-white">John Doe</span>
+                  <span class="d-none d-lg-inline text-white">{{ current_user.username }}</span>
                 </a>
                 <ul
                   class="dropdown-menu dropdown-menu-end"
                   aria-labelledby="userDropdown"
                 >
                   <li>
-                    <a class="dropdown-item" href="#"
+                    <a class="dropdown-item" href="{{ url_for('profile.view_profile') }}"
                       ><i class="fas fa-user me-2"></i> Profile</a
                     >
                   </li>
@@ -179,7 +179,7 @@
             class="d-sm-flex align-items-center justify-content-between mb-4"
           >
             <h1 class="h3 mb-0">User Profile</h1>
-            
+            <a
               href="#"
               class="d-none d-sm-inline-block btn btn-primary shadow-sm"
               data-bs-toggle="modal"
@@ -198,12 +198,12 @@
                   <div class="row align-items-center">
                     <div class="col-md-3 text-center">
                       <img
-                        src="{{ url_for('static', filename='images/demo.jpg') }}"
+                        src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='images/demo.jpg') }}"
                         class="profile-avatar mb-3"
                         alt="User Profile"
                       />
-                      <h4 class="mb-1">John Doe</h4>
-                      <p class="text-secondary mb-2">Sleep Enthusiast</p>
+                      <h4 class="mb-1">{{ current_user.username }}</h4>
+                      <p class="text-secondary mb-2">{{ current_user.bio|truncate(20, true) if current_user.bio else "Sleep Enthusiast" }}</p>
                       <div
                         class="d-flex justify-content-center profile-social-links"
                       ></div>
@@ -212,25 +212,19 @@
                       <div class="row">
                         <div class="col-md-6 mb-3">
                           <h6 class="text-secondary">Full Name</h6>
-                          <p>John Anthony Doe</p>
+                          <p>{{ current_user.full_name }}</p>
                         </div>
                         <div class="col-md-6 mb-3">
                           <h6 class="text-secondary">Email</h6>
-                          <p>john.doe@example.com</p>
+                          <p>{{ current_user.email }}</p>
                         </div>
                         <div class="col-md-6 mb-3">
                           <h6 class="text-secondary">Member Since</h6>
-                          <p>January 15, 2023</p>
+                          <p>{{ current_user.date_joined.strftime('%B %d, %Y') }}</p>
                         </div>
                         <div class="col-12 mt-2">
                           <h6 class="text-secondary">Bio</h6>
-                          <p>
-                            Passionate about optimizing sleep patterns and
-                            sharing knowledge about sleep health. I've been
-                            tracking my sleep for over 2 years and have seen
-                            significant improvements in my energy levels and
-                            overall productivity.
-                          </p>
+                          <p>{{ current_user.bio }}</p>
                         </div>
                       </div>
                     </div>
@@ -448,7 +442,7 @@
                     class="form-control"
                     id="editFullName"
                     name="editFullName"
-                    value="John Anthony Doe"
+                    value="{{ current_user.full_name }}"
                     required
                   />
                 </div>
@@ -459,7 +453,7 @@
                     class="form-control"
                     id="editEmail"
                     name="editEmail"
-                    value="john.doe@example.com"
+                    value="{{ current_user.email }}"
                     required
                   />
                 </div>
@@ -472,7 +466,7 @@
                     class="form-control"
                     id="editPhone"
                     name="editPhone"
-                    value="+1 (555) 123-4567"
+                    value="{{ current_user.phone }}"
                   />
                 </div>
                 <div class="col-md-6">
@@ -482,7 +476,7 @@
                     class="form-control"
                     id="editLocation"
                     name="editLocation"
-                    value="New York, USA"
+                    value="{{ current_user.location }}"
                   />
                 </div>
               </div>
@@ -490,11 +484,11 @@
                 <div class="col-md-6">
                   <label for="editTimezone" class="form-label">Timezone</label>
                   <select class="form-select" id="editTimezone" name="editTimezone">
-                    <option value="ET" selected>Eastern Time (ET)</option>
-                    <option value="CT">Central Time (CT)</option>
-                    <option value="MT">Mountain Time (MT)</option>
-                    <option value="PT">Pacific Time (PT)</option>
-                    <option value="GMT">Greenwich Mean Time (GMT)</option>
+                    <option value="ET" {% if current_user.timezone == 'ET' %}selected{% endif %}>Eastern Time (ET)</option>
+                    <option value="CT" {% if current_user.timezone == 'CT' %}selected{% endif %}>Central Time (CT)</option>
+                    <option value="MT" {% if current_user.timezone == 'MT' %}selected{% endif %}>Mountain Time (MT)</option>
+                    <option value="PT" {% if current_user.timezone == 'PT' %}selected{% endif %}>Pacific Time (PT)</option>
+                    <option value="GMT" {% if current_user.timezone == 'GMT' %}selected{% endif %}>Greenwich Mean Time (GMT)</option>
                   </select>
                 </div>
                 <div class="col-md-6">
@@ -506,7 +500,7 @@
               </div>
               <div class="mb-3">
                 <label for="editBio" class="form-label">Bio</label>
-                <textarea class="form-control" id="editBio" name="editBio" rows="4">Passionate about optimizing sleep patterns and sharing knowledge about sleep health. I've been tracking my sleep for over 2 years and have seen significant improvements in my energy levels and overall productivity.</textarea>
+                <textarea class="form-control" id="editBio" name="editBio" rows="4">{{ current_user.bio }}</textarea>
               </div>
               <div class="modal-footer">
                 <button

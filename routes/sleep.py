@@ -8,7 +8,8 @@ from collections import Counter
 # Create a Blueprint for sleep-related routes
 sleep = Blueprint('sleep', __name__)
 
-# Route to handle sleep record creation (GET to display form, POST to save data)
+# 1. Update sleep.py route to handle all form fields
+
 @sleep.route('/record-sleep', methods=['GET', 'POST'])
 @login_required
 def record_sleep():
@@ -44,7 +45,19 @@ def record_sleep():
                 duration_hours=duration,
                 quality=request.form.get('quality', 'Good'),  # Default: Good
                 mood=request.form.get('mood', 'Neutral'),      # Default: Neutral
-                notes=request.form.get('notes', '')
+                notes=request.form.get('notes', ''),
+                
+                # Process additional form fields
+                sleep_disturbances=request.form.get('sleepDisturbances', 'None'),
+                sleep_aid=request.form.get('sleepAid', 'None'),
+                daytime_dysfunction=request.form.get('daytimeDysfunction', 'None'),
+                
+                # Process numeric fields, with defaults
+                caffeine=int(request.form.get('caffeine', 1)),
+                exercise=int(request.form.get('exercise', 1)),
+                screen=int(request.form.get('screen', 1)),
+                eating=int(request.form.get('eating', 1)),
+                sleep_latency=int(request.form.get('sleep_latency', 3))
             )
             
             db.session.add(sleep_record)
@@ -59,6 +72,46 @@ def record_sleep():
     
     # Render sleep record form
     return render_template('Homepage/recordsleep.html')
+
+# 2. Update main.py dashboard route to use current user's data
+
+@main.route('/dashboard')
+@login_required
+def dashboard():
+    # Retrieve recent records
+    recent_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).limit(5).all()
+    
+    # Retrieve all records for statistics
+    sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
+    
+    # Calculate sleep quality percentages
+    quality_counts = {"excellent": 0, "good": 0, "fair": 0, "poor": 0}
+    total_records = len(sleep_records)
+
+    if total_records > 0:
+        for record in sleep_records:
+            quality = record.quality.lower()
+            if quality in quality_counts:
+                quality_counts[quality] += 1
+        
+        # Convert to percentages
+        quality_stats = {
+            "excellent": int((quality_counts["excellent"] / total_records) * 100) if total_records > 0 else 0,
+            "good": int((quality_counts["good"] / total_records) * 100) if total_records > 0 else 0,
+            "fair": int((quality_counts["fair"] / total_records) * 100) if total_records > 0 else 0,
+            "poor": int((quality_counts["poor"] / total_records) * 100) if total_records > 0 else 0
+        }
+    else:
+        quality_stats = {"excellent": 0, "good": 0, "fair": 0, "poor": 0}
+    
+    return render_template(
+        'Homepage/dashboard.html',
+        recent_records=recent_records,  
+        sleep_records=sleep_records[:7],  # Last 7 days for weekly view
+        quality_stats=quality_stats,
+        now=datetime.now(),
+        timedelta=timedelta
+    )
 
 # Route to display user's sleep history with dynamic data
 @sleep.route('/sleep-history')
