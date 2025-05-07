@@ -8,7 +8,7 @@ settings = Blueprint('settings', __name__)
 @settings.route('/settings')
 @login_required
 def view_settings():
-    return render_template('Settings/pages/settings.html')
+    return render_template('Settings/settings.html', user=current_user)
 
 @settings.route('/settings/update-password', methods=['POST'])
 @login_required
