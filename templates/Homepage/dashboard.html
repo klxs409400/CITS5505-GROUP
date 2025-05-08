@@ -170,7 +170,9 @@
                     width="30"
                     height="30"
                   />
-                  <span class="d-none d-lg-inline text-white">{{ current_user.username }}</span>
+                  <span class="d-none d-lg-inline text-white"
+                    >{{ current_user.username }}</span
+                  >
                 </a>
                 <ul
                   class="dropdown-menu dropdown-menu-end"
@@ -393,11 +395,6 @@
                       your body's internal clock and can help you fall asleep
                       and stay asleep for the night.
                     </p>
-                    <a
-                      href="{{ url_for('main.index') }}"
-                      class="btn btn-outline-warning"
-                      >More Tips</a
-                    >
                   </div>
                 </div>
                 <div class="col-md-12">
@@ -535,7 +532,11 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="sleepGoalForm">
+            <form
+              id="sleepGoalForm"
+              method="post"
+              action="{{ url_for('sleep.update_sleep_goal') }}"
+            >
               <div class="mb-3">
                 <label for="sleepGoalHours" class="form-label">Hours</label>
                 <select class="form-select" id="sleepGoalHours" required>
@@ -590,7 +591,7 @@
             >
               Cancel
             </button>
-            <button type="button" class="btn btn-primary" id="saveGoalBtn">
+            <button type="submit" class="btn btn-primary" id="saveGoalBtn">
               Save Goal
             </button>
           </div>

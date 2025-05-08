@@ -190,13 +190,14 @@ $(document).ready(function () {
   new Chart(sleepQualityChart, sleepQualityConfig);
 
   // Update Sleep Goal handler
-  $("#saveGoalBtn").click(function () {
-    console.log("Save goal button clicked"); // Debug info
+  $("#saveGoalBtn").click(function (event) {
+    console.log("Save goal button clicked");
     const sleepGoalHours = parseFloat($("#sleepGoalHours").val());
     const sleepGoalMinutes = parseInt($("#sleepGoalMinutes").val());
 
     if (isNaN(sleepGoalHours) || isNaN(sleepGoalMinutes)) {
       alert("Please enter valid numbers for sleep goal");
+      event.preventDefault();
       return;
     }
 

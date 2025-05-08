@@ -160,7 +160,9 @@
                     width="30"
                     height="30"
                   />
-                  <span class="d-none d-lg-inline text-white">{{ current_user.username }}</span>
+                  <span class="d-none d-lg-inline text-white"
+                    >{{ current_user.username }}</span
+                  >
                 </a>
                 <ul
                   class="dropdown-menu dropdown-menu-end"
@@ -623,7 +625,7 @@
             <form
               id="sleepGoalForm"
               method="post"
-              action="{{ url_for('sleep.sleep_history') }}"
+              action="{{ url_for('sleep.update_sleep_goal') }}"
             >
               <div class="mb-3">
                 <label for="sleepGoalHours" class="form-label">Hours</label>
@@ -722,7 +724,7 @@
             <form
               id="editEntryForm"
               method="post"
-              action="{{ url_for('sleep.record_sleep') }}"
+              action="{{ url_for('sleep.edit_sleep',record_id=0) }}"
             >
               <input type="hidden" id="editEntryId" name="editEntryId" />
               <div class="mb-3">
