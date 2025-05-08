@@ -74,10 +74,10 @@ def record_sleep():
 @sleep.route('/sleep-history')
 @login_required
 def sleep_history():
-    # Retrieve all sleep records for the current user, newest first
+    # Retrieve all sleep records for the current user, sorted by newest first
     sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
     
-    # Calculate statistics based on user's sleep records
+    # Calculate statistics based on the user's sleep records
     avg_duration = 0
     most_common_quality = "Good"
     usual_bedtime = "23:00"
@@ -88,13 +88,13 @@ def sleep_history():
         total_duration = sum(record.duration_hours for record in sleep_records)
         avg_duration = round(total_duration / len(sleep_records), 1)
         
-        # Find most common sleep quality
+        # Find the most common sleep quality
         quality_counts = {}
         for record in sleep_records:
             quality_counts[record.quality] = quality_counts.get(record.quality, 0) + 1
         most_common_quality = max(quality_counts.items(), key=lambda x: x[1])[0] if quality_counts else "Good"
         
-        # Calculate usual bedtime and wake time
+        # Calculate the usual bedtime and wake time
         bedtimes = [record.bedtime.strftime('%H:%M') for record in sleep_records]
         waketimes = [record.wake_time.strftime('%H:%M') for record in sleep_records]
         
@@ -102,8 +102,15 @@ def sleep_history():
         usual_bedtime = Counter(bedtimes).most_common(1)[0][0] if bedtimes else "23:00"
         usual_waketime = Counter(waketimes).most_common(1)[0][0] if waketimes else "07:00"
     
-    # Add current date and timedelta for template usage
+    # Add the current date and timedelta for template usage
     now = datetime.now()
+    
+    # Retrieve the current user's sleep goal
+    sleep_goal = SleepGoal.query.filter_by(user_id=current_user.id).first()
+    goal_hours = 8.0  # Default value
+    
+    if sleep_goal:
+        goal_hours = sleep_goal.target_hours + (sleep_goal.target_minutes / 60)
     
     # Pass all data to the template
     return render_template(
