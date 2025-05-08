@@ -39,6 +39,7 @@
     margin: 40px auto;
     max-width: 700px;
     text-align: center;
+    min-height: 500px;
   }
   
   .content-wrapper {

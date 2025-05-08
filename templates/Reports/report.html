@@ -86,7 +86,7 @@
     <div class="chart-card">
         <h3>Sleep Quality Distribution</h3>
         <p>This pie chart summarizes the proportion of good, average, and poor sleep nights.</p>
-        <canvas id="sleepQualityPieChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+        <canvas id="sleepQualityPieChart" style="margin-top: 20px;" width="400" height="400"></canvas>
     </div>
     </div>
 
@@ -184,48 +184,105 @@
         </script>
         
     
-    <script>
-        const ctx3 = document.getElementById('sleepQualityPieChart').getContext('2d');
-        new Chart(ctx3, {
-            type: 'pie', 
-            data: {
-                labels: ['Good (4-5)', 'Average (2-3)', 'Poor (0-1)'], 
-                datasets: [{
-                    label: 'Sleep Quality Distribution',
-                    data: [4, 2, 1], 
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',  
-                        'rgba(255, 205, 86, 0.6)',  
-                        'rgba(255, 99, 132, 0.6)'  
-                    ],
-                    borderWidth: 1
-                }]
-            }
-        });
-    </script>
+        <script>
+            fetch('/api/sleep/level-distribution')
+              .then(response => response.json())
+              .then(result => {
+                const ctx3 = document.getElementById('sleepQualityPieChart').getContext('2d');
+                new Chart(ctx3, {
+                  type: 'pie',
+                  data: {
+                    labels: result.labels,  // ['Excellent', 'Good', 'Fair', 'Poor']
+                    datasets: [{
+                      label: 'Sleep Quality Distribution',
+                      data: result.data,     // e.g., [2, 3, 1, 1]
+                      backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',   // Excellent
+                        'rgba(255, 205, 86, 0.6)',   // Good
+                        'rgba(255, 159, 64, 0.6)',   // Fair
+                        'rgba(255, 99, 132, 0.6)'    // Poor
+                      ],
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    plugins: {
+                      legend: {
+                        position: 'bottom',
+                        labels: {
+                          generateLabels: function (chart) {
+                            const original = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                            const mapping = {
+                              'Excellent': 'Excellent (18–21)',
+                              'Good': 'Good (14–17)',
+                              'Fair': 'Fair (9–13)',
+                              'Poor': 'Poor (0–8)'
+                            };
+                            return original.map(label => ({
+                              ...label,
+                              text: mapping[label.text] || label.text
+                            }));
+                          }
+                        }
+                      }
+                    }
+                  }
+                });
+              });
+          </script>
+          
     
     <script>
-        const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
-        new Chart(ctx4, {
-            type: 'bar', 
-            data: {
-                labels: ['Had Caffeine', 'Exercised', 'Screen Time', 'Late-night Eating'], 
-                datasets: [{
-                    label: 'Average Sleep Quality',
-                    data: [2.5, 4, 2, 2.8], 
-                    backgroundColor: [
-                        'rgba(255, 159, 64, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 205, 86, 0.6)'
-                    ]
-                }]
-            },
-            options: {
-                indexAxis: 'y', 
+fetch('/api/sleep/factor-impact')
+  .then(response => response.json())
+  .then(result => {
+    const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
+    new Chart(ctx4, {
+      type: 'bar',
+      data: {
+        labels: result.labels,  // ['Had Caffeine', 'Exercised', ...]
+        datasets: [{
+          label: 'Average Sleep Quality',
+          data: result.data,
+          backgroundColor: [
+            'rgba(255, 159, 64, 0.6)',
+            'rgba(75, 192, 192, 0.6)',
+            'rgba(153, 102, 255, 0.6)',
+            'rgba(255, 205, 86, 0.6)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 21  // 根据 sleep score 总分最大值设定
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: {
+                size: 14
+              }
             }
-        });
-    </script>    
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Average Score: ${context.raw}`;
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>    
     </div>
 
     <button onclick="scrollToTop()" class="top-button">↑ Top</button>
