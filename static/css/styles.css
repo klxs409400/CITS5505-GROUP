@@ -47,6 +47,31 @@
   --transition-normal: all 0.3s ease;
 }
 
+/* Light Mode Variables */
+.light-mode {
+  /* Grayscale */
+  --dark: #f8f9fa;
+  --darker: #e9ecef;
+  --dark-accent: #dee2e6;
+  --dark-component: #ffffff;
+  --dark-card: #ffffff;
+  --dark-input: #f1f3f5;
+  --dark-border: #dee2e6;
+  --dark-hover: #e9ecef;
+
+  /* Text Colors */
+  --text-primary: #343a40;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --text-light: #212529;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
 /* Global Styles */
 * {
   margin: 0;
@@ -63,6 +88,7 @@ body {
   overflow-x: hidden;
 }
 
+/* Pattern background - only show in dark mode */
 body::after {
   content: "";
   position: fixed;
@@ -74,6 +100,10 @@ body::after {
   background-repeat: repeat;
   opacity: 0.1;
   z-index: -1;
+}
+
+.light-mode::after {
+  opacity: 0; /* Hide pattern in light mode */
 }
 
 a {
@@ -373,6 +403,13 @@ label {
   border-bottom: 1px solid var(--dark-border);
 }
 
+.light-mode .navbar {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--dark-border);
+}
+
 .navbar-brand {
   font-size: 1.5rem;
   font-weight: 700;
@@ -432,8 +469,18 @@ label {
   border-bottom: 1px solid var(--dark-border);
 }
 
+.light-mode .card-header,
+.light-mode .modal-header {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
 .modal-footer {
   border-top: 1px solid var(--dark-border);
+}
+
+.light-mode .card-footer,
+.light-mode .modal-footer {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .btn-close {
@@ -593,4 +640,26 @@ label {
 .progress-bar {
   text-align: left;
   padding-left: 10px;
+}
+
+.light-mode .sidebar {
+  box-shadow: 1px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .table thead th {
+  border-bottom-color: var(--dark-border);
+}
+
+.light-mode .table tbody td {
+  border-top-color: var(--dark-border);
+}
+
+.light-mode .table-hover tbody tr:hover {
+  background-color: rgba(94, 114, 228, 0.05);
+}
+
+.light-mode .dropdown-menu {
+  background-color: var(--dark-component);
+  border: 1px solid var(--dark-border);
+  box-shadow: var(--shadow-md);
 }

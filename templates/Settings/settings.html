@@ -3,319 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Settings | Sleep Tracker</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Additional styles for demo */
-        .navbar {
-            margin-bottom: 20px;
-        }
-        body {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        body.dark-mode {
-            background-color: #212529;
-            color: #f8f9fa;
-        }
-        body.dark-mode .card {
-            background-color: #343a40;
-            color: #f8f9fa;
-        }
-        body.dark-mode .table {
-            color: #f8f9fa;
-        }
-        body.dark-mode .nav-tabs .nav-link {
-            color: #f8f9fa;
-        }
-        body.dark-mode .nav-tabs .nav-link.active {
-            background-color: #343a40;
-            color: #ffffff;
-            border-color: #495057 #495057 #343a40;
-        }
-        /* Back button style copied from report.css */
-        .back-button-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 10;
-        }
-        
-        .back-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #4f6cf5;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            font-size: 0.95em;
-        }
-        
-        .back-button:hover {
-            background-color: #3b54c2;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <!-- Theme JS -->
+    <script src="{{ url_for('static', filename='js/Settings/theme.js') }}"></script>
 </head>
 <body>
-<!-- Back button similar to report.html -->
-<div class="back-button-container">
-    <a href="{{ url_for('main.dashboard') }}" class="back-button">← Back to Dashboard</a>
-</div>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-moon"></i>
+                <h3>Sleep Tracker</h3>
+            </div>
 
-<div class="container">
-    <!-- Page Header -->
-    <header class="section mb-4">
-        <h1 class="title-lg">Settings</h1>
-        <hr>
-    </header>
-    
-    <!-- Demo Flash Message -->
-    <div class="alert alert-success alert-dismissible fade show d-none" id="demo-alert" role="alert">
-        <span id="alert-message">Settings updated successfully!</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='images/demo.jpg') }}" class="rounded-circle" alt="User Profile">
+                <h5>{{ current_user.username }}</h5>
+                <p>Sleep Enthusiast</p>
+            </div>
 
-    <!-- Tabs Navigation -->
-    <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="sharing-tab" data-bs-toggle="tab" data-bs-target="#sharing" type="button" role="tab" aria-controls="sharing" aria-selected="false">Sharing</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">Security</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="danger-tab" data-bs-toggle="tab" data-bs-target="#danger" type="button" role="tab" aria-controls="danger" aria-selected="false">Danger Zone</button>
-        </li>
-    </ul>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ url_for('main.dashboard') }}">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('sleep.record_sleep') }}">
+                        <i class="fas fa-plus-circle"></i>
+                        Record Sleep
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('sleep.sleep_history') }}">
+                        <i class="fas fa-history"></i>
+                        Sleep History
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('report.view_report') }}">
+                        <i class="fas fa-chart-line"></i>
+                        Sleep Reports
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('settings.view_settings') }}" class="active">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
 
-    <!-- Tab Content -->
-    <div class="tab-content" id="settingsTabsContent">
-        <!-- Profile Tab -->
-        <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            <section class="section">
-                <h2 class="title-md">Theme</h2>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="darkModeToggle">
-                    <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
+            <div class="sidebar-footer">
+                <!-- Homepage button: link to index page -->
+                <a href="{{ url_for('main.index', force_index=1) }}" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Homepage
+                </a>
+                <br>
+                <!-- Logout button: triggers logout route -->
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top navigation -->
+            <nav class="navbar">
+                <div class="d-flex justify-content-between w-100">
+                    <button id="sidebarToggle" class="navbar-toggler">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <ul class="navbar-nav flex-row ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{{ url_for('static', filename='images/demo.jpg') }}" class="rounded-circle me-2" alt="User" width="30" height="30">
+                                <span class="d-none d-lg-inline text-white">{{ current_user.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Content -->
+            <div class="container-fluid py-4">
+                <!-- Page Header -->
+                <div class="welcome-banner mb-4">
+                    <h1>Settings</h1>
+                    <p>Manage your account preferences and data sharing options</p>
                 </div>
                 
-                <h2 class="title-md mt-4">Profile Information</h2>
-                <form id="profileForm" class="mt-3">
-                    <div class="mb-3">
-                        <label for="displayName" class="form-label">Display Name</label>
-                        <input type="text" class="form-control" id="displayName" value="{{ current_user.full_name }}">
-                    </div>
-                    <div class="mb-3">
-                        <label for="emailAddress" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="emailAddress" value="{{ current_user.email }}" disabled>
-                    </div>
-                    <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
-                </form>
-            </section>
-        </div>
-        
-        <!-- Sharing Tab -->
-        <div class="tab-pane fade" id="sharing" role="tabpanel" aria-labelledby="sharing-tab">
-            <section class="section">
-                <h2 class="title-md">Share Your Sleep Data</h2>
-                <p class="mb-4">Share your sleep data with other users. They will be able to see your sleep records and analysis.</p>
-                
-                <!-- Share Form -->
-                <form class="row g-3 section" id="shareForm">
-                    <div class="col-md-8">
-                        <label for="shareEmail" class="form-label">User Email</label>
-                        <input type="email" class="form-control" id="shareEmail" placeholder="Enter user email to share with" required>
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="button" class="btn btn-primary" id="addUserBtn">Share with User</button>
-                    </div>
-                </form>
-                
-                <!-- Shared Users Table -->
-                <div class="mt-4">
-                    <h3 class="title-sm mb-3">Users with Access to Your Data</h3>
-                    {% if shared_users and shared_users|length > 0 %}
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">User</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Shared Since</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sharedUsersTable">
-                            {% for user in shared_users %}
-                            <tr data-user-id="{{ user.id }}">
-                                <td>{{ user.email }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.shared_to_me.filter_by(owner_id=current_user.id).first().created_at.strftime('%Y-%m-%d') }}</td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm revoke-btn" data-user-id="{{ user.id }}" data-user-email="{{ user.email }}">Revoke Access</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% else %}
-                    <div class="alert alert-info">
-                        You haven't shared your sleep data with anyone yet.
-                    </div>
-                    {% endif %}
+                <!-- Demo Flash Message -->
+                <div class="alert alert-success alert-dismissible fade show d-none" id="demo-alert" role="alert">
+                    <span id="alert-message">Settings updated successfully!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                
-                <!-- Shared With Me Section -->
-                <div class="mt-5">
-                    <h3 class="title-sm mb-3">Data Shared with Me</h3>
-                    {% if current_user.shared_to_me.count() > 0 %}
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">User</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Shared Since</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for sharing in current_user.shared_to_me %}
-                            <tr>
-                                <td>{{ sharing.owner.email }}</td>
-                                <td>{{ sharing.owner.username }}</td>
-                                <td>{{ sharing.created_at.strftime('%Y-%m-%d') }}</td>
-                                <td>
-                                    <a href="{{ url_for('report.view_shared_report', user_id=sharing.owner.id) }}" class="btn btn-primary btn-sm">View Data</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    {% else %}
-                    <div class="alert alert-info">
-                        No one has shared their sleep data with you yet.
+
+                <!-- Settings Card -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold">Account Settings</h6>
                     </div>
-                    {% endif %}
-                </div>
-            </section>
-        </div>
-        
-        <!-- Security Tab -->
-        <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
-            <section class="section">
-                <h2 class="title-md">Password Settings</h2>
-                
-                <!-- Password Update Form -->
-                <form class="row g-3" id="passwordForm" action="{{ url_for('settings.update_password') }}" method="POST">
-                    <div class="col-md-8">
-                        <label for="currentPassword">Current Password</label>
-                        <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password" required>
-                    </div>
-                    <div class="col-md-8 mt-3">
-                        <label for="newPassword">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" required>
-                    </div>
-                    <div class="col-md-8 mt-3">
-                        <label for="confirmPassword">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password" required>
-                    </div>
-                    <div class="col-md-8 mt-3">
-                        <button type="submit" class="btn btn-primary">Update Password</button>
-                    </div>
-                </form>
-            </section>
-        </div>
-        
-        <!-- Danger Zone Tab -->
-        <div class="tab-pane fade" id="danger" role="tabpanel" aria-labelledby="danger-tab">
-            <section class="section">
-                <h2 class="title-md">Danger Zone</h2>
-                <div class="card border-danger mb-3">
-                    <div class="card-header bg-danger text-white">Delete Account</div>
                     <div class="card-body">
-                        <h5 class="card-title">Delete your account permanently</h5>
-                        <p class="card-text">Once you delete your account, there is no going back. Please be certain.</p>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete Account</button>
+                        <!-- Tabs Navigation -->
+                        <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="sharing-tab" data-bs-toggle="tab" data-bs-target="#sharing" type="button" role="tab" aria-controls="sharing" aria-selected="false">Sharing</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">Security</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="danger-tab" data-bs-toggle="tab" data-bs-target="#danger" type="button" role="tab" aria-controls="danger" aria-selected="false">Danger Zone</button>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="settingsTabsContent">
+                            <!-- Profile Tab -->
+                            <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <section class="section">
+                                    <h2 class="title-md">Theme</h2>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="theme-toggle">
+                                        <label class="form-check-label" for="theme-toggle">Light Mode</label>
+                                    </div>
+                                    
+                                    <h2 class="title-md mt-4">Profile Information</h2>
+                                    <form id="profileForm" class="mt-3">
+                                        <div class="mb-3">
+                                            <label for="displayName" class="form-label">Display Name</label>
+                                            <input type="text" class="form-control" id="displayName" value="{{ current_user.full_name }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="emailAddress" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" id="emailAddress" value="{{ current_user.email }}" disabled>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+                                    </form>
+                                </section>
+                            </div>
+                            
+                            <!-- Sharing Tab -->
+                            <div class="tab-pane fade" id="sharing" role="tabpanel" aria-labelledby="sharing-tab">
+                                <section class="section">
+                                    <h2 class="title-md">Share Your Sleep Data</h2>
+                                    <p class="mb-4">Share your sleep data with other users. They will be able to see your sleep records and analysis.</p>
+                                    
+                                    <!-- Share Form -->
+                                    <form class="row g-3 section" id="shareForm">
+                                        <div class="col-md-8">
+                                            <label for="shareEmail" class="form-label">User Email</label>
+                                            <input type="email" class="form-control" id="shareEmail" placeholder="Enter user email to share with" required>
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button type="button" class="btn btn-primary" id="addUserBtn">Share with User</button>
+                                        </div>
+                                    </form>
+                                    
+                                    <!-- Shared Users Table -->
+                                    <div class="mt-4">
+                                        <h3 class="title-sm mb-3">Users with Access to Your Data</h3>
+                                        {% if shared_users and shared_users|length > 0 %}
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">User</th>
+                                                    <th scope="col">Username</th>
+                                                    <th scope="col">Shared Since</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="sharedUsersTable">
+                                                {% for user in shared_users %}
+                                                <tr data-user-id="{{ user.id }}">
+                                                    <td>{{ user.email }}</td>
+                                                    <td>{{ user.username }}</td>
+                                                    <td>{{ user.shared_to_me.filter_by(owner_id=current_user.id).first().created_at.strftime('%Y-%m-%d') }}</td>
+                                                    <td>
+                                                        <button class="btn btn-danger btn-sm revoke-btn" data-user-id="{{ user.id }}" data-user-email="{{ user.email }}">Revoke Access</button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {% else %}
+                                        <div class="alert alert-info">
+                                            You haven't shared your sleep data with anyone yet.
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Shared With Me Section -->
+                                    <div class="mt-5">
+                                        <h3 class="title-sm mb-3">Data Shared with Me</h3>
+                                        {% if current_user.shared_to_me.count() > 0 %}
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">User</th>
+                                                    <th scope="col">Username</th>
+                                                    <th scope="col">Shared Since</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for sharing in current_user.shared_to_me %}
+                                                <tr>
+                                                    <td>{{ sharing.owner.email }}</td>
+                                                    <td>{{ sharing.owner.username }}</td>
+                                                    <td>{{ sharing.created_at.strftime('%Y-%m-%d') }}</td>
+                                                    <td>
+                                                        <a href="{{ url_for('report.view_shared_report', user_id=sharing.owner.id) }}" class="btn btn-primary btn-sm">View Data</a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {% else %}
+                                        <div class="alert alert-info">
+                                            No one has shared their sleep data with you yet.
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </section>
+                            </div>
+                            
+                            <!-- Security Tab -->
+                            <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                                <section class="section">
+                                    <h2 class="title-md">Password Settings</h2>
+                                    
+                                    <!-- Password Update Form -->
+                                    <form class="row g-3" id="passwordForm" action="{{ url_for('settings.update_password') }}" method="POST">
+                                        <div class="col-md-8">
+                                            <label for="currentPassword">Current Password</label>
+                                            <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password" required>
+                                        </div>
+                                        <div class="col-md-8 mt-3">
+                                            <label for="newPassword">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" required>
+                                        </div>
+                                        <div class="col-md-8 mt-3">
+                                            <label for="confirmPassword">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password" required>
+                                        </div>
+                                        <div class="col-md-8 mt-3">
+                                            <button type="submit" class="btn btn-primary">Update Password</button>
+                                        </div>
+                                    </form>
+                                </section>
+                            </div>
+                            
+                            <!-- Danger Zone Tab -->
+                            <div class="tab-pane fade" id="danger" role="tabpanel" aria-labelledby="danger-tab">
+                                <section class="section">
+                                    <h2 class="title-md">Danger Zone</h2>
+                                    <div class="card border-danger mb-3">
+                                        <div class="card-header bg-danger text-white">Delete Account</div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">Delete your account permanently</h5>
+                                            <p class="card-text">Once you delete your account, there is no going back. Please be certain.</p>
+                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete Account</button>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>&copy; 2025 Sleep Tracker | CITS5505 GROUP PROJECT</span>
+                        <span>Version 1.0.0</span>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
-</div>
 
-<!-- Revoke Confirmation Modal -->
-<div class="modal fade" id="revokeModal" tabindex="-1" aria-labelledby="revokeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="revokeModalLabel">Confirm Revoke Access</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to revoke access for <span id="revokeUserEmail"></span>?</p>
-                <p>This action cannot be undone.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmRevokeBtn">Confirm Revoke</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Account Confirmation Modal -->
-<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-danger">Warning: This action cannot be undone.</p>
-                <p>Please type your password to confirm deletion:</p>
-                <div class="mb-3">
-                    <label for="confirmDeletePassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="confirmDeletePassword" required>
+    <!-- Revoke Confirmation Modal -->
+    <div class="modal fade" id="revokeModal" tabindex="-1" aria-labelledby="revokeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="revokeModalLabel">Confirm Revoke Access</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to revoke access for <span id="revokeUserEmail"></span>?</p>
+                    <p>This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmRevokeBtn">Confirm Revoke</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="deleteAccountBtn">Delete My Account</button>
+        </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">Warning: This action cannot be undone.</p>
+                    <p>Please type your password to confirm deletion:</p>
+                    <div class="mb-3">
+                        <label for="confirmDeletePassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="confirmDeletePassword" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="deleteAccountBtn">Delete My Account</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- Custom javascript -->
+    <script src="{{ url_for('static', filename='js/Homepage/dashboard.js') }}"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Theme toggle functionality
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        if (darkModeToggle) {
-            // Set initial state based on localStorage
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
-            darkModeToggle.checked = isDarkMode;
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-            }
-            
-            darkModeToggle.addEventListener('change', function() {
-                if (this.checked) {
-                    document.body.classList.add('dark-mode');
-                    localStorage.setItem('darkMode', 'true');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    localStorage.setItem('darkMode', 'false');
-                }
-                
+        // Theme toggle functionality - use theme.js functions
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('change', function() {
+                // Show success message when theme changes
                 showAlert('Theme preference saved!', 'success');
             });
         }
@@ -489,47 +546,6 @@
                 console.error('Error:', error);
                 showAlert('An error occurred. Please try again.', 'danger');
             });
-        });
-        
-        // Update password button
-        document.getElementById('updatePasswordBtn').addEventListener('click', function() {
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                showAlert('Please fill in all password fields', 'danger');
-                return;
-            }
-            
-            if (newPassword !== confirmPassword) {
-                showAlert('New passwords do not match', 'danger');
-                return;
-            }
-            
-            // In a real app, this would call an API
-            console.log('Password update request');
-            
-            // Clear form and show success
-            document.getElementById('currentPassword').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
-            showAlert('Password updated successfully!', 'success');
-        });
-        
-        // Update profile button
-        document.getElementById('updateProfileBtn').addEventListener('click', function() {
-            const displayName = document.getElementById('displayName').value;
-            
-            if (!displayName) {
-                showAlert('Display name cannot be empty', 'danger');
-                return;
-            }
-            
-            // In a real app, this would call an API
-            console.log(`Updating profile name to: ${displayName}`);
-            
-            showAlert('Profile updated successfully!', 'success');
         });
         
         // Delete account button
