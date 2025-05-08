@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  // Initialize DataTables
+  // Initialize DataTables with proper configuration
   var sleepTable = $("#sleepHistoryTable").DataTable({
     responsive: true,
     order: [[0, "desc"]], // Sort by date descending by default
@@ -31,7 +31,7 @@ $(document).ready(function () {
     dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex"f>>t<"d-flex justify-content-between align-items-center mt-3"<"d-flex"i><"d-flex"p>>',
   });
 
-  // Sidebar toggle
+  // Sidebar toggle functionality
   $("#sidebarToggle").on("click", function () {
     $(".sidebar").toggleClass("active");
 
@@ -48,7 +48,7 @@ $(document).ready(function () {
     }
   });
 
-  // Handle custom filter form - Fix filter functionality
+  // Handle custom filter form
   $("#applyFilters").click(function () {
     console.log("Apply filters clicked"); // Debug info
 
@@ -59,7 +59,7 @@ $(document).ready(function () {
 
     // Add custom filter function
     $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-      // Get filter values
+      // Get filter values with proper validation
       let dateFrom = $("#dateFrom").val()
         ? new Date($("#dateFrom").val())
         : null;
@@ -82,33 +82,72 @@ $(document).ready(function () {
         moodFilter,
       });
 
-      // Get row data
-      let date = new Date(data[0]);
-      let durationText = data[3];
-      let duration = parseFloat(durationText.replace(" hrs", ""));
+      // Get row data with safer parsing
+      try {
+        // Parse date safely
+        let date = data[0] ? new Date(data[0]) : null;
 
-      // Use regex to extract class names from HTML tags
-      let qualityMatch = data[4].match(/class="quality ([^"]+)"/);
-      let quality = qualityMatch ? qualityMatch[1].toLowerCase() : "";
+        // Extract duration (removing " hrs" text)
+        let durationText = data[3] || "0 hrs";
+        let duration = parseFloat(durationText.replace(/[^\d.-]/g, "")) || 0;
 
-      let moodMatch = data[5].match(/class="mood ([^"]+)"/);
-      let mood = moodMatch ? moodMatch[1].toLowerCase() : "";
+        // Extract quality and mood more reliably
+        let quality = "";
+        let mood = "";
 
-      console.log("Row data:", { date, duration, quality, mood });
+        // Use a safer approach to extract quality/mood values
+        if (data[4]) {
+          // Try to extract from HTML first
+          let qualityMatch = data[4].match(/class="quality ([^"]+)"/);
+          if (qualityMatch) {
+            quality = qualityMatch[1].toLowerCase();
+          } else {
+            // Fallback: just take the text and lowercase it
+            quality = $($.parseHTML(data[4])).text().toLowerCase().trim();
+          }
+        }
 
-      // Check each filter condition
-      let dateOk =
-        (!dateFrom || date >= dateFrom) && (!dateTo || date <= dateTo);
-      let durationOk =
-        (!durationMin || duration >= durationMin) &&
-        (!durationMax || duration <= durationMax);
-      let qualityOk = !qualityFilter || quality === qualityFilter;
-      let moodOk = !moodFilter || mood === moodFilter;
+        if (data[5]) {
+          let moodMatch = data[5].match(/class="mood ([^"]+)"/);
+          if (moodMatch) {
+            mood = moodMatch[1].toLowerCase();
+          } else {
+            mood = $($.parseHTML(data[5])).text().toLowerCase().trim();
+          }
+        }
 
-      let showRow = dateOk && durationOk && qualityOk && moodOk;
-      console.log("Show row?", showRow);
+        // Check each filter condition with proper validation
+        let dateOk = true;
+        if (
+          dateFrom instanceof Date &&
+          !isNaN(dateFrom) &&
+          date instanceof Date &&
+          !isNaN(date)
+        ) {
+          dateOk = date >= dateFrom;
+        }
+        if (
+          dateTo instanceof Date &&
+          !isNaN(dateTo) &&
+          date instanceof Date &&
+          !isNaN(date)
+        ) {
+          dateOk = dateOk && date <= dateTo;
+        }
 
-      return showRow;
+        let durationOk =
+          (!durationMin || duration >= durationMin) &&
+          (!durationMax || duration <= durationMax);
+
+        let qualityOk =
+          !qualityFilter || quality.includes(qualityFilter.toLowerCase());
+        let moodOk = !moodFilter || mood.includes(moodFilter.toLowerCase());
+
+        return dateOk && durationOk && qualityOk && moodOk;
+      } catch (e) {
+        console.error("Error filtering row:", e);
+        return true; // Show row in case of error
+      }
     });
 
     // Apply filters and redraw table
@@ -130,59 +169,107 @@ $(document).ready(function () {
     sleepTable.search("").columns().search("").draw();
   });
 
-  // Edit button click handler - Fix edit functionality
+  // Edit button click handler - improved to handle the DOM more safely
   $("#sleepHistoryTable").on("click", ".edit-btn", function (e) {
     console.log("Edit button clicked"); // Debug info
     e.preventDefault(); // Prevent default action
     e.stopPropagation(); // Prevent event bubbling
 
     let id = $(this).data("id");
+    if (!id) {
+      console.error("No ID found for edit button");
+      return;
+    }
+
     let row = $(this).closest("tr");
     let cells = row.find("td");
 
-    // Populate edit form with current values
+    // Safely populate edit form with current values
     $("#editEntryId").val(id);
-    $("#editSleepDate").val(cells.eq(0).text().trim());
-    $("#editSleepTime").val(cells.eq(1).text().trim());
-    $("#editWakeTime").val(cells.eq(2).text().trim());
 
-    // Extract quality value from span tag
-    let qualityText = cells.eq(4).find("span").text().toLowerCase().trim();
-    $("#editSleepQuality").val(qualityText);
+    // Get date value
+    let dateValue = cells.eq(0).text().trim();
+    $("#editSleepDate").val(dateValue);
 
-    // Extract mood value from span tag
-    let moodText = cells.eq(5).find("span").text().toLowerCase().trim();
-    $("#editMorningMood").val(moodText);
+    // Get sleep time
+    let sleepTimeValue = cells.eq(1).text().trim();
+    $("#editSleepTime").val(sleepTimeValue);
+
+    // Get wake time
+    let wakeTimeValue = cells.eq(2).text().trim();
+    $("#editWakeTime").val(wakeTimeValue);
+
+    // Extract quality value from span tag - more robust method
+    let qualityElement = cells.eq(4).find("span");
+    let qualityText = "";
+
+    if (qualityElement.length) {
+      qualityText = qualityElement.text().toLowerCase().trim();
+    } else {
+      qualityText = cells.eq(4).text().toLowerCase().trim();
+    }
+
+    // Set dropdown value, with fallback options
+    if ($("#editSleepQuality option[value='" + qualityText + "']").length) {
+      $("#editSleepQuality").val(qualityText);
+    } else if (qualityText.includes("excellent")) {
+      $("#editSleepQuality").val("excellent");
+    } else if (qualityText.includes("good")) {
+      $("#editSleepQuality").val("good");
+    } else if (qualityText.includes("fair")) {
+      $("#editSleepQuality").val("fair");
+    } else if (qualityText.includes("poor")) {
+      $("#editSleepQuality").val("poor");
+    }
+
+    // Extract mood value from span tag - more robust method
+    let moodElement = cells.eq(5).find("span");
+    let moodText = "";
+
+    if (moodElement.length) {
+      moodText = moodElement.text().toLowerCase().trim();
+    } else {
+      moodText = cells.eq(5).text().toLowerCase().trim();
+    }
+
+    // Set dropdown value, with fallback options
+    if ($("#editMorningMood option[value='" + moodText + "']").length) {
+      $("#editMorningMood").val(moodText);
+    } else if (moodText.includes("refreshed")) {
+      $("#editMorningMood").val("refreshed");
+    } else if (moodText.includes("neutral")) {
+      $("#editMorningMood").val("neutral");
+    } else if (moodText.includes("tired")) {
+      $("#editMorningMood").val("tired");
+    } else if (moodText.includes("exhausted")) {
+      $("#editMorningMood").val("exhausted");
+    }
 
     // Extract notes
     $("#editSleepNotes").val(cells.eq(6).text().trim());
 
-    // Set form submission URL - Fix edit functionality
+    // Set form submission URL correctly
     let editUrl = "/edit-sleep/" + id;
     $("#editEntryForm").attr("action", editUrl);
 
-    console.log("Setting form action to:", editUrl);
-    console.log("Form values:", {
-      id: id,
-      date: cells.eq(0).text(),
-      sleepTime: cells.eq(1).text(),
-      wakeTime: cells.eq(2).text(),
-      quality: qualityText,
-      mood: moodText,
-      notes: cells.eq(6).text(),
-    });
+    console.log("Form configured for editing record ID:", id);
 
     // Show edit modal
     $("#editEntryModal").modal("show");
   });
 
-  // Delete button click handler
+  // Delete button click handler - improved with better error handling
   $("#sleepHistoryTable").on("click", ".delete-btn", function (e) {
     console.log("Delete button clicked"); // Debug info
     e.preventDefault();
     e.stopPropagation();
 
     let id = $(this).data("id");
+    if (!id) {
+      console.error("No ID found for delete button");
+      return;
+    }
+
     $("#deleteEntryId").val(id);
 
     // Set delete form submission URL
@@ -193,44 +280,67 @@ $(document).ready(function () {
   });
 
   // Update Sleep Goal handler
-  $("#saveGoalBtn").click(function (event) {
-    console.log("Save goal button clicked"); // Debug info
-    const sleepGoalHours = parseFloat($("#sleepGoalHours").val());
-    const sleepGoalMinutes = parseInt($("#sleepGoalMinutes").val());
+  $("#saveGoalBtn").click(function (e) {
+    // Get values with validation
+    const sleepGoalHours = parseFloat($("#sleepGoalHours").val() || "8");
+    const sleepGoalMinutes = parseInt($("#sleepGoalMinutes").val() || "0");
 
     if (isNaN(sleepGoalHours) || isNaN(sleepGoalMinutes)) {
       alert("Please enter valid numbers for sleep goal");
+      e.preventDefault();
       return;
     }
 
-    // Calculate total hours
     const totalHours = sleepGoalHours + sleepGoalMinutes / 60;
-
-    // Update goal display
     $("#currentGoalValue").text(totalHours.toFixed(1));
 
-    // Update progress circle
-    const averageDuration = parseFloat(
-      $('.card:contains("Average Sleep Duration")').find(".h5").text()
-    );
-    const percentage = Math.min(
-      100,
-      Math.round((averageDuration / totalHours) * 100)
-    );
+    // Get average duration with fallback
+    let averageDuration = 0;
+    try {
+      averageDuration =
+        parseFloat(
+          $('.card:contains("Average Sleep Duration")').find(".h5").text()
+        ) || 0;
+    } catch (err) {
+      console.error("Error getting average duration:", err);
+      averageDuration = 0;
+    }
+
+    // Calculate percentage with safety check to avoid division by zero
+    const percentage =
+      totalHours > 0
+        ? Math.min(100, Math.round((averageDuration / totalHours) * 100))
+        : 0;
+
     updateProgressCircle(percentage);
 
-    // Close the modal
-    $("#sleepGoalModal").modal("hide");
-
-    // Show success message
+    // Success notification
     showToast("Sleep goal updated successfully!", "success");
   });
 
-  // Function to update the progress circle
+  // Sleep goal dropdown change handlers
+  $("#sleepGoalHours").change(function () {
+    updateSleepGoal("hours", $(this).val());
+  });
+
+  $("#sleepGoalMinutes").change(function () {
+    updateSleepGoal("minutes", $(this).val());
+  });
+
+  // Function to update sleep goal
+  function updateSleepGoal(type, value) {
+    console.log(`Updated ${type} to ${value}`);
+    // Add AJAX request or other logic here, e.g., update database or refresh UI
+  }
+
+  // Function to update the progress circle - single optimized implementation
   function updateProgressCircle(percentage) {
-    // Get progress circle element
+    // Get progress circle element with validation
     const progressCircle = document.querySelector("#goalProgress");
-    if (!progressCircle) return;
+    if (!progressCircle) {
+      console.error("Progress circle element not found");
+      return;
+    }
 
     const radius = 55; // Circle radius
     const circumference = 2 * Math.PI * radius;
@@ -260,19 +370,21 @@ $(document).ready(function () {
     }
   }
 
-  // Update entry button - Replaced by form submission
-  $("#updateEntryBtn").on("click", function () {
+  // Update entry button - Fixed to properly handle form validation
+  $("#updateEntryBtn").on("click", function (e) {
     console.log("Update entry button clicked");
+
     // Form validation
     let form = $("#editEntryForm")[0];
     if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
       form.classList.add("was-validated");
       return;
     }
 
     // Form will be automatically submitted to edit-sleep route
+    // No need to prevent default - allow normal form submission
   });
 
   // Function to show toast notifications
@@ -324,74 +436,81 @@ $(document).ready(function () {
 
   // Calculate and update summary statistics
   function updateSummaryStats() {
-    let totalDuration = 0;
-    let qualityCounts = { excellent: 0, good: 0, fair: 0, poor: 0 };
-    let sleepTimes = [];
-    let wakeTimes = [];
+    try {
+      let totalDuration = 0;
+      let qualityCounts = { excellent: 0, good: 0, fair: 0, poor: 0 };
+      let sleepTimes = [];
+      let wakeTimes = [];
 
-    sleepTable.rows({ search: "applied" }).every(function () {
-      let data = this.data();
+      // Process visible rows in the table
+      sleepTable.rows({ search: "applied" }).every(function () {
+        let data = this.data();
+        if (!data) return;
 
-      // Duration
-      let duration = parseFloat(data[3].replace(" hrs", ""));
-      if (!isNaN(duration)) {
-        totalDuration += duration;
+        // Duration - extract numeric value safely
+        let durationText = data[3] || "0 hrs";
+        let duration = parseFloat(durationText.replace(/[^\d.-]/g, "")) || 0;
+        if (!isNaN(duration)) {
+          totalDuration += duration;
+        }
+
+        // Quality - count occurrences safely
+        let qualityText = data[4] ? data[4].toLowerCase() : "";
+        if (qualityText.includes("excellent")) qualityCounts.excellent++;
+        if (qualityText.includes("good")) qualityCounts.good++;
+        if (qualityText.includes("fair")) qualityCounts.fair++;
+        if (qualityText.includes("poor")) qualityCounts.poor++;
+
+        // Sleep and wake times - collect values if present
+        if (data[1]) sleepTimes.push(data[1].trim());
+        if (data[2]) wakeTimes.push(data[2].trim());
+      });
+
+      // Calculate averages
+      let rowCount = sleepTable.rows({ search: "applied" }).count() || 1; // Avoid division by zero
+      let averageDuration = (totalDuration / rowCount).toFixed(1);
+
+      // Find most common quality
+      let maxQuality = "Good"; // Default value
+      let maxCount = 0;
+      for (let q in qualityCounts) {
+        if (qualityCounts[q] > maxCount) {
+          maxCount = qualityCounts[q];
+          maxQuality = q.charAt(0).toUpperCase() + q.slice(1);
+        }
       }
 
-      // Quality
-      let quality = data[4].toLowerCase();
-      if (quality.includes("excellent")) qualityCounts.excellent++;
-      if (quality.includes("good")) qualityCounts.good++;
-      if (quality.includes("fair")) qualityCounts.fair++;
-      if (quality.includes("poor")) qualityCounts.poor++;
+      // Update summary cards safely
+      $('.card:contains("Average Sleep Duration")')
+        .find(".h5")
+        .text(averageDuration + " hrs");
+      $('.card:contains("Most Common Quality")').find(".h5").text(maxQuality);
 
-      // Sleep and wake times
-      sleepTimes.push(data[1]);
-      wakeTimes.push(data[2]);
-    });
+      // Calculate median for sleep and wake times
+      if (sleepTimes.length > 0) {
+        sleepTimes.sort();
+        wakeTimes.sort();
 
-    // Calculate averages
-    let rowCount = sleepTable.rows({ search: "applied" }).count();
-    let averageDuration =
-      rowCount > 0 ? (totalDuration / rowCount).toFixed(1) : 0;
+        let medianIndex = Math.floor(sleepTimes.length / 2);
+        let medianSleepTime = sleepTimes[medianIndex] || "23:00";
+        let medianWakeTime = wakeTimes[medianIndex] || "07:00";
 
-    // Find most common quality
-    let maxQuality = "";
-    let maxCount = 0;
-    for (let q in qualityCounts) {
-      if (qualityCounts[q] > maxCount) {
-        maxCount = qualityCounts[q];
-        maxQuality = q.charAt(0).toUpperCase() + q.slice(1);
+        $('.card:contains("Usual Bedtime")').find(".h5").text(medianSleepTime);
+        $('.card:contains("Usual Wake Time")').find(".h5").text(medianWakeTime);
       }
-    }
 
-    // Update summary cards
-    $('.card:contains("Average Sleep Duration")')
-      .find(".h5")
-      .text(averageDuration + " hrs");
-    $('.card:contains("Most Common Quality")').find(".h5").text(maxQuality);
-
-    // Calculate median for sleep and wake times (simplified approach)
-    if (sleepTimes.length > 0) {
-      sleepTimes.sort();
-      wakeTimes.sort();
-
-      let medianIndex = Math.floor(sleepTimes.length / 2);
-      let medianSleepTime = sleepTimes[medianIndex];
-      let medianWakeTime = wakeTimes[medianIndex];
-
-      $('.card:contains("Usual Bedtime")').find(".h5").text(medianSleepTime);
-      $('.card:contains("Usual Wake Time")').find(".h5").text(medianWakeTime);
-    }
-
-    // Update progress circle if a goal is set
-    const goalValue = parseFloat($("#currentGoalValue").text());
-    if (!isNaN(goalValue) && goalValue > 0) {
-      const percentage = Math.min(
-        100,
-        Math.round((averageDuration / goalValue) * 100)
-      );
-      updateProgressCircle(percentage);
+      // Update progress circle if a goal is set
+      const goalValueText = $("#currentGoalValue").text() || "8.0";
+      const goalValue = parseFloat(goalValueText);
+      if (!isNaN(goalValue) && goalValue > 0) {
+        const percentage = Math.min(
+          100,
+          Math.round((averageDuration / goalValue) * 100)
+        );
+        updateProgressCircle(percentage);
+      }
+    } catch (err) {
+      console.error("Error updating summary stats:", err);
     }
   }
 
@@ -400,9 +519,13 @@ $(document).ready(function () {
   sleepTable.on("draw", updateSummaryStats);
 
   // Set current date as default for date inputs
-  const today = new Date().toISOString().split("T")[0];
-  $("#dateFrom").val(today);
-  $("#dateTo").val(today);
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    $("#dateFrom").val(today);
+    $("#dateTo").val(today);
+  } catch (e) {
+    console.error("Error setting default dates:", e);
+  }
 
   // Initialize tooltips
   try {
@@ -416,6 +539,6 @@ $(document).ready(function () {
     console.error("Error initializing tooltips:", e);
   }
 
-  // Initialize goal circle
+  // Initialize goal circle with default value
   updateProgressCircle(75); // Default value until real data is calculated
 });

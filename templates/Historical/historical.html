@@ -218,7 +218,10 @@
                     <div class="col-md-4 text-center">
                       <h5 class="text-white mb-3">Current Sleep Goal</h5>
                       <div class="goal-value mb-2">
-                        <span id="currentGoalValue">8.0</span> hrs
+                        <span id="currentGoalValue"
+                          >{{ sleep_goal_hours }}</span
+                        >
+                        hrs
                       </div>
                       <p class="text-white">Set your ideal sleep duration</p>
                     </div>
@@ -681,19 +684,24 @@
                   </li>
                 </ul>
               </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button type="submit" class="btn btn-primary" id="saveGoalBtn">
-                  Save Goal
-                </button>
-              </div>
             </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="sleepGoalForm"
+              class="btn btn-primary"
+              id="saveGoalBtn"
+            >
+              Save Goal
+            </button>
           </div>
         </div>
       </div>

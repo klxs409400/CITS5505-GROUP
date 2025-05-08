@@ -539,7 +539,12 @@
             >
               <div class="mb-3">
                 <label for="sleepGoalHours" class="form-label">Hours</label>
-                <select class="form-select" id="sleepGoalHours" required>
+                <select
+                  class="form-select"
+                  id="sleepGoalHours"
+                  name="sleepGoalHours"
+                  required
+                >
                   <option value="6">6 hours</option>
                   <option value="7">7 hours</option>
                   <option value="8" selected>8 hours</option>
@@ -549,7 +554,12 @@
               </div>
               <div class="mb-3">
                 <label for="sleepGoalMinutes" class="form-label">Minutes</label>
-                <select class="form-select" id="sleepGoalMinutes" required>
+                <select
+                  class="form-select"
+                  id="sleepGoalMinutes"
+                  name="sleepGoalMinutes"
+                  required
+                >
                   <option value="0" selected>0 minutes</option>
                   <option value="15">15 minutes</option>
                   <option value="30">30 minutes</option>
@@ -591,14 +601,18 @@
             >
               Cancel
             </button>
-            <button type="submit" class="btn btn-primary" id="saveGoalBtn">
+            <button
+              type="submit"
+              form="sleepGoalForm"
+              class="btn btn-primary"
+              id="saveGoalBtn"
+            >
               Save Goal
             </button>
           </div>
         </div>
       </div>
     </div>
-
     <!-- Delete Confirmation Modal -->
     <div
       class="modal fade"
