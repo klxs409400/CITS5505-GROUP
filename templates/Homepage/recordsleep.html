@@ -130,16 +130,23 @@
                         <span class="input-group-text">min</span>
                       </div>
                     </div>
-                    
+
                     <div class="record-container">
-                      <label for="sleep_latency" class="record-label">Sleep Latency:</label>
-                      <select id="sleep_latency" name="sleep_latency" class="record-input" required>
+                      <label for="sleep_latency" class="record-label"
+                        >Sleep Latency:</label
+                      >
+                      <select
+                        id="sleep_latency"
+                        name="sleep_latency"
+                        class="record-input"
+                        required
+                      >
                         <option value="3">≤ 15 minutes (Best)</option>
                         <option value="1">16–60 minutes (Moderate)</option>
                         <option value="0">> 60 minutes (Poor)</option>
                       </select>
-                    </div>                                     
-                    
+                    </div>
+
                     <!-- Sleep Disturbances -->
                     <div class="mb-4">
                       <label class="form-label"
@@ -320,10 +327,50 @@
                       </select>
                     </div>
 
-                    <!-- 添加隐藏字段用于质量和心情 -->
-                    <input type="hidden" name="quality" value="Good" />
-                    <input type="hidden" name="mood" value="Neutral" />
-                    <input type="hidden" name="notes" value="" />
+                    <!-- Sleep Quality - ADDED SELECTION -->
+                    <div class="mb-4">
+                      <label for="quality" class="form-label"
+                        >Sleep Quality</label
+                      >
+                      <select
+                        class="form-control"
+                        id="quality"
+                        name="quality"
+                        required
+                      >
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good" selected>Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Poor">Poor</option>
+                      </select>
+                    </div>
+
+                    <!-- Morning Mood - ADDED SELECTION -->
+                    <div class="mb-4">
+                      <label for="mood" class="form-label">Morning Mood</label>
+                      <select
+                        class="form-control"
+                        id="mood"
+                        name="mood"
+                        required
+                      >
+                        <option value="Refreshed">Refreshed</option>
+                        <option value="Neutral" selected>Neutral</option>
+                        <option value="Tired">Tired</option>
+                        <option value="Exhausted">Exhausted</option>
+                      </select>
+                    </div>
+
+                    <!-- Notes - ADDED TEXTAREA -->
+                    <div class="mb-4">
+                      <label for="notes" class="form-label">Notes</label>
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        name="notes"
+                        rows="3"
+                      ></textarea>
+                    </div>
 
                     <!-- Submit button -->
                     <div class="text-center mt-4">

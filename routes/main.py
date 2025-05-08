@@ -1,12 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from models import SleepRecord
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template, redirect, url_for, request
 
 main = Blueprint('main', __name__)
 
-@main.route('/')
 @main.route('/')
 def index():
     # Add a query parameter to allow viewing of the homepage even if you are logged in
@@ -46,7 +44,7 @@ def dashboard():
     return render_template(
         'Homepage/dashboard.html',
         recent_records=recent_records,
-        sleep_records=sleep_records,
+        sleep_records=sleep_records[:7],  # Last 7 days for weekly view
         quality_stats=quality_stats,
         now=datetime.now(),
         timedelta=timedelta
@@ -54,7 +52,6 @@ def dashboard():
 
 @main.route('/demo')
 def demo():
-
     quality_stats = {"excellent": 25, "good": 45, "fair": 20, "poor": 10}
     now = datetime.now()
     

@@ -41,7 +41,7 @@
             class="rounded-circle"
             alt="User Profile"
           />
-          <h5>John Doe</h5>
+          <h5>{{ current_user.username }}</h5>
           <p>Sleep Enthusiast</p>
         </div>
 
@@ -168,7 +168,7 @@
                     width="30"
                     height="30"
                   />
-                  <span class="d-none d-lg-inline text-white">John Doe</span>
+                  <span class="d-none d-lg-inline text-white">{{ current_user.username }}</span>
                 </a>
                 <ul
                   class="dropdown-menu dropdown-menu-end"
@@ -467,62 +467,34 @@
                   </tr>
                 </thead>
                 <tbody>
+                  {% for record in recent_records %}
                   <tr>
-                    <td>Apr 28, 2025</td>
-                    <td>7h 30m</td>
-                    <td>23:30</td>
-                    <td>07:00</td>
+                    <td>{{ record.date.strftime('%b %d, %Y') }}</td>
                     <td>
-                      <span class="badge-quality badge-excellent"
-                        >Excellent</span
+                      {{ record.duration_hours|round(1) }}h {{
+                      ((record.duration_hours % 1) * 60)|int }}m
+                    </td>
+                    <td>{{ record.bedtime.strftime('%H:%M') }}</td>
+                    <td>{{ record.wake_time.strftime('%H:%M') }}</td>
+                    <td>
+                      <span
+                        class="badge-quality badge-{{ record.quality.lower() }}"
+                        >{{ record.quality }}</span
                       >
                     </td>
                     <td>
-                      <span class="badge-mood badge-refreshed">Refreshed</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Apr 27, 2025</td>
-                    <td>6h 45m</td>
-                    <td>00:15</td>
-                    <td>07:00</td>
-                    <td><span class="badge-quality badge-good">Good</span></td>
-                    <td>
-                      <span class="badge-mood badge-neutral">Neutral</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Apr 26, 2025</td>
-                    <td>8h 15m</td>
-                    <td>22:45</td>
-                    <td>07:00</td>
-                    <td>
-                      <span class="badge-quality badge-excellent"
-                        >Excellent</span
+                      <span class="badge-mood badge-{{ record.mood.lower() }}"
+                        >{{ record.mood }}</span
                       >
                     </td>
-                    <td>
-                      <span class="badge-mood badge-refreshed">Refreshed</span>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td colspan="6" class="text-center">
+                      No sleep records found. Start tracking your sleep!
                     </td>
                   </tr>
-                  <tr>
-                    <td>Apr 25, 2025</td>
-                    <td>6h 00m</td>
-                    <td>00:00</td>
-                    <td>06:00</td>
-                    <td><span class="badge-quality badge-fair">Fair</span></td>
-                    <td><span class="badge-mood badge-tired">Tired</span></td>
-                  </tr>
-                  <tr>
-                    <td>Apr 24, 2025</td>
-                    <td>5h 30m</td>
-                    <td>01:30</td>
-                    <td>07:00</td>
-                    <td><span class="badge-quality badge-poor">Poor</span></td>
-                    <td>
-                      <span class="badge-mood badge-exhausted">Exhausted</span>
-                    </td>
-                  </tr>
+                  {% endfor %}
                 </tbody>
               </table>
             </div>

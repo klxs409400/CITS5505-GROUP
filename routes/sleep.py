@@ -1,4 +1,3 @@
-# Import necessary Flask and Flask-Login components
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, SleepRecord
@@ -8,7 +7,6 @@ from collections import Counter
 # Create a Blueprint for sleep-related routes
 sleep = Blueprint('sleep', __name__)
 
-# Route to handle sleep record creation (GET to display form, POST to save data)
 @sleep.route('/record-sleep', methods=['GET', 'POST'])
 @login_required
 def record_sleep():
@@ -44,7 +42,19 @@ def record_sleep():
                 duration_hours=duration,
                 quality=request.form.get('quality', 'Good'),  # Default: Good
                 mood=request.form.get('mood', 'Neutral'),      # Default: Neutral
-                notes=request.form.get('notes', '')
+                notes=request.form.get('notes', ''),
+                
+                # Process additional form fields
+                sleep_disturbances=request.form.get('sleepDisturbances', 'None'),
+                sleep_aid=request.form.get('sleepAid', 'None'),
+                daytime_dysfunction=request.form.get('daytimeDysfunction', 'None'),
+                
+                # Process numeric fields, with defaults
+                caffeine=int(request.form.get('caffeine', 1)),
+                exercise=int(request.form.get('exercise', 1)),
+                screen=int(request.form.get('screen', 1)),
+                eating=int(request.form.get('eating', 1)),
+                sleep_latency=int(request.form.get('sleep_latency', 3))
             )
             
             db.session.add(sleep_record)
