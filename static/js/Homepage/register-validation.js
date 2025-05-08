@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const passwordError = document.getElementById("passwordError");
   const confirmPasswordError = document.getElementById("confirmPasswordError");
 
+  // Style error messages to be more visible
+  const allErrorElements = [usernameError, emailError, passwordError, confirmPasswordError];
+  allErrorElements.forEach(elem => {
+    if (elem) {
+      elem.style.color = "red";
+      elem.style.display = "block";
+      elem.style.marginTop = "5px";
+      elem.style.fontWeight = "bold";
+    }
+  });
+
   // Validate username
   function validateUsername() {
     const value = username.value.trim();
@@ -48,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Validate password
+  // Validate password - simplified to only check length
   function validatePassword() {
     const value = password.value;
 
@@ -57,17 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return false;
     } else if (value.length < 8) {
       passwordError.textContent = "Password must be at least 8 characters";
-      return false;
-    } else if (!/[A-Z]/.test(value)) {
-      passwordError.textContent =
-        "Password must contain at least one uppercase letter";
-      return false;
-    } else if (!/[a-z]/.test(value)) {
-      passwordError.textContent =
-        "Password must contain at least one lowercase letter";
-      return false;
-    } else if (!/[0-9]/.test(value)) {
-      passwordError.textContent = "Password must contain at least one number";
       return false;
     } else {
       passwordError.textContent = "";
@@ -93,10 +93,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Add real-time validation
-  username.addEventListener("blur", validateUsername);
-  email.addEventListener("blur", validateEmail);
-  password.addEventListener("blur", validatePassword);
-  confirmPassword.addEventListener("blur", validateConfirmPassword);
+  username.addEventListener("input", validateUsername);
+  email.addEventListener("input", validateEmail);
+  password.addEventListener("input", validatePassword);
+  confirmPassword.addEventListener("input", validateConfirmPassword);
 
   // Validate all fields on form submit
   registerForm.addEventListener("submit", function (event) {
@@ -105,13 +105,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const isPasswordValid = validatePassword();
     const isConfirmPasswordValid = validateConfirmPassword();
 
-    if (
-      !isUsernameValid ||
-      !isEmailValid ||
-      !isPasswordValid ||
-      !isConfirmPasswordValid
-    ) {
+    console.log("Form validation:", { 
+      isUsernameValid, 
+      isEmailValid, 
+      isPasswordValid, 
+      isConfirmPasswordValid 
+    });
+
+    if (!isUsernameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
       event.preventDefault();
+      console.log("Form submission prevented due to validation errors");
+      
+      // Make sure the first error is visible to the user
+      if (!isUsernameValid) username.focus();
+      else if (!isEmailValid) email.focus();
+      else if (!isPasswordValid) password.focus();
+      else confirmPassword.focus();
     }
   });
 });
