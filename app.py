@@ -2,6 +2,8 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from models import db, User
+import os
+import subprocess
 
 def create_app():
     app = Flask(__name__)
@@ -40,12 +42,33 @@ def create_app():
     
     return app
 
-# Create the application instance for 'flask run' to use
+# Create an application instance
 app = create_app()
 
-if __name__ == '__main__':
-    # Create database tables
-    with app.app_context():
-        db.create_all()
+# Check if database exists and initialize if needed
+def init_db_if_needed():
+    # Check if database file exists
+    db_file = 'sleeptracker.db'
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), db_file)
+    
+    if not os.path.exists(db_path):
+        print("Database file not found. Creating database tables...")
+        # Create database tables
+        with app.app_context():
+            db.create_all()
         
+        # Initialize test data
+        print("Initializing test data with init_db.py...")
+        try:
+            subprocess.run(["python3", "init_db.py"], check=True)
+            print("Test data initialized successfully!")
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to initialize test data: {e}")
+    else:
+        print(f"Database file {db_file} already exists.")
+
+# Initialize the database when this module is imported
+init_db_if_needed()
+
+if __name__ == '__main__':
     app.run(debug=True)
