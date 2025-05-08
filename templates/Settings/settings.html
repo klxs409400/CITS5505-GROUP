@@ -267,18 +267,21 @@
                                     <form class="row g-3" id="passwordForm" action="{{ url_for('settings.update_password') }}" method="POST">
                                         <div class="col-md-8">
                                             <label for="currentPassword">Current Password</label>
-                                            <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password" required>
+                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
+                                            <small id="currentPasswordError" class="text-danger"></small>
                                         </div>
                                         <div class="col-md-8 mt-3">
                                             <label for="newPassword">New Password</label>
                                             <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" required>
+                                            <small id="newPasswordError" class="text-danger"></small>
                                         </div>
                                         <div class="col-md-8 mt-3">
                                             <label for="confirmPassword">Confirm New Password</label>
-                                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password" required>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
+                                            <small id="confirmPasswordError" class="text-danger"></small>
                                         </div>
                                         <div class="col-md-8 mt-3">
-                                            <button type="submit" class="btn btn-primary">Update Password</button>
+                                            <button type="submit" class="btn btn-primary" id="updatePasswordBtn">Update Password</button>
                                         </div>
                                     </form>
                                 </section>
@@ -363,6 +366,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- 密码验证脚本 -->
+    <script src="{{ url_for('static', filename='js/Settings/password-validation.js') }}"></script>
     <!-- Custom javascript -->
     <script src="{{ url_for('static', filename='js/Homepage/dashboard.js') }}"></script>
 

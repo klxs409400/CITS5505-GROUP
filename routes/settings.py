@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, User, DataSharing
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 settings = Blueprint('settings', __name__)
 
@@ -18,13 +18,30 @@ def view_settings():
 @settings.route('/settings/update-password', methods=['POST'])
 @login_required
 def update_password():
-    new_password = request.form['newPassword']
+    current_password = request.form.get('currentPassword')
+    new_password = request.form.get('newPassword')
+    confirm_password = request.form.get('confirmPassword')
     
-    # Update passwords
+    # Validate form inputs are complete
+    if not current_password or not new_password or not confirm_password:
+        flash('All password fields are required', 'danger')
+        return redirect(url_for('settings.view_settings'))
+    
+    # Verify current password is correct
+    if not check_password_hash(current_user.password_hash, current_password):
+        flash('Current password is incorrect', 'danger')
+        return redirect(url_for('settings.view_settings'))
+    
+    # Verify new password and confirmation match
+    if new_password != confirm_password:
+        flash('New password and confirmation do not match', 'danger')
+        return redirect(url_for('settings.view_settings'))
+    
+    # Update password - removed length validation
     current_user.password_hash = generate_password_hash(new_password)
     db.session.commit()
     
-    flash('Password updated successfully!')
+    flash('Password updated successfully!', 'success')
     return redirect(url_for('settings.view_settings'))
 
 @settings.route('/settings/share', methods=['POST'])
