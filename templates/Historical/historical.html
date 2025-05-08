@@ -21,6 +21,8 @@
     />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Theme JS -->
+    <script src="{{ url_for('static', filename='js/Settings/theme.js') }}"></script>
     <!-- Main Styles -->
     <link
       rel="stylesheet"
@@ -288,9 +290,8 @@
                   day)|first %} {% if record %}
                   <div class="progress">
                     <div
-                      class="progress-bar {% if record.quality == 'Excellent' %}bg-success {% elif record.quality == 'Good' %}bg-primary {% elif record.quality == 'Fair' %}bg-warning {% else %}bg-danger{% endif %}"
+                      class="progress-bar {% if record.quality == 'Excellent' %}bg-success {% elif record.quality == 'Good' %}bg-primary {% elif record.quality == 'Fair' %}bg-warning {% else %}bg-danger{% endif %} {% if record.duration_hours <= 1 %}progress-width-10{% elif record.duration_hours <= 2 %}progress-width-20{% elif record.duration_hours <= 3 %}progress-width-30{% elif record.duration_hours <= 4 %}progress-width-40{% elif record.duration_hours <= 5 %}progress-width-50{% elif record.duration_hours <= 6 %}progress-width-60{% elif record.duration_hours <= 7 %}progress-width-70{% elif record.duration_hours <= 8 %}progress-width-80{% elif record.duration_hours <= 9 %}progress-width-90{% else %}progress-width-100{% endif %}"
                       role="progressbar"
-                      style="width: {{ (record.duration_hours/10)*100 }}%"
                       aria-valuenow="{{ record.duration_hours }}"
                       aria-valuemin="0"
                       aria-valuemax="10"
@@ -747,8 +748,6 @@
               <div class="mb-3">
                 <label for="editWakeTime" class="form-label">Wake Time</label>
                 <input
-                  type="time"
-                  class="form-control"
                   type="time"
                   class="form-control"
                   id="editWakeTime"
