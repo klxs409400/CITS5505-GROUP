@@ -20,6 +20,50 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
     <!-- Page Specific Styles -->
     <link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" />
+    
+    <!-- Pass flash messages to JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson }}');
+        
+        // Display flash messages if any
+        if (flashMessages && flashMessages.length > 0) {
+          flashMessages.forEach(function(flash) {
+            const category = flash[0] !== 'message' ? flash[0] : 'info';
+            const message = flash[1];
+            
+            // Use toastr or any other notification library you're using
+            // This example assumes you're using Bootstrap alerts
+            showAlert(category, message);
+          });
+        }
+        
+        function showAlert(category, message) {
+          const alertContainer = document.createElement('div');
+          alertContainer.className = `alert alert-${category} alert-dismissible fade show`;
+          alertContainer.setAttribute('role', 'alert');
+          
+          alertContainer.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          
+          // Insert at the top of the content area
+          const mainContent = document.querySelector('.main-content');
+          if (mainContent) {
+            mainContent.insertBefore(alertContainer, mainContent.firstChild);
+          }
+          
+          // Auto-dismiss after 5 seconds
+          setTimeout(function() {
+            alertContainer.classList.remove('show');
+            setTimeout(function() {
+              alertContainer.remove();
+            }, 150);
+          }, 5000);
+        }
+      });
+    </script>
   </head>
   <body class="profile-page">
     <div class="wrapper">

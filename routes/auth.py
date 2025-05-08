@@ -35,18 +35,24 @@ def register():
     
     if request.method == 'POST':
         email = request.form['email']
+        username = request.form['username']
         print("Form submitted with:", request.form)
         
+        # Check if email already exists
         if User.query.filter_by(email=email).first():
             flash('Email already registered.')
             return redirect(url_for('auth.register'))
         
-
-        username = email.split('@')[0]  
+        # Check if username already exists
+        if User.query.filter_by(username=username).first():
+            flash('Username already taken.')
+            return redirect(url_for('auth.register'))
+        
+        # Create new user with the provided username
         user = User(
             username=username,
             email=email,
-            full_name=request.form['username'],
+            full_name=username,  # Using username as full_name for now
             date_joined=datetime.utcnow()
         )
         user.set_password(request.form['password'])

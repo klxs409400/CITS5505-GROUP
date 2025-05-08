@@ -39,6 +39,18 @@ This web application allows users to track and analyze their sleep patterns and 
 3. **Visualization View**: Dashboard displaying sleep metrics, trends, and factor analysis
 4. **Share View**: Interface allowing users to share specific reports with other users
 
+## Test Accounts
+
+The application comes with pre-initialized test accounts for development and testing purposes:
+
+| Username | Email | Password |
+|----------|-------|----------|
+| johndoe | john.doe@example.com | password123 |
+| janesmith | jane.smith@example.com | password456 |
+| testdelete | delete.test@example.com | deletetest123 |
+
+*Note: These accounts are for development environment only and should not be used in production.*
+
 ## Installation Instructions
 
 _[To be completed as the project develops]_
