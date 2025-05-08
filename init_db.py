@@ -282,4 +282,73 @@ with app.app_context():
     else:
         print("Second test user already exists.")
 
+    # Add a third test user (if not already present)
+    if not User.query.filter_by(username='testdelete').first():
+        third_user = User(
+            username='testdelete',
+            email='delete.test@example.com',
+            full_name='Test Delete User',
+            password_hash=generate_password_hash('deletetest123'),
+            # Sample data for new fields
+            phone='+1 (555) 111-2222',
+            location='Seattle, USA',
+            timezone='PT',
+            bio='Test user account created specifically to test the delete user functionality.',
+            profile_pic='images/demo.jpg'
+        )
+        db.session.add(third_user)
+        db.session.commit()  # Commit the user first to retrieve user ID
+        
+        # Add sleep goal
+        sleep_goal = SleepGoal(
+            user_id=third_user.id,
+            target_hours=8,
+            target_minutes=30
+        )
+        db.session.add(sleep_goal)
+        
+        # Add some achievements (some unlocked, some locked)
+        achievements = [
+            Achievement(
+                user_id=third_user.id,
+                name="Test Achievement",
+                description="This is a test achievement for the delete user",
+                icon="fa-trash",
+                is_locked=False
+            )
+        ]
+        db.session.add_all(achievements)
+        
+        # Add a sample sleep record
+        from datetime import date, time, timedelta
+        
+        # Create a sample entry
+        record_date = date.today() - timedelta(days=1)
+        bedtime = datetime.combine(record_date - timedelta(days=1), time(22, 30))  # 10:30 PM
+        wake_time = datetime.combine(record_date, time(6, 30))  # 6:30 AM
+        
+        sleep_record = SleepRecord(
+            user_id=third_user.id,
+            date=record_date,
+            bedtime=bedtime,
+            wake_time=wake_time,
+            duration_hours=8.0,
+            quality="Good",
+            mood="Refreshed",
+            notes="Test delete user's sleep record",
+            sleep_disturbances="None",
+            sleep_aid="None",
+            daytime_dysfunction="None",
+            caffeine=0,   # None
+            exercise=1,   # Light exercise
+            screen=1,     # 15-60 min
+            eating=1      # Sometimes
+        )
+        db.session.add(sleep_record)
+        
+        db.session.commit()
+        print("Third test user for deletion testing created.")
+    else:
+        print("Third test user already exists.")
+
 print("Database initialized.")
