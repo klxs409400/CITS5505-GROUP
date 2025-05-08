@@ -1,252 +1,248 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from models import db, SleepRecord, SleepGoal
-from datetime import datetime, timedelta
-from collections import Counter
+from datetime import datetime, date, time, timedelta
 
-# Create a Blueprint for sleep-related routes
 sleep = Blueprint('sleep', __name__)
 
 @sleep.route('/record-sleep', methods=['GET', 'POST'])
 @login_required
 def record_sleep():
+    """
+    Route to record a new sleep entry. Handles both the display form (GET)
+    and form submission (POST).
+    """
     if request.method == 'POST':
-        # Extract form data
-        date_str = request.form['sleepDate']
-        sleep_time_str = request.form['sleepTime']
-        wake_time_str = request.form['wakeTime']
-        
         try:
-            # Parse date and time inputs
-            date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            sleep_time = datetime.strptime(sleep_time_str, '%H:%M').time()
-            wake_time = datetime.strptime(wake_time_str, '%H:%M').time()
+            # Get form data
+            sleep_date = request.form.get('sleepDate')
+            sleep_time = request.form.get('sleepTime')
+            wake_time = request.form.get('wakeTime')
+            
+            # Get duration components
+            sleep_duration_hours = int(request.form.get('sleepDurationHours', 0))
+            sleep_duration_minutes = int(request.form.get('sleepDurationMinutes', 0))
+            duration_hours = sleep_duration_hours + (sleep_duration_minutes / 60)
+            
+            # Get sleep quality and mood
+            quality = request.form.get('quality')
+            mood = request.form.get('mood')
+            
+            # Get other sleep parameters
+            sleep_disturbances = request.form.get('sleepDisturbances')
+            sleep_aid = request.form.get('sleepAid')
+            daytime_dysfunction = request.form.get('daytimeDysfunction')
+            caffeine = int(request.form.get('caffeine', 0))
+            exercise = int(request.form.get('exercise', 0))
+            screen = int(request.form.get('screen', 0))
+            eating = int(request.form.get('eating', 0))
+            sleep_latency = int(request.form.get('sleep_latency', 0))
+            notes = request.form.get('notes', '')
+            
+            # Convert strings to datetime objects
+            sleep_date_obj = datetime.strptime(sleep_date, '%Y-%m-%d').date()
+            sleep_time_obj = datetime.strptime(sleep_time, '%H:%M').time()
+            wake_time_obj = datetime.strptime(wake_time, '%H:%M').time()
             
             # Combine date and time into datetime objects
-            sleep_datetime = datetime.combine(date, sleep_time)
-            wake_datetime = datetime.combine(date, wake_time)
+            # If wake time is earlier than sleep time, it's the next day
+            if wake_time_obj < sleep_time_obj:
+                wake_datetime = datetime.combine(sleep_date_obj + timedelta(days=1), wake_time_obj)
+            else:
+                wake_datetime = datetime.combine(sleep_date_obj, wake_time_obj)
+                
+            sleep_datetime = datetime.combine(sleep_date_obj, sleep_time_obj)
             
-            # If wake time is earlier than sleep time, assume next day wake-up
-            if wake_datetime <= sleep_datetime:
-                wake_datetime = datetime.combine(date + timedelta(days=1), wake_time)
-            
-            # Calculate sleep duration in hours
-            duration = (wake_datetime - sleep_datetime).total_seconds() / 3600
-            
-            # Create and save new sleep record
+            # Create sleep record
             sleep_record = SleepRecord(
                 user_id=current_user.id,
-                date=date,
+                date=sleep_date_obj,
                 bedtime=sleep_datetime,
                 wake_time=wake_datetime,
-                duration_hours=duration,
-                quality=request.form.get('quality', 'Good'),  # Default: Good
-                mood=request.form.get('mood', 'Neutral'),      # Default: Neutral
-                notes=request.form.get('notes', ''),
-                
-                # Process additional form fields
-                sleep_disturbances=request.form.get('sleepDisturbances', 'None'),
-                sleep_aid=request.form.get('sleepAid', 'None'),
-                daytime_dysfunction=request.form.get('daytimeDysfunction', 'None'),
-                
-                # Process numeric fields, with defaults
-                caffeine=int(request.form.get('caffeine', 1)),
-                exercise=int(request.form.get('exercise', 1)),
-                screen=int(request.form.get('screen', 1)),
-                eating=int(request.form.get('eating', 1)),
-                sleep_latency=int(request.form.get('sleep_latency', 3))
+                duration_hours=duration_hours,
+                quality=quality,
+                mood=mood,
+                notes=notes,
+                sleep_disturbances=sleep_disturbances,
+                sleep_aid=sleep_aid,
+                daytime_dysfunction=daytime_dysfunction,
+                caffeine=caffeine,
+                exercise=exercise,
+                screen=screen,
+                eating=eating,
+                sleep_latency=sleep_latency
             )
             
+            # Add and commit to database
             db.session.add(sleep_record)
             db.session.commit()
             
-            flash('Sleep record saved successfully!')
-            return redirect(url_for('main.dashboard'))
+            flash('Sleep record saved successfully!', 'success')
+            return redirect(url_for('sleep.sleep_history'))
             
         except Exception as e:
-            flash(f'Error saving sleep record: {str(e)}')
-            return redirect(url_for('sleep.record_sleep'))
+            db.session.rollback()
+            print(f"Error saving sleep record: {str(e)}")
+            flash(f'Error saving sleep record: {str(e)}', 'danger')
+            return render_template('Homepage/recordsleep.html')
     
-    # Render sleep record form
     return render_template('Homepage/recordsleep.html')
 
-# Route to display user's sleep history with dynamic data
 @sleep.route('/sleep-history')
 @login_required
 def sleep_history():
-    # Retrieve all sleep records for the current user, sorted by newest first
+    """
+    Route to display sleep history. Shows all sleep records for the current user
+    and calculates various statistics.
+    """
+    # Get all sleep records for the current user
     sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
     
-    # Calculate statistics based on the user's sleep records
+    # Calculate statistics for display
     avg_duration = 0
     most_common_quality = "Good"
     usual_bedtime = "23:00"
     usual_waketime = "07:00"
+    sleep_goal_hours = 8.0
     
     if sleep_records:
         # Calculate average sleep duration
         total_duration = sum(record.duration_hours for record in sleep_records)
         avg_duration = round(total_duration / len(sleep_records), 1)
         
-        # Find the most common sleep quality
-        quality_counts = {}
+        # Get the most common sleep quality
+        quality_counts = {"Excellent": 0, "Good": 0, "Fair": 0, "Poor": 0}
         for record in sleep_records:
             quality_counts[record.quality] = quality_counts.get(record.quality, 0) + 1
-        most_common_quality = max(quality_counts.items(), key=lambda x: x[1])[0] if quality_counts else "Good"
+        most_common_quality = max(quality_counts.items(), key=lambda x: x[1])[0]
         
-        # Calculate the usual bedtime and wake time
+        # Calculate usual bedtime and wake time
         bedtimes = [record.bedtime.strftime('%H:%M') for record in sleep_records]
         waketimes = [record.wake_time.strftime('%H:%M') for record in sleep_records]
         
-        from collections import Counter
-        usual_bedtime = Counter(bedtimes).most_common(1)[0][0] if bedtimes else "23:00"
-        usual_waketime = Counter(waketimes).most_common(1)[0][0] if waketimes else "07:00"
+        # Get the median time
+        bedtimes.sort()
+        waketimes.sort()
+        usual_bedtime = bedtimes[len(bedtimes) // 2]
+        usual_waketime = waketimes[len(waketimes) // 2]
     
-    # Add the current date and timedelta for template usage
-    now = datetime.now()
-    
-    # Retrieve the current user's sleep goal
-    sleep_goal = SleepGoal.query.filter_by(user_id=current_user.id).first()
-    goal_hours = 8.0  # Default value
-    
+    # Get sleep goal
+    sleep_goal = SleepGoal.query.filter_by(user_id=current_user.id).order_by(SleepGoal.created_at.desc()).first()
     if sleep_goal:
-        goal_hours = sleep_goal.target_hours + (sleep_goal.target_minutes / 60)
+        sleep_goal_hours = sleep_goal.target_hours + (sleep_goal.target_minutes / 60)
     
-    # Pass all data to the template
-    return render_template(
-        'Historical/historical.html',
-        sleep_records=sleep_records,
-        avg_duration=avg_duration,
-        most_common_quality=most_common_quality,
-        usual_bedtime=usual_bedtime,
-        usual_waketime=usual_waketime,
-        now=now,
-        timedelta=timedelta,
-        sleep_goal_hours=goal_hours
-    )
+    return render_template('Historical/historical.html',
+                          sleep_records=sleep_records,
+                          avg_duration=avg_duration,
+                          most_common_quality=most_common_quality,
+                          usual_bedtime=usual_bedtime,
+                          usual_waketime=usual_waketime,
+                          sleep_goal_hours=sleep_goal_hours,
+                          now=datetime.now(),
+                          timedelta=timedelta)
 
-# Route to handle deletion of a sleep record
-@sleep.route('/delete-sleep/<int:record_id>', methods=['POST'])
-@login_required
-def delete_sleep(record_id):
-    # Retrieve the record or return 404 if not found
-    record = SleepRecord.query.get_or_404(record_id)
-    
-    # Ensure that the record belongs to the current user
-    if record.user_id != current_user.id:
-        flash('You do not have permission to delete this record.')
-        return redirect(url_for('sleep.sleep_history'))
-    
-    # Delete and commit the record
-    db.session.delete(record)
-    db.session.commit()
-    
-    flash('Sleep record deleted successfully.')
-    return redirect(url_for('sleep.sleep_history'))
-
-# New route: Edit a sleep record
 @sleep.route('/edit-sleep/<int:record_id>', methods=['POST'])
 @login_required
 def edit_sleep(record_id):
-    # Retrieve the record or return 404 if not found
-    record = SleepRecord.query.get_or_404(record_id)
+    """
+    Route to edit an existing sleep record. Only handles form submission (POST).
+    """
+    sleep_record = SleepRecord.query.filter_by(id=record_id, user_id=current_user.id).first_or_404()
     
-    # Ensure that the record belongs to the current user
-    if record.user_id != current_user.id:
-        flash('You do not have permission to edit this record.')
-        return redirect(url_for('sleep.sleep_history'))
+    if request.method == 'POST':
+        try:
+            # Get form data
+            sleep_date = request.form.get('sleepDate')
+            sleep_time = request.form.get('sleepTime')
+            wake_time = request.form.get('wakeTime')
+            quality = request.form.get('quality')
+            mood = request.form.get('mood')
+            notes = request.form.get('notes', '')
+            
+            # Convert strings to datetime objects
+            sleep_date_obj = datetime.strptime(sleep_date, '%Y-%m-%d').date()
+            sleep_time_obj = datetime.strptime(sleep_time, '%H:%M').time()
+            wake_time_obj = datetime.strptime(wake_time, '%H:%M').time()
+            
+            # Combine date and time into datetime objects
+            # If wake time is earlier than sleep time, it's the next day
+            if wake_time_obj < sleep_time_obj:
+                wake_datetime = datetime.combine(sleep_date_obj + timedelta(days=1), wake_time_obj)
+            else:
+                wake_datetime = datetime.combine(sleep_date_obj, wake_time_obj)
+                
+            sleep_datetime = datetime.combine(sleep_date_obj, sleep_time_obj)
+            
+            # Calculate duration in hours
+            duration_seconds = (wake_datetime - sleep_datetime).total_seconds()
+            duration_hours = duration_seconds / 3600
+            
+            # Update record
+            sleep_record.date = sleep_date_obj
+            sleep_record.bedtime = sleep_datetime
+            sleep_record.wake_time = wake_datetime
+            sleep_record.duration_hours = duration_hours
+            sleep_record.quality = quality
+            sleep_record.mood = mood
+            sleep_record.notes = notes
+            
+            db.session.commit()
+            flash('Sleep record updated successfully!', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating sleep record: {str(e)}")
+            flash(f'Error updating sleep record: {str(e)}', 'danger')
+            
+    return redirect(url_for('sleep.sleep_history'))
+
+@sleep.route('/delete-sleep/<int:record_id>', methods=['POST'])
+@login_required
+def delete_sleep(record_id):
+    """
+    Route to delete a sleep record. Only handles form submission (POST).
+    """
+    sleep_record = SleepRecord.query.filter_by(id=record_id, user_id=current_user.id).first_or_404()
     
     try:
-        # Extract form data
-        date_str = request.form['sleepDate']
-        sleep_time_str = request.form['sleepTime']
-        wake_time_str = request.form['wakeTime']
-        
-        # Parse date and time inputs
-        date = datetime.strptime(date_str, '%Y-%m-%d').date()
-        sleep_time = datetime.strptime(sleep_time_str, '%H:%M').time()
-        wake_time = datetime.strptime(wake_time_str, '%H:%M').time()
-        
-        # Combine date and time into datetime objects
-        sleep_datetime = datetime.combine(date, sleep_time)
-        wake_datetime = datetime.combine(date, wake_time)
-        
-        # If wake time is earlier than sleep time, assume next day wake-up
-        if wake_datetime <= sleep_datetime:
-            wake_datetime = datetime.combine(date + timedelta(days=1), wake_time)
-        
-        # Calculate sleep duration in hours
-        duration = (wake_datetime - sleep_datetime).total_seconds() / 3600
-        
-        # Update the record
-        record.date = date
-        record.bedtime = sleep_datetime
-        record.wake_time = wake_datetime
-        record.duration_hours = duration
-        record.quality = request.form.get('quality', 'Good')
-        record.mood = request.form.get('mood', 'Neutral')
-        record.notes = request.form.get('notes', '')
-        
-        # Update additional fields if present in the form
-        if 'sleepDisturbances' in request.form:
-            record.sleep_disturbances = request.form.get('sleepDisturbances')
-        if 'sleepAid' in request.form:
-            record.sleep_aid = request.form.get('sleepAid')
-        if 'daytimeDysfunction' in request.form:
-            record.daytime_dysfunction = request.form.get('daytimeDysfunction')
-        
-        # Update numeric fields if present
-        if 'caffeine' in request.form:
-            record.caffeine = int(request.form.get('caffeine'))
-        if 'exercise' in request.form:
-            record.exercise = int(request.form.get('exercise'))
-        if 'screen' in request.form:
-            record.screen = int(request.form.get('screen'))
-        if 'eating' in request.form:
-            record.eating = int(request.form.get('eating'))
-        if 'sleep_latency' in request.form:
-            record.sleep_latency = int(request.form.get('sleep_latency'))
-        
-        # Save changes
+        db.session.delete(sleep_record)
         db.session.commit()
-        flash('Sleep record updated successfully!')
-        
+        flash('Sleep record deleted successfully!', 'success')
     except Exception as e:
         db.session.rollback()
-        flash(f'Error updating sleep record: {str(e)}')
-    
+        print(f"Error deleting sleep record: {str(e)}")
+        flash(f'Error deleting sleep record: {str(e)}', 'danger')
+        
     return redirect(url_for('sleep.sleep_history'))
 
 @sleep.route('/update-sleep-goal', methods=['POST'])
 @login_required
 def update_sleep_goal():
-    try:
-        # Get sleep goal values from the form
-        sleep_goal_hours = int(request.form.get('sleepGoalHours', 8))
-        sleep_goal_minutes = int(request.form.get('sleepGoalMinutes', 0))
-        
-        # Find the current user's sleep goal record
-        goal = SleepGoal.query.filter_by(user_id=current_user.id).first()
-        
-        # If no existing goal, create a new one
-        if not goal:
-            goal = SleepGoal(
+    """
+    Route to update sleep goal. Only handles form submission (POST).
+    """
+    if request.method == 'POST':
+        try:
+            # Get form data
+            sleep_goal_hours = int(request.form.get('sleepGoalHours', 8))
+            sleep_goal_minutes = int(request.form.get('sleepGoalMinutes', 0))
+            
+            # Create new sleep goal
+            sleep_goal = SleepGoal(
                 user_id=current_user.id,
                 target_hours=sleep_goal_hours,
                 target_minutes=sleep_goal_minutes
             )
-            db.session.add(goal)
-        else:
-            # Update the existing goal
-            goal.target_hours = sleep_goal_hours
-            goal.target_minutes = sleep_goal_minutes
-        
-        # Save to the database
-        db.session.commit()
-        flash('Sleep goal updated successfully!')
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error updating sleep goal: {str(e)}')
-    
-    # Redirect back to the sleep history page
-    return redirect(url_for('sleep.sleep_history'))
+            
+            db.session.add(sleep_goal)
+            db.session.commit()
+            
+            flash('Sleep goal updated successfully!', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating sleep goal: {str(e)}")
+            flash(f'Error updating sleep goal: {str(e)}', 'danger')
+            
+    # Redirect back to the referring page
+    return redirect(request.referrer or url_for('sleep.sleep_history'))

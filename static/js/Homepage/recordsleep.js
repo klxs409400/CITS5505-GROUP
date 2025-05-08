@@ -1,121 +1,125 @@
 /**
- * Sleep Tracker - Simple Record Sleep Page JavaScript
- * Handles form functionality and duration calculation
+ * Sleep Tracker - Record Sleep Page JavaScript
+ * Handles form functionality, duration calculation, and form submission
  */
 
 $(document).ready(function () {
-  // Initialize page with current date
-  initializePage();
+  // Set current date as default for sleep date input
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+  $("#sleepDate").val(formattedDate);
 
-  // Calculate sleep duration when times change
-  $("#sleepTime, #wakeTime").change(function () {
-    calculateDuration();
+  // Set default values for time inputs
+  $("#sleepTime").val("23:00");
+  $("#wakeTime").val("07:00");
+
+  // Set default duration values based on sleep time and wake time
+  $("#sleepDurationHours").val("8");
+  $("#sleepDurationMinutes").val("0");
+
+  // Calculate sleep duration when sleep time or wake time changes
+  $("#sleepTime, #wakeTime").on("change", function () {
+    calculateSleepDuration();
   });
 
-  // Form submission
-  $("#sleepEntryForm").submit(function (e) {
-    e.preventDefault();
-    if (validateForm()) {
-      saveRecord();
+  // Form submission validation
+  $("#sleepEntryForm").on("submit", function (e) {
+    // Basic validation
+    const sleepDate = $("#sleepDate").val();
+    const sleepTime = $("#sleepTime").val();
+    const wakeTime = $("#wakeTime").val();
+    const durationHours = parseInt($("#sleepDurationHours").val()) || 0;
+    const durationMinutes = parseInt($("#sleepDurationMinutes").val()) || 0;
+    const quality = $("#quality").val();
+    const mood = $("#mood").val();
+
+    if (!sleepDate || !sleepTime || !wakeTime) {
+      e.preventDefault();
+      alert("Please fill in all required date and time fields.");
+      return false;
     }
+
+    if (durationHours === 0 && durationMinutes === 0) {
+      e.preventDefault();
+      alert("Sleep duration cannot be zero.");
+      return false;
+    }
+
+    if (durationHours > 24) {
+      e.preventDefault();
+      alert("Sleep duration cannot exceed 24 hours.");
+      return false;
+    }
+
+    if (!quality || !mood) {
+      e.preventDefault();
+      alert("Please select sleep quality and morning mood.");
+      return false;
+    }
+
+    // Additional validation for numerical fields
+    const caffeine = parseInt($("#caffeine").val());
+    const exercise = parseInt($("#exercise").val());
+    const screen = parseInt($("#screen").val());
+    const eating = parseInt($("#eating").val());
+    const sleep_latency = parseInt($("#sleep_latency").val());
+
+    // Ensure numerical values are set correctly
+    if (
+      isNaN(caffeine) ||
+      isNaN(exercise) ||
+      isNaN(screen) ||
+      isNaN(eating) ||
+      isNaN(sleep_latency)
+    ) {
+      e.preventDefault();
+      alert("Please select valid values for all fields.");
+      return false;
+    }
+
+    // If validation passes, let the form submit
+    console.log("Form validation passed, submitting...");
+    return true;
   });
+
+  // Calculate initial sleep duration
+  calculateSleepDuration();
 });
 
 /**
- * Initialize page with current date
+ * Calculate sleep duration based on sleep time and wake time
+ * Updates the hours and minutes input fields
  */
-function initializePage() {
-  const today = new Date();
-  const formattedDate = formatDate(today);
-  $("#sleepDate").val(formattedDate);
-}
+function calculateSleepDuration() {
+  try {
+    const sleepTime = $("#sleepTime").val();
+    const wakeTime = $("#wakeTime").val();
 
-/**
- * Format a date object to YYYY-MM-DD for the date input
- */
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+    if (sleepTime && wakeTime) {
+      // Parse times
+      const [sleepHour, sleepMinute] = sleepTime.split(":").map(Number);
+      const [wakeHour, wakeMinute] = wakeTime.split(":").map(Number);
 
-  return `${year}-${month}-${day}`;
-}
+      // Calculate duration in minutes
+      let durationMinutes =
+        wakeHour * 60 + wakeMinute - (sleepHour * 60 + sleepMinute);
 
-/**
- * Calculate sleep duration based on sleep and wake times
- */
-function calculateDuration() {
-  const sleepTime = $("#sleepTime").val();
-  const wakeTime = $("#wakeTime").val();
+      // If wake time is earlier than sleep time, add 24 hours (1440 minutes)
+      if (durationMinutes < 0) {
+        durationMinutes += 1440;
+      }
 
-  if (sleepTime && wakeTime) {
-    // Create date objects for calculation
-    // We use the same date for both to simplify calculation
-    const sleepDate = new Date(`2023-01-01T${sleepTime}:00`);
-    let wakeDate = new Date(`2023-01-01T${wakeTime}:00`);
+      // Convert to hours and minutes
+      const hours = Math.floor(durationMinutes / 60);
+      const minutes = durationMinutes % 60;
 
-    // If wake time is earlier than sleep time, assume next day
-    if (wakeDate < sleepDate) {
-      wakeDate = new Date(`2023-01-02T${wakeTime}:00`);
+      // Update form fields
+      $("#sleepDurationHours").val(hours);
+      $("#sleepDurationMinutes").val(minutes);
+
+      console.log(`Calculated duration: ${hours}h ${minutes}m`);
     }
-
-    // Calculate difference in milliseconds
-    const diff = wakeDate - sleepDate;
-
-    // Convert to hours and minutes
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-    // Format the duration
-    const duration = `${hours}h ${minutes}m`;
-
-    // Set the duration field
-    $("#sleepDuration").val(duration);
-  } else {
-    $("#sleepDuration").val("");
+  } catch (error) {
+    console.error("Error calculating sleep duration:", error);
   }
-}
-
-/**
- * Validate form data
- */
-function validateForm() {
-  let isValid = true;
-
-  // Check required fields
-  if (!$("#sleepDate").val()) {
-    alert("Please select a sleep date");
-    isValid = false;
-  }
-
-  if (!$("#sleepTime").val()) {
-    alert("Please enter your bedtime");
-    isValid = false;
-  }
-
-  if (!$("#wakeTime").val()) {
-    alert("Please enter your wake-up time");
-    isValid = false;
-  }
-
-  return isValid;
-}
-
-/**
- * Save sleep record
- * In a real application, this would send data to a server
- */
-function saveRecord() {
-  // For demonstration, we'll just show an alert
-  alert("Sleep record saved successfully!");
-
-  // Reset form fields except date
-  $("#sleepTime").val("");
-  $("#wakeTime").val("");
-  $("#sleepDuration").val("");
-
-  // Reset radio buttons to default values
-  $("#disturbancesNone").prop("checked", true);
-  $("#aidNone").prop("checked", true);
-  $("#dysfunctionNone").prop("checked", true);
 }

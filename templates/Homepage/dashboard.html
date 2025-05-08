@@ -221,7 +221,7 @@
                 <div class="icon">
                   <i class="fas fa-bed"></i>
                 </div>
-                <h2>7.5h</h2>
+                <h2>{{ avg_duration if avg_duration else 'No input data' }}</h2>
                 <p>Average Sleep Duration</p>
                 <small class="text-muted">Last 30 days</small>
               </div>
@@ -232,9 +232,15 @@
                 <div class="icon">
                   <i class="fas fa-chart-line"></i>
                 </div>
-                <h2>83%</h2>
+                <h2>
+                  {{ sleep_quality_percentage if sleep_quality_percentage else
+                  'No input data' }}
+                </h2>
                 <p>Sleep Quality</p>
-                <small class="text-muted">Up 5% from last week</small>
+                <small class="text-muted"
+                  >Up {{ quality_change if quality_change else 'No input data'
+                  }} from last week</small
+                >
               </div>
             </div>
 
@@ -243,7 +249,10 @@
                 <div class="icon">
                   <i class="fas fa-trophy"></i>
                 </div>
-                <h2>16</h2>
+                <h2>
+                  {{ goal_achievement if goal_achievement else 'No input data'
+                  }}
+                </h2>
                 <p>Goal Achievement</p>
                 <small class="text-muted">Days this month</small>
               </div>
@@ -254,7 +263,9 @@
                 <div class="icon">
                   <i class="fas fa-moon"></i>
                 </div>
-                <h2>23:15</h2>
+                <h2>
+                  {{ usual_bedtime if usual_bedtime else 'No input data' }}
+                </h2>
                 <p>Average Bedtime</p>
                 <small class="text-muted">Last 7 days</small>
               </div>

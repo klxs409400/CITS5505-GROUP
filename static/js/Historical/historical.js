@@ -10,6 +10,7 @@ $(document).ready(function () {
       info: "Showing _START_ to _END_ of _TOTAL_ entries",
       infoEmpty: "Showing 0 to 0 of 0 entries",
       infoFiltered: "(filtered from _MAX_ total entries)",
+      emptyTable: "No sleep records found. Start tracking your sleep!", // Added for empty tables
     },
     // Custom rendering for certain columns
     columnDefs: [
@@ -26,6 +27,8 @@ $(document).ready(function () {
         orderable: false,
         searchable: false,
         className: "dt-body-center",
+        defaultContent:
+          '<button class="btn btn-link btn-sm edit-btn" title="Edit"><i class="fas fa-edit"></i></button><button class="btn btn-link btn-sm delete-btn" title="Delete"><i class="fas fa-trash"></i></button>', // Default content for empty rows
       },
     ],
     dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex"f>>t<"d-flex justify-content-between align-items-center mt-3"<"d-flex"i><"d-flex"p>>',
@@ -176,12 +179,22 @@ $(document).ready(function () {
     e.stopPropagation(); // Prevent event bubbling
 
     let id = $(this).data("id");
+    let row = $(this).closest("tr");
+    let rowData = sleepTable.row(row).data();
+
+    if (!id && rowData && rowData.length > 7 && rowData[7]) {
+      // Try to extract ID from HTML in the row data
+      let idMatch = rowData[7].match(/data-id="(\d+)"/);
+      if (idMatch && idMatch[1]) {
+        id = idMatch[1];
+      }
+    }
+
     if (!id) {
       console.error("No ID found for edit button");
       return;
     }
 
-    let row = $(this).closest("tr");
     let cells = row.find("td");
 
     // Safely populate edit form with current values
@@ -265,6 +278,17 @@ $(document).ready(function () {
     e.stopPropagation();
 
     let id = $(this).data("id");
+    let row = $(this).closest("tr");
+    let rowData = sleepTable.row(row).data();
+
+    // If ID is missing, try to extract it from the row
+    if (!id && rowData && rowData.length > 7 && rowData[7]) {
+      let idMatch = rowData[7].match(/data-id="(\d+)"/);
+      if (idMatch && idMatch[1]) {
+        id = idMatch[1];
+      }
+    }
+
     if (!id) {
       console.error("No ID found for delete button");
       return;
@@ -434,18 +458,20 @@ $(document).ready(function () {
     });
   }
 
-  // Calculate and update summary statistics
+  // Enhanced function to update summary stats
   function updateSummaryStats() {
     try {
       let totalDuration = 0;
       let qualityCounts = { excellent: 0, good: 0, fair: 0, poor: 0 };
       let sleepTimes = [];
       let wakeTimes = [];
+      let recordCount = 0;
 
       // Process visible rows in the table
       sleepTable.rows({ search: "applied" }).every(function () {
         let data = this.data();
         if (!data) return;
+        recordCount++;
 
         // Duration - extract numeric value safely
         let durationText = data[3] || "0 hrs";
@@ -466,48 +492,54 @@ $(document).ready(function () {
         if (data[2]) wakeTimes.push(data[2].trim());
       });
 
-      // Calculate averages
-      let rowCount = sleepTable.rows({ search: "applied" }).count() || 1; // Avoid division by zero
-      let averageDuration = (totalDuration / rowCount).toFixed(1);
+      // Only update if records exist
+      if (recordCount > 0) {
+        // Calculate averages
+        let averageDuration = (totalDuration / recordCount).toFixed(1);
 
-      // Find most common quality
-      let maxQuality = "Good"; // Default value
-      let maxCount = 0;
-      for (let q in qualityCounts) {
-        if (qualityCounts[q] > maxCount) {
-          maxCount = qualityCounts[q];
-          maxQuality = q.charAt(0).toUpperCase() + q.slice(1);
+        // Find most common quality
+        let maxQuality = "Good"; // Default value
+        let maxCount = 0;
+        for (let q in qualityCounts) {
+          if (qualityCounts[q] > maxCount) {
+            maxCount = qualityCounts[q];
+            maxQuality = q.charAt(0).toUpperCase() + q.slice(1);
+          }
         }
-      }
 
-      // Update summary cards safely
-      $('.card:contains("Average Sleep Duration")')
-        .find(".h5")
-        .text(averageDuration + " hrs");
-      $('.card:contains("Most Common Quality")').find(".h5").text(maxQuality);
+        // Update summary cards safely
+        $('.card:contains("Average Sleep Duration")')
+          .find(".h5")
+          .text(averageDuration + " hrs");
+        $('.card:contains("Most Common Quality")').find(".h5").text(maxQuality);
 
-      // Calculate median for sleep and wake times
-      if (sleepTimes.length > 0) {
-        sleepTimes.sort();
-        wakeTimes.sort();
+        // Calculate median for sleep and wake times
+        if (sleepTimes.length > 0) {
+          sleepTimes.sort();
+          wakeTimes.sort();
 
-        let medianIndex = Math.floor(sleepTimes.length / 2);
-        let medianSleepTime = sleepTimes[medianIndex] || "23:00";
-        let medianWakeTime = wakeTimes[medianIndex] || "07:00";
+          let medianIndex = Math.floor(sleepTimes.length / 2);
+          let medianSleepTime = sleepTimes[medianIndex] || "23:00";
+          let medianWakeTime = wakeTimes[medianIndex] || "07:00";
 
-        $('.card:contains("Usual Bedtime")').find(".h5").text(medianSleepTime);
-        $('.card:contains("Usual Wake Time")').find(".h5").text(medianWakeTime);
-      }
+          $('.card:contains("Usual Bedtime")')
+            .find(".h5")
+            .text(medianSleepTime);
+          $('.card:contains("Usual Wake Time")')
+            .find(".h5")
+            .text(medianWakeTime);
+        }
 
-      // Update progress circle if a goal is set
-      const goalValueText = $("#currentGoalValue").text() || "8.0";
-      const goalValue = parseFloat(goalValueText);
-      if (!isNaN(goalValue) && goalValue > 0) {
-        const percentage = Math.min(
-          100,
-          Math.round((averageDuration / goalValue) * 100)
-        );
-        updateProgressCircle(percentage);
+        // Update progress circle if a goal is set
+        const goalValueText = $("#currentGoalValue").text() || "8.0";
+        const goalValue = parseFloat(goalValueText);
+        if (!isNaN(goalValue) && goalValue > 0) {
+          const percentage = Math.min(
+            100,
+            Math.round((averageDuration / goalValue) * 100)
+          );
+          updateProgressCircle(percentage);
+        }
       }
     } catch (err) {
       console.error("Error updating summary stats:", err);
