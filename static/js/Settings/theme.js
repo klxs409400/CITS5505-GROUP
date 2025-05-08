@@ -1,21 +1,21 @@
 /**
  * SleepTracker Theme Handler
- * 这个文件负责处理整个应用程序的主题设置
- * 包括保存用户的主题偏好到 localStorage 和在页面加载时应用主题
+ * This file is responsible for handling theme settings throughout the application
+ * Including saving user theme preferences to localStorage and applying the theme on page load
  */
 
-// 在页面加载时执行主题初始化
+// Execute theme initialization when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // 从 localStorage 中获取用户主题偏好
+    // Get user theme preference from localStorage
     initTheme();
 
-    // 查找页面上的主题切换开关（如果存在）
+    // Find the theme toggle switch on the page (if it exists)
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
-        // 根据当前主题设置开关状态
+        // Set the switch state based on current theme
         themeToggle.checked = localStorage.getItem('theme') === 'light';
         
-        // 添加事件监听器，在开关状态改变时切换主题
+        // Add event listener to switch theme when toggle state changes
         themeToggle.addEventListener('change', function() {
             if (this.checked) {
                 setTheme('light');
@@ -27,22 +27,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * 初始化主题 - 从 localStorage 中读取用户偏好并应用
+ * Initialize theme - Read user preferences from localStorage and apply
  */
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-        // 如果用户有保存的主题偏好，应用它
+        // If user has a saved theme preference, apply it
         document.body.classList.toggle('light-mode', savedTheme === 'light');
     } else {
-        // 默认使用暗色主题
+        // Use dark theme as default
         localStorage.setItem('theme', 'dark');
     }
 }
 
 /**
- * 设置主题 - 应用主题并保存到 localStorage
- * @param {string} theme - 'light' 或 'dark'
+ * Set theme - Apply theme and save to localStorage
+ * @param {string} theme - 'light' or 'dark'
  */
 function setTheme(theme) {
     localStorage.setItem('theme', theme);
@@ -50,19 +50,19 @@ function setTheme(theme) {
 }
 
 /**
- * 切换主题 - 在亮色和暗色主题之间切换
- * 可以从任何页面调用此函数
+ * Toggle theme - Switch between light and dark themes
+ * This function can be called from any page
  */
 function toggleTheme() {
     const currentTheme = localStorage.getItem('theme') || 'dark';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
     
-    // 如果页面上有主题开关，更新其状态
+    // If there's a theme toggle on the page, update its state
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.checked = newTheme === 'light';
     }
     
-    return newTheme; // 返回新的主题，方便调用者使用
+    return newTheme; // Return the new theme for convenience
 }
