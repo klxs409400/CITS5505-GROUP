@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
-from flask_login import login_required, current_user
-from models import db, User, DataSharing
+from flask_login import login_required, current_user, logout_user
+from models import db, User, DataSharing, SleepRecord, SleepGoal, Achievement
 from werkzeug.security import generate_password_hash, check_password_hash
 
 settings = Blueprint('settings', __name__)
@@ -123,3 +123,45 @@ def get_shared_users():
     } for user in shared_users]
     
     return jsonify({'success': True, 'users': users_data})
+
+@settings.route('/settings/delete-account', methods=['POST'])
+@login_required
+def delete_account():
+    data = request.json
+    password = data.get('password')
+    
+    if not password:
+        return jsonify({'success': False, 'message': 'Password is required to confirm deletion'}), 400
+    
+    # Verify password is correct
+    if not check_password_hash(current_user.password_hash, password):
+        return jsonify({'success': False, 'message': 'Password is incorrect'}), 400
+    
+    try:
+        # Delete all user's data
+        # 1. Delete sharing records (both where user is owner and viewer)
+        DataSharing.query.filter((DataSharing.owner_id == current_user.id) | 
+                                (DataSharing.viewer_id == current_user.id)).delete()
+        
+        # 2. Delete sleep records
+        SleepRecord.query.filter_by(user_id=current_user.id).delete()
+        
+        # 3. Delete sleep goals
+        SleepGoal.query.filter_by(user_id=current_user.id).delete()
+        
+        # 4. Delete achievements
+        Achievement.query.filter_by(user_id=current_user.id).delete()
+        
+        # 5. Finally delete the user
+        user_to_delete = User.query.get(current_user.id)
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        
+        # Log the user out
+        logout_user()
+        
+        return jsonify({'success': True, 'message': 'Account deleted successfully', 'redirect': url_for('auth.login')})
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Error deleting account: {str(e)}'}), 500

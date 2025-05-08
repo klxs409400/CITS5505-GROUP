@@ -562,12 +562,30 @@
                 return;
             }
             
-            // In a real app, this would call an API
-            console.log('Account deletion requested');
-            
-            // Redirect to login page after deletion (demo)
-            alert('Account deleted. You will be redirected to the login page.');
-            window.location.href = "{{ url_for('auth.login') }}";
+            // Call the API to delete the account
+            fetch('{{ url_for("settings.delete_account") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert('Account deleted successfully. You will be redirected to the login page.');
+                    // Redirect to login page
+                    window.location.href = data.redirect;
+                } else {
+                    // Show error message
+                    showAlert(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred while deleting your account. Please try again.', 'danger');
+            });
         });
     });
 </script>
