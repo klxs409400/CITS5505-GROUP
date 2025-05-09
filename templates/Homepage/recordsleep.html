@@ -18,8 +18,14 @@
     />
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../../static/css/styles.css" />
-    <link rel="stylesheet" href="../../static/css/recordsleep.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/recordsleep.css') }}"
+    />
   </head>
   <body>
     <div class="wrapper">
@@ -28,7 +34,10 @@
         <!-- Top navigation -->
         <nav class="navbar">
           <div class="d-flex justify-content-between w-100">
-            <a href="dashboard.html" class="btn btn-outline-primary">
+            <a
+              href="{{ url_for('main.dashboard') }}"
+              class="btn btn-outline-primary"
+            >
               <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
             <!-- Empty div for flex spacing -->
@@ -44,7 +53,11 @@
                   <h3><i class="fas fa-moon"></i> Record Your Sleep</h3>
                 </div>
                 <div class="card-body">
-                  <form id="sleepEntryForm">
+                  <form
+                    id="sleepEntryForm"
+                    action="{{ url_for('sleep.record_sleep') }}"
+                    method="post"
+                  >
                     <!-- Date Selection -->
                     <div class="mb-4">
                       <label for="sleepDate" class="form-label"
@@ -116,6 +129,22 @@
                         />
                         <span class="input-group-text">min</span>
                       </div>
+                    </div>
+
+                    <div class="record-container">
+                      <label for="sleep_latency" class="record-label"
+                        >Sleep Latency:</label
+                      >
+                      <select
+                        id="sleep_latency"
+                        name="sleep_latency"
+                        class="record-input"
+                        required
+                      >
+                        <option value="3">≤ 15 minutes (Best)</option>
+                        <option value="1">16–60 minutes (Moderate)</option>
+                        <option value="0">> 60 minutes (Poor)</option>
+                      </select>
                     </div>
 
                     <!-- Sleep Disturbances -->
@@ -256,22 +285,30 @@
 
                     <div class="record-container">
                       <label for="caffeine">Had Caffeine:</label>
-                      <select id="caffeine" class="record-input" name="caffeine">
+                      <select
+                        id="caffeine"
+                        class="record-input"
+                        name="caffeine"
+                      >
                         <option value="2">No intake</option>
                         <option value="1">Daytime only</option>
                         <option value="0">Nighttime</option>
                       </select>
                     </div>
-                    
+
                     <div class="record-container">
                       <label for="exercise">Exercised:</label>
-                      <select id="exercise" class="record-input" name="exercise">
+                      <select
+                        id="exercise"
+                        class="record-input"
+                        name="exercise"
+                      >
                         <option value="2">Moderate daytime exercise</option>
                         <option value="1">No exercise</option>
                         <option value="0">Intense night exercise</option>
                       </select>
                     </div>
-                    
+
                     <div class="record-container">
                       <label for="screen">Screen Time (Before Bed):</label>
                       <select id="screen" class="record-input" name="screen">
@@ -280,7 +317,7 @@
                         <option value="0">&gt;60 min</option>
                       </select>
                     </div>
-                    
+
                     <div class="record-container">
                       <label for="eating">Late-night Eating:</label>
                       <select id="eating" class="record-input" name="eating">
@@ -289,7 +326,52 @@
                         <option value="0">Often</option>
                       </select>
                     </div>
-                    
+
+                    <!-- Sleep Quality - ADDED SELECTION -->
+                    <div class="mb-4">
+                      <label for="quality" class="form-label"
+                        >Sleep Quality</label
+                      >
+                      <select
+                        class="form-control"
+                        id="quality"
+                        name="quality"
+                        required
+                      >
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good" selected>Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Poor">Poor</option>
+                      </select>
+                    </div>
+
+                    <!-- Morning Mood - ADDED SELECTION -->
+                    <div class="mb-4">
+                      <label for="mood" class="form-label">Morning Mood</label>
+                      <select
+                        class="form-control"
+                        id="mood"
+                        name="mood"
+                        required
+                      >
+                        <option value="Refreshed">Refreshed</option>
+                        <option value="Neutral" selected>Neutral</option>
+                        <option value="Tired">Tired</option>
+                        <option value="Exhausted">Exhausted</option>
+                      </select>
+                    </div>
+
+                    <!-- Notes - ADDED TEXTAREA -->
+                    <div class="mb-4">
+                      <label for="notes" class="form-label">Notes</label>
+                      <textarea
+                        class="form-control"
+                        id="notes"
+                        name="notes"
+                        rows="3"
+                      ></textarea>
+                    </div>
+
                     <!-- Submit button -->
                     <div class="text-center mt-4">
                       <button type="submit" class="btn btn-primary">
@@ -320,6 +402,6 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- Custom javascript-->
-    <script src="js/recordsleep.js"></script>
+    <script src="{{ url_for('static', filename='js/Homepage/recordsleep.js') }}"></script>
   </body>
 </html>

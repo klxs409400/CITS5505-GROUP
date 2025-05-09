@@ -414,6 +414,19 @@
   opacity: 1;
 }
 
+/* Add progress width */
+.progress-width-0 { width: 0%; }
+.progress-width-10 { width: 10%; }
+.progress-width-20 { width: 20%; }
+.progress-width-30 { width: 30%; }
+.progress-width-40 { width: 40%; }
+.progress-width-50 { width: 50%; }
+.progress-width-60 { width: 60%; }
+.progress-width-70 { width: 70%; }
+.progress-width-80 { width: 80%; }
+.progress-width-90 { width: 90%; }
+.progress-width-100 { width: 100%; }
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .sidebar {
@@ -468,7 +481,6 @@
   color: var(--text-light) !important;
 }
 
-/* 确保在悬停时质量和情绪标签保持各自的颜色 */
 .table-hover tbody tr:hover .quality.excellent,
 .table-hover tbody tr:hover .mood.refreshed {
   color: #fff !important;

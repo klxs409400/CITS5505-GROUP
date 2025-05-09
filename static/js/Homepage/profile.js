@@ -21,21 +21,24 @@ $(document).ready(function () {
     }
   });
 
-  // Update profile button click handler
-  $("#updateProfileBtn").click(function () {
-    // Form validation
-    let form = $("#editProfileForm")[0];
+  // Profile form submission handler
+  $("#editProfileForm").on("submit", function(e) {
+    // Form already has action and method for server-side submission,
+    // but we can add client-side validation here
+    let form = this;
     if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
       form.classList.add("was-validated");
-      return;
+      return false;
     }
-
-    // In a real app, this would send data to the server
-    // For now, just show a success message
-    showToast("Profile updated successfully!", "success");
-
-    // Close the modal
-    $("#editProfileModal").modal("hide");
+    
+    // Display a loading indicator if desired
+    showToast("Updating profile...", "info");
+    
+    // Let the form submit naturally - no need to prevent default
+    // The server will handle the submission and redirect
+    return true;
   });
 
   // Function to display toast notifications
@@ -94,6 +97,13 @@ $(document).ready(function () {
     });
   } catch (e) {
     console.error("Error initializing tooltips:", e);
+  }
+
+  // Display flash messages as toasts if they exist
+  if (typeof flashes !== 'undefined' && flashes.length > 0) {
+    flashes.forEach(flash => {
+      showToast(flash.message, flash.category);
+    });
   }
 
   // Setup for mobile/responsive view

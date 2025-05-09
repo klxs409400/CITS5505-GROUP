@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shared Sleep Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">        
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .shared-indicator {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .shared-user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .shared-user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .shared-user-details h3 {
+            margin: 0 0 5px 0;
+        }
+        
+        .shared-user-details p {
+            margin: 0;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="back-button-container">
+        <a href="{{ url_for('settings.view_settings') }}" class="back-button">← Back to Settings</a>
+    </div>
+    
+    <div class="center-heading">
+        <h1>Shared Sleep Report</h1>
+        
+        <div class="shared-indicator">
+            <div class="shared-user-info">
+                <img src="{{ url_for('static', filename=shared_user.profile_pic) }}" alt="{{ shared_user.username }}" class="shared-user-avatar">
+                <div class="shared-user-details">
+                    <h3>{{ shared_user.username }}'s Sleep Data</h3>
+                    <p>{{ shared_user.email }}</p>
+                </div>
+            </div>
+            <p class="subtitle">Viewing sleep data shared with you by {{ shared_user.username }}</p>
+        </div>
+    </div>
+
+    <div class="summary-cards">
+        <a href="#chart1" class="summary-card">
+            <div class="card-icon"></div>
+            <h3>Daily Sleep Duration</h3>
+            <p>Track their total sleep hours day by day for the current week.</p>
+        </a>
+        <a href="#chart2" class="summary-card">
+            <div class="card-icon"></div>
+            <h3>Sleep Quality Trend</h3>
+            <p>View how their sleep quality fluctuated during the week.</p>
+        </a>
+    </div>
+  
+    <div class="content-wrapper">
+        <div class="content-inner">
+            <div id="chart1">
+                <div class="chart-card">
+                    <h3>Daily Sleep Duration</h3>
+                    <p>This chart shows {{ shared_user.username }}'s total sleep hours recorded each day this week.</p>
+                    <canvas id="sleepDurationChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+                </div>
+            </div>
+            
+            <div id="chart2">
+                <div class="chart-card">
+                    <h3>Sleep Quality Trend</h3>
+                    <p>This line graph illustrates how {{ shared_user.username }}'s sleep quality has varied across the week.</p>
+                    <canvas id="sleepQualityChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+                </div>
+            </div>
+
+            <div class="scoring-guide">
+                <h3>Sleep Quality Scoring Criteria (0–3, higher is better)</h3>
+                <p style="font-style: italic; color: #666;">
+                Based on the Pittsburgh Sleep Quality Index (PSQI) — Buysse et al., 1989. Scores are reversed so that higher values indicate better sleep quality.
+                </p>
+                <ul>
+                    <li><b>Subjective Quality:</b> Very good = 3, Fair = 2, Poor = 1, Very poor = 0</li>
+                    <li><b>Sleep Latency:</b> ≤15min = 3, 16–60min = 1, >60min = 0</li>
+                    <li><b>Duration:</b> ≥7h = 3, 6–7h = 2, 5–6h = 1, &lt;5h = 0</li>
+                    <li><b>Efficiency:</b> ≥85% = 3, 75–84% = 2, 65–74% = 1, &lt;65% = 0</li>
+                    <li><b>Disturbances:</b> None = 3, Occasionally = 2, Often = 1, Frequent = 0</li>
+                    <li><b>Sleep Meds:</b> None = 3, Occasionally = 2, Often = 1, Daily = 0</li>
+                    <li><b>Daytime Dysfunction:</b> None = 3, Sometimes = 2, Often = 1, Severe = 0</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="scrollToTop()" class="top-button">↑ Top</button>
+
+    <script>
+        fetch('/api/shared/sleep/duration/{{ shared_user.id }}')
+            .then(res => res.json())
+            .then(data => {
+                const labels = data.map(d => d.date);        // ['Mon', 'Tue', ...]
+                const durations = data.map(d => d.duration); // [7, 6.5, ...]
+            
+                const ctx = document.getElementById('sleepDurationChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Sleep Duration (hours)',
+                            data: durations,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching sleep duration data:', error);
+                document.getElementById('sleepDurationChart').insertAdjacentHTML('afterend', 
+                    '<div class="alert alert-danger">Unable to load sleep duration data</div>');
+            });
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/shared/sleep/score/{{ shared_user.id }}')
+                .then(response => response.json())
+                .then(data => {
+                    const ctx2 = document.getElementById('sleepQualityChart').getContext('2d');
+            
+                    new Chart(ctx2, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Total Sleep Score (0–21)',
+                                data: data.data,
+                                borderWidth: 2,
+                                borderColor: 'rgba(255, 99, 132, 0.8)',
+                                backgroundColor: 'rgba(255, 99, 132, 0.3)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    suggestedMax: 21
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching sleep quality data:', error);
+                    document.getElementById('sleepQualityChart').insertAdjacentHTML('afterend', 
+                        '<div class="alert alert-danger">Unable to load sleep quality data</div>');
+                });
+        });
+    
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
