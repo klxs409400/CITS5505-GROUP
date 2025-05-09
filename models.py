@@ -56,7 +56,7 @@ class SleepRecord(db.Model):
     
     # Additional fields - retrieved from recordsleep.html form
     sleep_disturbances = db.Column(db.String(20))
-    sleep_aid = db.Column(db.Integer)       # e.g., "Melatonin", "Prescription", "None"
+    sleep_aid = db.Column(db.String(20))       # e.g., "Melatonin", "Prescription", "None"
     daytime_dysfunction = db.Column(db.String(20))
     caffeine = db.Column(db.Integer)         # Values: 0, 1, 2
     exercise = db.Column(db.Integer)         # Values: 0, 1, 2
