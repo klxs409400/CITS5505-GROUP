@@ -98,12 +98,16 @@ def sleep_history():
     # Get all sleep records for the current user
     sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
     
+    for record in sleep_records:
+        record.date_str = record.date.strftime('%Y-%m-%d')
+
     # Calculate statistics for display
     avg_duration = 0
     most_common_quality = "Good"
     usual_bedtime = "23:00"
     usual_waketime = "07:00"
     sleep_goal_hours = 8.0
+    sleep_goal_percentage = 75
     
     if sleep_records:
         # Calculate average sleep duration
@@ -114,7 +118,7 @@ def sleep_history():
         quality_counts = {"Excellent": 0, "Good": 0, "Fair": 0, "Poor": 0}
         for record in sleep_records:
             quality_counts[record.quality] = quality_counts.get(record.quality, 0) + 1
-        most_common_quality = max(quality_counts.items(), key=lambda x: x[1])[0]
+            most_common_quality = max(quality_counts.items(), key=lambda x: x[1])[0]
         
         # Calculate usual bedtime and wake time
         bedtimes = [record.bedtime.strftime('%H:%M') for record in sleep_records]
@@ -130,6 +134,19 @@ def sleep_history():
     sleep_goal = SleepGoal.query.filter_by(user_id=current_user.id).order_by(SleepGoal.created_at.desc()).first()
     if sleep_goal:
         sleep_goal_hours = sleep_goal.target_hours + (sleep_goal.target_minutes / 60)
+
+    # Generate a list of date strings for the last 7 days for comparison in the template
+    now = datetime.now()
+    date_strings = [(now - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
+
+  # Calculate the target achievement rate
+    if sleep_goal_hours > 0 and avg_duration > 0:
+      # If the average duration exceeds the target, 100% will be displayed
+        if avg_duration >= sleep_goal_hours:
+            sleep_goal_percentage = 100
+        else:
+            # Otherwise, the actual proportion will be displayed
+            sleep_goal_percentage = int((avg_duration / sleep_goal_hours) * 100)
     
     return render_template('Historical/historical.html',
                           sleep_records=sleep_records,
@@ -138,8 +155,10 @@ def sleep_history():
                           usual_bedtime=usual_bedtime,
                           usual_waketime=usual_waketime,
                           sleep_goal_hours=sleep_goal_hours,
+                          sleep_goal_percentage=sleep_goal_percentage, 
                           now=datetime.now(),
-                          timedelta=timedelta)
+                          timedelta=timedelta,
+                          date_strings=date_strings)
 
 @sleep.route('/edit-sleep/<int:record_id>', methods=['POST'])
 @login_required

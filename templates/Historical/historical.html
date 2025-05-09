@@ -258,11 +258,11 @@
                             font-size="20"
                             font-weight="bold"
                           >
-                            75%
+                            {{ sleep_goal_percentage }}%
                           </text>
                         </svg>
                       </div>
-                      <p class="text-white mt-2">Goal Achievement</p>
+                      <p class="text-white mt-2">Total Goal Achievement</p>
                     </div>
                     <div class="col-md-4 text-center">
                       <h5 class="text-white mb-3">Sleep Tips</h5>
@@ -288,10 +288,10 @@
                 {% for i in range(7) %}
                 <div class="col-md-6 mb-3">
                   <div class="small mb-1">
-                    {% set day = (now - timedelta(days=i)).strftime('%Y-%m-%d')
-                    %} {{ (now - timedelta(days=i)).strftime('%A (%Y-%m-%d)') }}
+                    {% set day = date_strings[i] %} {{ (now -
+                    timedelta(days=i)).strftime('%A (%Y-%m-%d)') }}
                   </div>
-                  {% set record = sleep_records|selectattr('date', 'eq',
+                  {% set record = sleep_records|selectattr('date_str', 'eq',
                   day)|first %} {% if record %}
                   <div class="progress">
                     <div

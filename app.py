@@ -1,7 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_migrate import Migrate
-from flask_login import LoginManager
-from models import db, User
+from flask_login import LoginManager, login_required, current_user
+from models import db, User, SleepRecord  # 添加 SleepRecord 的导入
 import os
 import subprocess
 
@@ -39,6 +39,38 @@ def create_app():
     app.register_blueprint(report)
     app.register_blueprint(settings)
     app.register_blueprint(profile)
+    
+    # 添加调试路由
+    @app.route('/debug-current-user')
+    @login_required
+    def debug_current_user():
+        # 获取当前用户信息
+        user_info = {
+            'id': current_user.id,
+            'username': current_user.username,
+            'email': current_user.email
+        }
+        
+        # 获取该用户的所有睡眠记录
+        sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
+        
+        # 转换记录为可序列化的格式
+        records_info = []
+        for record in sleep_records:
+            records_info.append({
+                'id': record.id,
+                'date': record.date.strftime('%Y-%m-%d'),
+                'bedtime': record.bedtime.strftime('%Y-%m-%d %H:%M'),
+                'wake_time': record.wake_time.strftime('%Y-%m-%d %H:%M'),
+                'duration_hours': record.duration_hours,
+                'quality': record.quality
+            })
+        
+        return jsonify({
+            'user': user_info,
+            'sleep_records': records_info,
+            'record_count': len(records_info)
+        })
     
     return app
 
