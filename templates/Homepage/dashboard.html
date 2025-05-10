@@ -179,12 +179,12 @@
                   aria-labelledby="userDropdown"
                 >
                   <li>
-                    <a class="dropdown-item" href="#"
+                    <a class="dropdown-item" href="{{ url_for('profile.view_profile') }}"
                       ><i class="fas fa-user me-2"></i> Profile</a
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#"
+                    <a class="dropdown-item" href="{{ url_for('settings.view_settings') }}"
                       ><i class="fas fa-cog me-2"></i> Settings</a
                     >
                   </li>
