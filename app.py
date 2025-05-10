@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_required, current_user
-from models import db, User, SleepRecord  # 添加 SleepRecord 的导入
+from models import db, User, SleepRecord  
 import os
 import subprocess
 
@@ -40,21 +40,21 @@ def create_app():
     app.register_blueprint(settings)
     app.register_blueprint(profile)
     
-    # 添加调试路由
+    # Add debug route
     @app.route('/debug-current-user')
     @login_required
     def debug_current_user():
-        # 获取当前用户信息
+        # Get current user information
         user_info = {
             'id': current_user.id,
             'username': current_user.username,
             'email': current_user.email
         }
         
-        # 获取该用户的所有睡眠记录
+        # Get all sleep records for the user
         sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
         
-        # 转换记录为可序列化的格式
+        # Convert records to a serializable format
         records_info = []
         for record in sleep_records:
             records_info.append({
@@ -81,7 +81,8 @@ app = create_app()
 def init_db_if_needed():
     # Check if database file exists
     db_file = 'sleeptracker.db'
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), db_file)
+    instance_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
+    db_path = os.path.join(instance_dir, db_file)
     
     if not os.path.exists(db_path):
         print("Database file not found. Creating database tables...")
@@ -92,7 +93,12 @@ def init_db_if_needed():
         # Initialize test data
         print("Initializing test data with init_db.py...")
         try:
-            subprocess.run(["python3", "init_db.py"], check=True)
+            # Set environment variables to ensure init_db.py uses the correct database path
+            env = os.environ.copy()
+            env['FLASK_APP'] = 'app.py'
+            env['FLASK_ENV'] = 'development'
+            # Use the same URI path pattern to ensure the database is created in the instance directory
+            subprocess.run(["python3", "init_db.py"], env=env, check=True)
             print("Test data initialized successfully!")
         except subprocess.CalledProcessError as e:
             print(f"Failed to initialize test data: {e}")

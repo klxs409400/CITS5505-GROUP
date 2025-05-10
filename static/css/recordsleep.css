@@ -69,27 +69,22 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(94, 114, 228, 0.25);
 }
 
-/* Make input text visible against dark background */
+/* Make input text visible against background */
 input.form-control {
-  color: white; /* Light text color */
-  background-color: #1e2142; /* Same as the card background */
-  border: 1px solid #3f4785; /* Slightly lighter border */
+  color: var(--text-primary); /* Use theme variable instead of hard-coded white */
+  background-color: var(--dark-input); /* Use theme variable */
+  border: 1px solid var(--dark-border); /* Use theme variable */
 }
 
 input.form-control::placeholder {
-  color: rgba(
-    255,
-    255,
-    255,
-    0.6
-  ); /* Visible but slightly dimmed placeholder text */
+  color: var(--text-muted); /* Use theme variable */
 }
 
 /* Style for the hours/minutes labels */
 .input-group-text {
-  color: white;
-  background-color: #2a2f4a; /* Slightly lighter than the input background */
-  border: 1px solid #3f4785;
+  color: var(--text-primary);
+  background-color: var(--dark-input); /* Use theme variable */
+  border: 1px solid var(--dark-border); /* Use theme variable */
 }
 
 .form-text {

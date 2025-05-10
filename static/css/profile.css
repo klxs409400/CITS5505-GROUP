@@ -180,24 +180,24 @@
 
 /* Update dropdown menu styles to match dashboard appearance */
 .navbar .dropdown-menu {
-  background-color: #fff !important; /* Change background to white instead of dark */
-  border: 1px solid rgba(0, 0, 0, 0.15) !important; /* Add subtle border */
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175) !important; /* Add depth with shadow */
-  color: #212529 !important; /* Set text color to dark */
+  background-color: var(--dark-card) !important; /* Use theme variable */
+  border: 1px solid var(--dark-border) !important; /* Use theme variable */
+  box-shadow: var(--shadow-md) !important; /* Use theme variable */
+  color: var(--text-primary) !important; /* Use theme variable */
 }
 
 .navbar .dropdown-item {
-  color: #212529 !important; /* Set menu item text to dark */
+  color: var(--text-primary) !important; /* Use theme variable */
   transition: var(--transition-normal); /* Keep transition effect */
 }
 
 .navbar .dropdown-item:hover {
-  background-color: #f8f9fa !important; /* Light gray background on hover */
-  color: #212529 !important; /* Maintain dark text on hover */
+  background-color: var(--dark-hover) !important; /* Use theme variable */
+  color: var(--text-light) !important; /* Use theme variable */
 }
 
 .navbar .dropdown-item i {
-  color: #6c757d !important; /* Set icon color to medium gray */
+  color: var(--text-secondary) !important; /* Use theme variable */
 }
 
 /* Adjust dropdown divider color */

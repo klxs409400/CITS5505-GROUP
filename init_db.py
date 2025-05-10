@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash
 from datetime import datetime
 
 # Create the Flask application instance
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
 
 # Configure Flask using environment variables
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
