@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Record Sleep | Sleep Tracker</title>
+    
+    {% include 'theme_preload.html' %}
 
     <!-- Bootstrap CSS -->
     <link
@@ -26,6 +28,8 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/recordsleep.css') }}"
     />
+    <!-- Theme JS -->
+    <script src="{{ url_for('static', filename='js/Settings/theme.js') }}"></script>
   </head>
   <body>
     <div class="wrapper">

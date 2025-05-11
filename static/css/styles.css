@@ -79,7 +79,7 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   font-family: "Segoe UI", sans-serif;
   background-color: var(--dark);
   color: var(--text-primary);
@@ -89,7 +89,8 @@ body {
 }
 
 /* Pattern background - only show in dark mode */
-body::after {
+html:not(.light-mode)::after,
+body:not(.light-mode)::after {
   content: "";
   position: fixed;
   top: 0;

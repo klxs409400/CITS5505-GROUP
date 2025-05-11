@@ -4,11 +4,17 @@
  * Including saving user theme preferences to localStorage and applying the theme on page load
  */
 
+// Immediately apply theme to prevent flash of default theme
+(function() {
+    // This script runs immediately when it's loaded
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-mode');
+    }
+})();
+
 // Execute theme initialization when the page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Get user theme preference from localStorage
-    initTheme();
-
     // Find the theme toggle switch on the page (if it exists)
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
@@ -28,11 +34,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /**
  * Initialize theme - Read user preferences from localStorage and apply
+ * Note: This is still kept for backward compatibility but main theme setting
+ * now happens earlier to prevent flash
  */
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-        // If user has a saved theme preference, apply it
+        // If user has a saved theme preference, apply it to both documentElement and body
+        document.documentElement.classList.toggle('light-mode', savedTheme === 'light');
         document.body.classList.toggle('light-mode', savedTheme === 'light');
     } else {
         // Use dark theme as default
@@ -46,6 +55,7 @@ function initTheme() {
  */
 function setTheme(theme) {
     localStorage.setItem('theme', theme);
+    document.documentElement.classList.toggle('light-mode', theme === 'light');
     document.body.classList.toggle('light-mode', theme === 'light');
 }
 

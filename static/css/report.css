@@ -148,14 +148,14 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     font-size: 1rem;
     line-height: 1.8;
-    color: #374151; 
-    max-width: 800px; 
+    color: #374151; /* Dark gray, more clear */
+    max-width: 800px; /* Consistent with charts above */
   }
   
   .references h2 {
     font-size: 1.4rem;
     margin-bottom: 18px;
-    border-bottom: 2px solid #10b981;
+    border-bottom: 2px solid #10b981; /* Dark green accent */
     padding-bottom: 6px;
     color: #111827;
   }

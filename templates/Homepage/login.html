@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <title>Login | SleepTracker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    {% include 'theme_preload.html' %}
+    
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
@@ -12,6 +15,8 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/auth.css') }}"
     />
+    <!-- Theme JS -->
+    <script src="{{ url_for('static', filename='js/Settings/theme.js') }}"></script>
   </head>
   <body class="auth-page">
     <a href="{{ url_for('main.index') }}" class="home-button">← Home</a>
@@ -53,7 +58,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
-        <p class="text-center mt-3">
+        <p class="auth-footer">
           Don't have an account?
           <a
             href="{{ url_for('auth.register') }}"
