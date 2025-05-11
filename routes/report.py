@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template, abort, request
 from flask_login import login_required, current_user
 from flask import jsonify
 from models import SleepRecord, db, User, DataSharing
@@ -9,7 +9,19 @@ report = Blueprint('report', __name__)
 @report.route('/report')
 @login_required
 def view_report():
-    return render_template('Reports/report.html')
+    # Check if 'classic' parameter is present
+    if request.args.get('classic') == 'true':
+        # Show the original report page
+        return render_template('Reports/report.html')
+    else:
+        # Show the visual report page by default
+        return render_template('Reports/visual_report.html')
+
+@report.route('/visual-report')
+@login_required
+def view_visual_report():
+    """Render the visual report page with enhanced data visualizations"""
+    return render_template('Reports/visual_report.html')
 
 def score_mapping(record):
     quality_map = {"Very good": 3, "Fair": 2, "Poor": 1, "Very poor": 0}

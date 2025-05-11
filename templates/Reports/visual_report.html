@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Data Visualization Report</title>
+    <!-- Chart.js and necessary libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.0.0"></script>
+    <!-- Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Theme JS -->
+    <script src="{{ url_for('static', filename='js/Settings/theme.js') }}"></script>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/visual_report.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('main.dashboard') }}" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('report.view_report', classic='true') }}" class="back-button" style="right: 20px; left: auto;">
+            <i class="fas fa-share-alt"></i> Share Report
+        </a>
+        
+        <div class="header">
+            <h1>Sleep Data Visualization Report</h1>
+            <p>Comprehensive analysis of your sleep patterns and quality</p>
+        </div>
+        
+        <div class="summary-cards" id="summary-cards">
+            <!-- Summary cards will be populated by JavaScript -->
+            <div class="summary-card">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <h3>Average Sleep Duration</h3>
+                <div class="value" id="avg-duration">--</div>
+                <p>Recommended: 7-9 hours</p>
+            </div>
+            
+            <div class="summary-card">
+                <div class="icon"><i class="fas fa-star"></i></div>
+                <h3>Sleep Quality Score</h3>
+                <div class="value" id="avg-quality">--</div>
+                <p id="quality-text">Loading...</p>
+            </div>
+            
+            <div class="summary-card">
+                <div class="icon"><i class="fas fa-chart-pie"></i></div>
+                <h3>Most Common Sleep Quality</h3>
+                <div class="value" id="main-issue-pct">--</div>
+                <p id="main-issue-text">Loading...</p>
+            </div>
+            
+            <div class="summary-card">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <h3>Top Sleep Factor</h3>
+                <div class="value"><i class="fas fa-mobile-alt"></i></div>
+                <p>Loading...</p>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <!-- Sleep Duration Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Daily Sleep Duration</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sleepDurationChart"></canvas>
+                </div>
+                <div class="chart-notes">
+                    This chart shows your total sleep hours recorded each day this week.
+                </div>
+            </div>
+            
+            <!-- Sleep Quality Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Sleep Quality Trend</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sleepQualityChart"></canvas>
+                </div>
+                <div class="chart-notes">
+                    This line graph illustrates how your sleep quality has varied across the week.
+                </div>
+            </div>
+            
+            <!-- Sleep Quality Distribution -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Sleep Quality Distribution</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sleepQualityPieChart"></canvas>
+                </div>
+                <div class="chart-notes">
+                    This pie chart summarizes the proportion of good, average, and poor sleep nights.
+                </div>
+            </div>
+            
+            <!-- Impact Factors Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Impact of Factors on Sleep Quality</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="factorsImpactChart"></canvas>
+                </div>
+                <div class="chart-notes">
+                    This bar chart compares how different habits influenced your sleep quality.
+                </div>
+            </div>
+            
+            <!-- Sleep Dimensions Radar Chart removed as it used hardcoded data -->
+        </div>
+        
+        <!-- Sleep Data Comprehensive Summary -->
+        <div class="summary-analysis-card" id="summary-analysis">
+            <div class="chart-header">
+                <h2 class="chart-title">Sleep Data Comprehensive Analysis</h2>
+            </div>
+            <div class="summary-analysis-content">
+                <div class="loading-indicator" id="summary-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Generating analysis...
+                </div>
+                <div id="summary-text" class="hidden"></div>
+            </div>
+        </div>
+        
+        <button id="toggleExplanation" class="toggle-button">
+            <i class="fas fa-info-circle"></i> Show Scoring Criteria
+        </button>
+        
+        <div id="explanationContent" class="collapsible-content">
+            <div class="explanation-section">
+                <h2>Sleep Quality Scoring Criteria (0–3, higher is better)</h2>
+                <p style="font-style: italic; color: #666;">
+                    Based on the Pittsburgh Sleep Quality Index (PSQI) — Buysse et al., 1989. Scores are reversed so that higher values indicate better sleep quality.
+                </p>
+                <ul>
+                    <li><b>Subjective Quality:</b> Very good = 3, Fair = 2, Poor = 1, Very poor = 0</li>
+                    <li><b>Sleep Latency:</b> ≤15min = 3, 16–60min = 1, >60min = 0</li>
+                    <li><b>Duration:</b> ≥7h = 3, 6–7h = 2, 5–6h = 1, &lt;5h = 0</li>
+                    <li><b>Efficiency:</b> ≥85% = 3, 75–84% = 2, 65–74% = 1, &lt;65% = 0</li>
+                    <li><b>Disturbances:</b> None = 3, Occasionally = 2, Often = 1, Frequent = 0</li>
+                    <li><b>Sleep Meds:</b> None = 3, Occasionally = 2, Often = 1, Daily = 0</li>
+                    <li><b>Daytime Dysfunction:</b> None = 3, Sometimes = 2, Often = 1, Severe = 0</li>
+                </ul>
+                
+                <h2>Behavioral Factors Scoring Criteria for Sleep Quality (0–2, higher is better)</h2>
+                <ul>
+                    <li><b>Caffeine Intake:</b> No intake = 2, Daytime only = 1, Nighttime = 0</li>
+                    <li><b>Exercise:</b> Intense night exercise = 0, Moderate daytime exercise = 2, No exercise = 1</li>
+                    <li><b>Screen Time (Before Bed):</b> ≤15min = 2, 15–60min = 1, >60min = 0</li>
+                    <li><b>Late-night Eating:</b> None = 2, Occasionally = 1, Often = 0</li>
+                </ul>
+                
+                <p class="chart-explanation">
+                    <strong>Explanation:</strong> These scoring criteria are designed based on evidence from sleep behavior research. 
+                    Studies suggest that late-night caffeine intake and prolonged screen exposure can negatively affect sleep quality, 
+                    while moderate daytime exercise and healthy eating habits are linked to better sleep. By quantifying these factors, 
+                    the chart helps users understand how their daily habits contribute to overall sleep performance.
+                </p>
+            </div>
+        </div>
+        
+        <button id="toggleReferences" class="toggle-button">
+            <i class="fas fa-book"></i> Show References
+        </button>
+        
+        <div id="referencesContent" class="collapsible-content">
+            <section class="references">
+                <h2>References</h2>
+                <ul>
+                    <li>Buysse, D. J., Reynolds, C. F., Monk, T. H., et al. (1989). The Pittsburgh Sleep Quality Index (PSQI): A New Instrument for Psychiatric Practice and Research. <em>Psychiatry Research, 28</em>(2), 193–213. <a href="https://doi.org/10.1016/0165-1781(89)90047-4" target="_blank">https://doi.org/10.1016/0165-1781(89)90047-4</a></li>
+                    
+                    <li>Knutson, K. L., & Van Cauter, E. (2008). Associations Between Sleep Loss and Increased Risk of Obesity and Diabetes. <em>Annals of the New York Academy of Sciences, 1129</em>, 287–304. <a href="https://doi.org/10.1196/annals.1417.033" target="_blank">https://doi.org/10.1196/annals.1417.033</a></li>
+                
+                    <li>Grandner, M. A., et al. (2010). Social and Behavioral Determinants of Perceived Insufficient Sleep. <em>Frontiers in Neurology, 1</em>, 8. <a href="https://doi.org/10.3389/fneur.2010.00008" target="_blank">https://doi.org/10.3389/fneur.2010.00008</a></li>
+                    
+                    <li>Clark, I., & Landolt, H. P. (2017). Coffee, caffeine, and sleep: A systematic review of epidemiological studies and randomized controlled trials. <em>Sleep Medicine Reviews</em>, 31, 70–78. <a href="https://www.sciencedirect.com/science/article/pii/S1087079216000150" target="_blank">https://www.sciencedirect.com/science/article/pii/S1087079216000150</a></li>
+                    
+                    <li>Chang, A. M., et al. (2015). Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness. <em>Proceedings of the National Academy of Sciences</em>, 112(4), 1232–1237. <a href="https://www.pnas.org/content/112/4/1232" target="_blank">https://www.pnas.org/content/112/4/1232</a></li>
+                    
+                    <li>St-Onge, M. P., et al. (2016). Meal timing and frequency: Implications for cardiovascular disease prevention: A scientific statement from the American Heart Association. <em>Circulation</em>, 135(9), e96–e121. <a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000000476" target="_blank">https://www.ahajournals.org/doi/10.1161/CIR.0000000000000476</a></li>
+                </ul>
+            </section>
+        </div>
+    </div>
+    
+<script>
+    // Toggle explanation content
+    document.getElementById('toggleExplanation').addEventListener('click', function() {
+        const content = document.getElementById('explanationContent');
+        content.classList.toggle('show');
+        
+        const button = document.getElementById('toggleExplanation');
+        if (content.classList.contains('show')) {
+            button.innerHTML = '<i class="fas fa-times-circle"></i> Hide Scoring Criteria';
+        } else {
+            button.innerHTML = '<i class="fas fa-info-circle"></i> Show Scoring Criteria';
+        }
+    });
+    
+    // Toggle references content
+    document.getElementById('toggleReferences').addEventListener('click', function() {
+        const content = document.getElementById('referencesContent');
+        content.classList.toggle('show');
+        
+        const button = document.getElementById('toggleReferences');
+        if (content.classList.contains('show')) {
+            button.innerHTML = '<i class="fas fa-times-circle"></i> Hide References';
+        } else {
+            button.innerHTML = '<i class="fas fa-book"></i> Show References';
+        }
+    });
+    
+    // Initialize all charts and summary data when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Global variable to store sleep quality data for reuse
+        let sleepQualityData = null;
+        let durationData = null;
+        let distributionData = null;
+        let factorImpactData = null;
+        
+        // Load summary data
+        Promise.all([
+            fetch('/api/sleep/duration').then(res => res.json()),
+            fetch('/api/sleep/score').then(res => res.json()),
+            fetch('/api/sleep/level-distribution').then(res => res.json()),
+            fetch('/api/sleep/factor-impact').then(res => res.json())
+        ]).then(([durData, scoreData, distData, factorData]) => {
+            // Store data for reuse
+            durationData = durData;
+            sleepQualityData = scoreData;
+            distributionData = distData;
+            factorImpactData = factorData;
+            
+            // Calculate average duration
+            const durations = durationData.map(d => d.duration);
+            const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+            document.getElementById('avg-duration').textContent = avgDuration.toFixed(1) + 'h';
+            
+            // Calculate average quality score from Sleep Quality Trend data
+            const scores = sleepQualityData.data;
+            const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            document.getElementById('avg-quality').textContent = Math.round(avgScore) + '/21';
+            
+            // Set quality text
+            let qualityText = 'Poor quality sleep';
+            if (avgScore >= 18) qualityText = 'Excellent quality sleep';
+            else if (avgScore >= 14) qualityText = 'Good quality sleep';
+            else if (avgScore >= 9) qualityText = 'Fair quality sleep';
+            document.getElementById('quality-text').textContent = qualityText;
+            
+            // Find the most common sleep quality category from distribution data
+            const total = distributionData.data.reduce((a, b) => a + b, 0);
+            const categories = distributionData.labels; // ['Excellent', 'Good', 'Fair', 'Poor']
+            const percentages = distributionData.data.map(value => Math.round((value / total) * 100));
+            
+            // Find the index of the category with the highest percentage
+            const maxIndex = percentages.indexOf(Math.max(...percentages));
+            const maxCategory = categories[maxIndex];
+            const maxPercentage = percentages[maxIndex];
+            
+            // Update the main sleep issue card with the most common category
+            document.getElementById('main-issue-pct').textContent = maxPercentage + '%';
+            document.getElementById('main-issue-text').textContent = maxCategory + ' quality sleep';
+            
+            // Find the factor with the biggest impact on sleep quality
+            const factorLabels = factorImpactData.labels; // ['Had Caffeine', 'Exercised', 'Screen Time', 'Late-night Eating']
+            const factorScores = factorImpactData.data;
+            
+            // Find the index of the factor with the highest score
+            const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
+            const maxFactor = factorLabels[maxFactorIndex];
+            
+            // Map factors to improvement tips and icons
+            const factorTips = {
+                'Had Caffeine': 'Limit caffeine intake, especially in the afternoon and evening',
+                'Exercised': 'Continue regular exercise for better sleep quality',
+                'Screen Time': 'Reduce screen time before bed',
+                'Late-night Eating': 'Avoid eating late at night'
+            };
+            
+            const factorIcons = {
+                'Had Caffeine': 'fa-mug-hot',
+                'Exercised': 'fa-dumbbell',
+                'Screen Time': 'fa-mobile-alt',
+                'Late-night Eating': 'fa-utensils'
+            };
+            
+            // Update the improvement tip card with the factor that has the biggest impact
+            const tipElement = document.querySelector('.summary-card:nth-child(4) .value i');
+            tipElement.className = ''; // Clear existing classes
+            tipElement.classList.add('fas', factorIcons[maxFactor]);
+            
+            document.querySelector('.summary-card:nth-child(4) p').textContent = factorTips[maxFactor];
+            
+            // Generate comprehensive analysis summary
+            generateSleepAnalysisSummary(durData, scoreData, distData, factorData);
+        });
+        // Sleep Duration Chart
+        fetch('/api/sleep/duration')
+        .then(res => res.json())
+        .then(data => {
+            const labels = data.map(d => d.date);        // ['Mon', 'Tue', ...]
+            const durations = data.map(d => d.duration); // [7, 6.5, ...]
+            
+            const ctx1 = document.getElementById('sleepDurationChart').getContext('2d');
+            new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sleep Duration (hours)',
+                    data: durations,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: 7,
+                                yMax: 7,
+                                borderColor: 'rgba(75, 192, 192, 0.7)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    content: 'Minimum Recommended (7h)',
+                                    display: true,
+                                    position: 'start'
+                                }
+                            },
+                            line2: {
+                                type: 'line',
+                                yMin: 9,
+                                yMax: 9,
+                                borderColor: 'rgba(75, 192, 192, 0.7)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    content: 'Maximum Recommended (9h)',
+                                    display: true,
+                                    position: 'end'
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const value = context.raw;
+                                if (value < 7) return 'Below recommended range';
+                                if (value > 9) return 'Above recommended range';
+                                return 'Within recommended range';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10,
+                        title: {
+                            display: true,
+                            text: 'Hours',
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        });
+        
+        // Sleep Quality Chart
+        fetch('/api/sleep/score')
+        .then(response => response.json())
+        .then(data => {
+            // Store sleep quality data if not already stored
+            if (!sleepQualityData) {
+                sleepQualityData = data;
+                
+                // Update the summary card with the average score
+                const scores = sleepQualityData.data;
+                const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+                document.getElementById('avg-quality').textContent = Math.round(avgScore) + '/21';
+                
+                // Update quality text
+                let qualityText = 'Poor quality sleep';
+                if (avgScore >= 18) qualityText = 'Excellent quality sleep';
+                else if (avgScore >= 14) qualityText = 'Good quality sleep';
+                else if (avgScore >= 9) qualityText = 'Fair quality sleep';
+                document.getElementById('quality-text').textContent = qualityText;
+            }
+            
+            const ctx2 = document.getElementById('sleepQualityChart').getContext('2d');
+            new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Sleep Quality Trend (0-21)',
+                    data: data.data,
+                    borderColor: 'rgba(255, 99, 132, 0.8)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointBackgroundColor: 'white',
+                    pointBorderColor: 'rgba(255, 99, 132, 0.8)',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            zone1: {
+                                type: 'box',
+                                yMin: 0,
+                                yMax: 8,
+                                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                                borderColor: 'rgba(255, 99, 132, 0.3)',
+                                label: {
+                                    content: 'Poor',
+                                    display: true,
+                                    position: 'start'
+                                }
+                            },
+                            zone2: {
+                                type: 'box',
+                                yMin: 9,
+                                yMax: 13,
+                                backgroundColor: 'rgba(255, 159, 64, 0.1)',
+                                borderColor: 'rgba(255, 159, 64, 0.3)',
+                                label: {
+                                    content: 'Fair',
+                                    display: true,
+                                    position: 'start'
+                                }
+                            },
+                            zone3: {
+                                type: 'box',
+                                yMin: 14,
+                                yMax: 17,
+                                backgroundColor: 'rgba(255, 205, 86, 0.1)',
+                                borderColor: 'rgba(255, 205, 86, 0.3)',
+                                label: {
+                                    content: 'Good',
+                                    display: true,
+                                    position: 'start'
+                                }
+                            },
+                            zone4: {
+                                type: 'box',
+                                yMin: 18,
+                                yMax: 21,
+                                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                                borderColor: 'rgba(75, 192, 192, 0.3)',
+                                label: {
+                                    content: 'Excellent',
+                                    display: true,
+                                    position: 'start'
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: function(context) {
+                                const value = context.raw;
+                                if (value >= 18) return 'Quality: Excellent';
+                                if (value >= 14) return 'Quality: Good';
+                                if (value >= 9) return 'Quality: Fair';
+                                return 'Quality: Poor';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 21,
+                        title: {
+                            display: true,
+                            text: 'Score',
+                            color: '#ffffff'
+                        },
+                        ticks: {
+                            color: '#ffffff',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        });
+        
+        // Sleep Quality Distribution Pie Chart
+        fetch('/api/sleep/level-distribution')
+        .then(response => response.json())
+        .then(result => {
+            const ctx3 = document.getElementById('sleepQualityPieChart').getContext('2d');
+            new Chart(ctx3, {
+            type: 'pie',
+            data: {
+                labels: result.labels,
+                datasets: [{
+                    data: result.data,
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)',   // Excellent
+                        'rgba(255, 205, 86, 0.7)',   // Good
+                        'rgba(255, 159, 64, 0.7)',   // Fair
+                        'rgba(255, 99, 132, 0.7)'    // Poor
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 2000,
+                    animateRotate: true
+                },
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#ffffff',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            generateLabels: function(chart) {
+                                // 使用固定的标签
+                                const colors = [
+                                    'rgba(75, 192, 192, 0.7)',   // Excellent
+                                    'rgba(255, 205, 86, 0.7)',   // Good
+                                    'rgba(255, 159, 64, 0.7)',   // Fair
+                                    'rgba(255, 99, 132, 0.7)'    // Poor
+                                ];
+                                const labels = ['Excellent', 'Good', 'Fair', 'Poor'];
+                                
+                                return labels.map((text, i) => ({
+                                    text: text,
+                                    fillStyle: colors[i],
+                                    strokeStyle: colors[i],
+                                    lineWidth: 1,
+                                    hidden: false,
+                                    fontColor: '#ffffff'
+                                }));
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} nights (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+            });
+        });
+        
+        // Factors Impact Chart
+        fetch('/api/sleep/factor-impact')
+        .then(response => response.json())
+        .then(result => {
+            const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
+            new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: result.labels,
+                datasets: [{
+                    label: 'Average Sleep Quality',
+                    data: result.data,
+                    backgroundColor: [
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 205, 86, 0.7)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 2000
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Score: ${context.raw}/21`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 21,
+                        title: {
+                            display: true,
+                            text: 'Sleep Quality Score'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Sleep Dimensions Radar Chart removed as it used hardcoded data
+    });
+    
+    // Generate sleep analysis summary
+    function generateSleepAnalysisSummary(durationData, scoreData, distributionData, factorImpactData) {
+        // Show loading indicator
+        document.getElementById('summary-loading').classList.remove('hidden');
+        document.getElementById('summary-text').classList.add('hidden');
+        
+        // Calculate average sleep duration
+        const durations = durationData.map(d => d.duration);
+        const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+        
+        // Calculate average sleep quality score
+        const scores = scoreData.data;
+        const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+        
+        // Get sleep quality distribution
+        const total = distributionData.data.reduce((a, b) => a + b, 0);
+        const categories = distributionData.labels; // ['Excellent', 'Good', 'Fair', 'Poor']
+        const percentages = distributionData.data.map(value => Math.round((value / total) * 100));
+        
+        // Find the most common sleep quality category
+        const maxIndex = percentages.indexOf(Math.max(...percentages));
+        const maxCategory = categories[maxIndex];
+        const maxPercentage = percentages[maxIndex];
+        
+        // Find the factor with the biggest impact
+        const factorLabels = factorImpactData.labels;
+        const factorScores = factorImpactData.data;
+        const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
+        const maxFactor = factorLabels[maxFactorIndex];
+        
+        // Analyze sleep trend
+        let trend = "stable";
+        if (scores.length > 2) {
+            const firstHalf = scores.slice(0, Math.floor(scores.length / 2));
+            const secondHalf = scores.slice(Math.floor(scores.length / 2));
+            const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+            const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+            
+            if (secondAvg - firstAvg > 1) {
+                trend = "improving";
+            } else if (firstAvg - secondAvg > 1) {
+                trend = "declining";
+            }
+        }
+        
+        // Sleep duration assessment
+        let durationAssessment = "";
+        if (avgDuration >= 7 && avgDuration <= 9) {
+            durationAssessment = "Your average sleep duration is within the recommended range (7-9 hours), which helps with physical recovery and cognitive function maintenance.";
+        } else if (avgDuration < 7) {
+            durationAssessment = "Your average sleep duration is below the recommended range (7-9 hours), which may lead to decreased attention and lowered immunity.";
+        } else {
+            durationAssessment = "Your average sleep duration exceeds the recommended range (7-9 hours), which may be associated with certain health issues.";
+        }
+        
+        // Sleep quality assessment
+        let qualityAssessment = "";
+        if (avgScore >= 18) {
+            qualityAssessment = "Your sleep quality score is excellent, indicating a high-quality sleep experience.";
+        } else if (avgScore >= 14) {
+            qualityAssessment = "Your sleep quality score is good, but there's still room for improvement.";
+        } else if (avgScore >= 9) {
+            qualityAssessment = "Your sleep quality score is fair. Consider paying attention to factors affecting your sleep.";
+        } else {
+            qualityAssessment = "Your sleep quality score is low. You may need to take measures to improve your sleep environment and habits.";
+        }
+        
+        // Factor impact analysis
+        const factorTips = {
+            'Had Caffeine': 'Reduce caffeine intake, especially in the afternoon and evening',
+            'Exercised': 'Maintain regular exercise to help improve sleep quality',
+            'Screen Time': 'Reducing screen time before bed can help you fall asleep faster',
+            'Late-night Eating': 'Avoiding late-night eating can reduce sleep disruptions'
+        };
+        
+        // Generate summary text
+        let summaryText = `
+            <h3>Sleep Overview</h3>
+            <p>In the past week, your average sleep duration was <strong>${avgDuration.toFixed(1)} hours</strong>,
+            with a sleep quality score of <strong>${Math.round(avgScore)}/21</strong>.
+            Your sleep quality trend is <strong>${trend}</strong>.</p>
+            
+            <h3>Sleep Quality Distribution</h3>
+            <p>You had <strong>${maxPercentage}%</strong> of nights with "${maxCategory}" sleep quality.
+            ${categories.map((cat, i) => `${cat}: ${percentages[i]}%`).join(', ')}.</p>
+            
+            <h3>Assessment & Recommendations</h3>
+            <p>${durationAssessment}</p>
+            <p>${qualityAssessment}</p>
+            <p>Data shows that <strong>${maxFactor}</strong> is the main factor affecting your sleep quality.
+            Recommendation: ${factorTips[maxFactor]}.</p>
+            
+            <h3>Areas for Improvement</h3>
+            <ul>
+                ${avgDuration < 7 ? '<li>Try going to bed earlier to ensure adequate sleep time</li>' : ''}
+                ${avgDuration > 9 ? '<li>Avoid excessive sleep duration and maintain a regular sleep-wake cycle</li>' : ''}
+                ${maxFactor === 'Had Caffeine' ? '<li>Limit caffeine intake, especially in the afternoon and evening</li>' : ''}
+                ${maxFactor === 'Screen Time' ? '<li>Avoid electronic devices one hour before bedtime</li>' : ''}
+                ${maxFactor === 'Late-night Eating' ? '<li>Finish dinner at least 3 hours before bedtime</li>' : ''}
+                <li>Maintain a regular sleep schedule, including weekends</li>
+                <li>Create a comfortable, quiet, and dark sleep environment</li>
+            </ul>
+        `;
+        
+        // Update DOM
+        setTimeout(() => {
+            document.getElementById('summary-loading').classList.add('hidden');
+            const summaryTextElement = document.getElementById('summary-text');
+            summaryTextElement.innerHTML = summaryText;
+            summaryTextElement.classList.remove('hidden');
+        }, 1000); // Add 1 second delay to show loading effect
+    }
+</script>
+        
+    </div>
+</body>
+</html>
