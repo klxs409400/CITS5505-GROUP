@@ -8,6 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.0.0"></script>
+    <!-- Add html2canvas and jsPDF libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Icon library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Theme JS -->
@@ -27,6 +30,10 @@
         <a href="{{ url_for('report.view_report', classic='true') }}" class="back-button" style="right: 20px; left: auto;">
             <i class="fas fa-share-alt"></i> Share Report
         </a>
+        
+        <button id="exportPdfBtn" class="back-button" style="right: 180px; left: auto;">
+            <i class="fas fa-file-pdf"></i> Export PDF
+        </button>
         
         <div class="header">
             <h1>Sleep Data Visualization Report</h1>
@@ -120,6 +127,19 @@
             <!-- Sleep Dimensions Radar Chart removed as it used hardcoded data -->
         </div>
         
+        <!-- Sleep Data Comprehensive Summary -->
+        <div class="summary-analysis-card" id="summary-analysis">
+            <div class="chart-header">
+                <h2 class="chart-title">Sleep Data Comprehensive Analysis</h2>
+            </div>
+            <div class="summary-analysis-content">
+                <div class="loading-indicator" id="summary-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Generating analysis...
+                </div>
+                <div id="summary-text" class="hidden"></div>
+            </div>
+        </div>
+        
         <button id="toggleExplanation" class="toggle-button">
             <i class="fas fa-info-circle"></i> Show Scoring Criteria
         </button>
@@ -182,6 +202,274 @@
     </div>
     
 <script>
+    // PDF Export functionality
+    document.getElementById('exportPdfBtn').addEventListener('click', function() {
+        // Show loading state
+        try {
+            prepareChartsForPdfExport(); // Modify chart options before export
+        } catch(e) {
+            console.error("Error preparing charts:", e);
+            // Continue with export even if chart preparation fails
+        }
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        this.disabled = true;
+        
+        // Temporarily hide export button
+        this.style.display = 'none';
+        
+        // Get content to export
+        const contentElement = document.querySelector('.container');
+        
+        // Capture screenshot with html2canvas
+        html2canvas(contentElement, {
+            scale: 1, // Lower resolution to reduce file size
+            useCORS: true, // Allow cross-origin images
+            logging: false, // Disable logging
+            onclone: function(clonedDoc) {
+                // Hide buttons in the cloned document
+                const clonedButtons = clonedDoc.querySelectorAll('.back-button, #toggleExplanation, #toggleReferences');
+                clonedButtons.forEach(button => {
+                    button.style.display = 'none';
+                });
+                
+                // Adjust content to fit in one page without text overlap
+                const container = clonedDoc.querySelector('.container');
+                if (container) {
+                    // Hide chart notes to prevent overlap
+                    const chartNotes = clonedDoc.querySelectorAll('.chart-notes');
+                    chartNotes.forEach(note => {
+                        note.style.display = 'none';
+                    });
+                    
+                    // Adjust chart container height
+                    const chartContainers = clonedDoc.querySelectorAll('.chart-container');
+                    chartContainers.forEach(chart => {
+                        chart.style.height = '220px';
+                        chart.style.marginBottom = '0';
+                        // Ensure chart container has proper background
+                        chart.style.backgroundColor = '#252a4a';
+                    });
+                    
+                    // Fix chart cards to remove any artifacts
+                    const chartCards = clonedDoc.querySelectorAll('.chart-card');
+                    chartCards.forEach(card => {
+                        // Ensure consistent background color
+                        card.style.backgroundColor = '#252a4a';
+                        // Remove any borders that might cause artifacts
+                        card.style.border = 'none';
+                        // Adjust padding to remove any potential gaps
+                        card.style.padding = '15px';
+                        // Remove any box-shadow
+                        card.style.boxShadow = 'none';
+                    });
+                    
+                    // Fix canvas elements to remove artifacts
+                    const canvasElements = clonedDoc.querySelectorAll('canvas');
+                    canvasElements.forEach(canvas => {
+                        // Add a wrapper div with proper background
+                        const wrapper = document.createElement('div');
+                        wrapper.style.backgroundColor = '#252a4a';
+                        wrapper.style.position = 'relative';
+                        wrapper.style.width = '100%';
+                        wrapper.style.height = '100%';
+                        
+                        // Replace canvas with wrapped canvas
+                        const parent = canvas.parentNode;
+                        parent.insertBefore(wrapper, canvas);
+                        wrapper.appendChild(canvas);
+                    });
+                    
+                    // Reduce font size
+                    container.style.fontSize = '0.9em';
+                    
+                    // Reduce margins
+                    container.style.padding = '10px';
+                    
+                    // Compress layout
+                    const dashboard = clonedDoc.querySelector('.dashboard');
+                    if (dashboard) {
+                        dashboard.style.gap = '10px';
+                        // Ensure dashboard has proper background
+                        dashboard.style.backgroundColor = '#121212';
+                    }
+                    
+                    const summaryCards = clonedDoc.querySelector('.summary-cards');
+                    if (summaryCards) {
+                        summaryCards.style.gap = '10px';
+                        summaryCards.style.marginBottom = '10px';
+                    }
+                    
+                    // Ensure body has proper background
+                    clonedDoc.body.style.backgroundColor = '#121212';
+                    
+                    // Modify chart options to prevent text overlap
+                    const chartElements = clonedDoc.querySelectorAll('canvas');
+                    chartElements.forEach(canvas => {
+                        // Add custom attribute to identify these canvases for special handling
+                        canvas.setAttribute('data-pdf-export', 'true');
+                    });
+                }
+            }
+        }).then(function(canvas) {
+            // Create PDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            // Get canvas dimensions
+            const imgWidth = 210; // A4 width (mm)
+            const pageHeight = 295; // A4 height (mm)
+            
+            // Calculate appropriate height to ensure content fits in one page
+            let imgHeight = canvas.height * imgWidth / canvas.width;
+            
+            // Scale down if height exceeds A4 page height
+            if (imgHeight > pageHeight) {
+                imgHeight = pageHeight;
+            }
+            
+            // Add image to PDF using lower quality JPEG instead of PNG
+            const imgData = canvas.toDataURL('image/jpeg', 0.6); // Reduce quality to 60%
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+            
+            // Save PDF
+            pdf.save('sleep_report.pdf');
+            
+            // Restore button state and chart options
+            const exportBtn = document.getElementById('exportPdfBtn');
+            exportBtn.style.display = '';
+            exportBtn.innerHTML = originalText;
+            exportBtn.disabled = false;
+            
+            // Restore original chart options
+            try {
+                restoreChartOptions();
+            } catch(e) {
+                console.error("Error restoring chart options:", e);
+                // Continue even if restoration fails
+            }
+        });
+    });
+    
+    // Add custom chart rendering for PDF export
+    // This will run before the PDF export to modify chart options
+    function prepareChartsForPdfExport() {
+        // Check if Chart is defined and has instances
+        if (typeof Chart === 'undefined' || !Chart.instances) {
+            console.log("Chart.js not initialized or no instances available");
+            return;
+        }
+        
+        try {
+            // Find all chart instances
+            Object.keys(Chart.instances).forEach(key => {
+                const chart = Chart.instances[key];
+                if (!chart || !chart.options) return;
+                
+                // Store original options
+                if (!chart._originalOptions) {
+                    try {
+                        chart._originalOptions = JSON.parse(JSON.stringify(chart.options));
+                    } catch(e) {
+                        console.error("Error storing original options:", e);
+                    }
+                }
+                
+                // Safely modify options
+                try {
+                    // Modify font sizes if they exist
+                    if (chart.options.plugins && chart.options.plugins.legend &&
+                        chart.options.plugins.legend.labels) {
+                        if (!chart.options.plugins.legend.labels.font) {
+                            chart.options.plugins.legend.labels.font = {};
+                        }
+                        chart.options.plugins.legend.labels.font.size = 8;
+                    }
+                    
+                    // Modify axis ticks if they exist
+                    if (chart.options.scales) {
+                        if (chart.options.scales.x) {
+                            if (!chart.options.scales.x.ticks) {
+                                chart.options.scales.x.ticks = {};
+                            }
+                            if (!chart.options.scales.x.ticks.font) {
+                                chart.options.scales.x.ticks.font = {};
+                            }
+                            chart.options.scales.x.ticks.font.size = 8;
+                            
+                            // Hide grid lines
+                            if (!chart.options.scales.x.grid) {
+                                chart.options.scales.x.grid = {};
+                            }
+                            chart.options.scales.x.grid.display = false;
+                            
+                            // Fix background color
+                            chart.options.scales.x.grid.color = 'transparent';
+                            chart.options.scales.x.border = { display: false };
+                            chart.options.scales.x.backgroundColor = '#252a4a';
+                        }
+                        
+                        if (chart.options.scales.y) {
+                            if (!chart.options.scales.y.ticks) {
+                                chart.options.scales.y.ticks = {};
+                            }
+                            if (!chart.options.scales.y.ticks.font) {
+                                chart.options.scales.y.ticks.font = {};
+                            }
+                            chart.options.scales.y.ticks.font.size = 8;
+                            
+                            // Hide grid lines
+                            if (!chart.options.scales.y.grid) {
+                                chart.options.scales.y.grid = {};
+                            }
+                            chart.options.scales.y.grid.display = false;
+                            
+                            // Fix background color
+                            chart.options.scales.y.grid.color = 'transparent';
+                            chart.options.scales.y.border = { display: false };
+                            chart.options.scales.y.backgroundColor = '#252a4a';
+                        }
+                    }
+                    
+                    // Update chart
+                    chart.update();
+                } catch(e) {
+                    console.error("Error modifying chart options:", e);
+                }
+            });
+        } catch(e) {
+            console.error("Error in prepareChartsForPdfExport:", e);
+        }
+    }
+    
+    // Restore original chart options
+    function restoreChartOptions() {
+        // Check if Chart is defined and has instances
+        if (typeof Chart === 'undefined' || !Chart.instances) {
+            console.log("Chart.js not initialized or no instances available");
+            return;
+        }
+        
+        try {
+            Object.keys(Chart.instances).forEach(key => {
+                const chart = Chart.instances[key];
+                if (!chart) return;
+                
+                // Restore original options if available
+                if (chart._originalOptions) {
+                    try {
+                        chart.options = JSON.parse(JSON.stringify(chart._originalOptions));
+                        chart.update();
+                    } catch(e) {
+                        console.error("Error restoring chart options:", e);
+                    }
+                }
+            });
+        } catch(e) {
+            console.error("Error in restoreChartOptions:", e);
+        }
+    }
+    
     // Toggle explanation content
     document.getElementById('toggleExplanation').addEventListener('click', function() {
         const content = document.getElementById('explanationContent');
@@ -212,6 +500,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Global variable to store sleep quality data for reuse
         let sleepQualityData = null;
+        let durationData = null;
+        let distributionData = null;
+        let factorImpactData = null;
         
         // Load summary data
         Promise.all([
@@ -219,9 +510,12 @@
             fetch('/api/sleep/score').then(res => res.json()),
             fetch('/api/sleep/level-distribution').then(res => res.json()),
             fetch('/api/sleep/factor-impact').then(res => res.json())
-        ]).then(([durationData, scoreData, distributionData, factorImpactData]) => {
-            // Store sleep quality data for reuse
+        ]).then(([durData, scoreData, distData, factorData]) => {
+            // Store data for reuse
+            durationData = durData;
             sleepQualityData = scoreData;
+            distributionData = distData;
+            factorImpactData = factorData;
             
             // Calculate average duration
             const durations = durationData.map(d => d.duration);
@@ -283,6 +577,9 @@
             tipElement.classList.add('fas', factorIcons[maxFactor]);
             
             document.querySelector('.summary-card:nth-child(4) p').textContent = factorTips[maxFactor];
+            
+            // Generate comprehensive analysis summary
+            generateSleepAnalysisSummary(durData, scoreData, distData, factorData);
         });
         // Sleep Duration Chart
         fetch('/api/sleep/duration')
@@ -691,6 +988,119 @@
         
         // Sleep Dimensions Radar Chart removed as it used hardcoded data
     });
+    
+    // Generate sleep analysis summary
+    function generateSleepAnalysisSummary(durationData, scoreData, distributionData, factorImpactData) {
+        // Show loading indicator
+        document.getElementById('summary-loading').classList.remove('hidden');
+        document.getElementById('summary-text').classList.add('hidden');
+        
+        // Calculate average sleep duration
+        const durations = durationData.map(d => d.duration);
+        const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+        
+        // Calculate average sleep quality score
+        const scores = scoreData.data;
+        const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+        
+        // Get sleep quality distribution
+        const total = distributionData.data.reduce((a, b) => a + b, 0);
+        const categories = distributionData.labels; // ['Excellent', 'Good', 'Fair', 'Poor']
+        const percentages = distributionData.data.map(value => Math.round((value / total) * 100));
+        
+        // Find the most common sleep quality category
+        const maxIndex = percentages.indexOf(Math.max(...percentages));
+        const maxCategory = categories[maxIndex];
+        const maxPercentage = percentages[maxIndex];
+        
+        // Find the factor with the biggest impact
+        const factorLabels = factorImpactData.labels;
+        const factorScores = factorImpactData.data;
+        const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
+        const maxFactor = factorLabels[maxFactorIndex];
+        
+        // Analyze sleep trend
+        let trend = "stable";
+        if (scores.length > 2) {
+            const firstHalf = scores.slice(0, Math.floor(scores.length / 2));
+            const secondHalf = scores.slice(Math.floor(scores.length / 2));
+            const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+            const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+            
+            if (secondAvg - firstAvg > 1) {
+                trend = "improving";
+            } else if (firstAvg - secondAvg > 1) {
+                trend = "declining";
+            }
+        }
+        
+        // Sleep duration assessment
+        let durationAssessment = "";
+        if (avgDuration >= 7 && avgDuration <= 9) {
+            durationAssessment = "Your average sleep duration is within the recommended range (7-9 hours), which helps with physical recovery and cognitive function maintenance.";
+        } else if (avgDuration < 7) {
+            durationAssessment = "Your average sleep duration is below the recommended range (7-9 hours), which may lead to decreased attention and lowered immunity.";
+        } else {
+            durationAssessment = "Your average sleep duration exceeds the recommended range (7-9 hours), which may be associated with certain health issues.";
+        }
+        
+        // Sleep quality assessment
+        let qualityAssessment = "";
+        if (avgScore >= 18) {
+            qualityAssessment = "Your sleep quality score is excellent, indicating a high-quality sleep experience.";
+        } else if (avgScore >= 14) {
+            qualityAssessment = "Your sleep quality score is good, but there's still room for improvement.";
+        } else if (avgScore >= 9) {
+            qualityAssessment = "Your sleep quality score is fair. Consider paying attention to factors affecting your sleep.";
+        } else {
+            qualityAssessment = "Your sleep quality score is low. You may need to take measures to improve your sleep environment and habits.";
+        }
+        
+        // Factor impact analysis
+        const factorTips = {
+            'Had Caffeine': 'Reduce caffeine intake, especially in the afternoon and evening',
+            'Exercised': 'Maintain regular exercise to help improve sleep quality',
+            'Screen Time': 'Reducing screen time before bed can help you fall asleep faster',
+            'Late-night Eating': 'Avoiding late-night eating can reduce sleep disruptions'
+        };
+        
+        // Generate summary text
+        let summaryText = `
+            <h3>Sleep Overview</h3>
+            <p>In the past week, your average sleep duration was <strong>${avgDuration.toFixed(1)} hours</strong>,
+            with a sleep quality score of <strong>${Math.round(avgScore)}/21</strong>.
+            Your sleep quality trend is <strong>${trend}</strong>.</p>
+            
+            <h3>Sleep Quality Distribution</h3>
+            <p>You had <strong>${maxPercentage}%</strong> of nights with "${maxCategory}" sleep quality.
+            ${categories.map((cat, i) => `${cat}: ${percentages[i]}%`).join(', ')}.</p>
+            
+            <h3>Assessment & Recommendations</h3>
+            <p>${durationAssessment}</p>
+            <p>${qualityAssessment}</p>
+            <p>Data shows that <strong>${maxFactor}</strong> is the main factor affecting your sleep quality.
+            Recommendation: ${factorTips[maxFactor]}.</p>
+            
+            <h3>Areas for Improvement</h3>
+            <ul>
+                ${avgDuration < 7 ? '<li>Try going to bed earlier to ensure adequate sleep time</li>' : ''}
+                ${avgDuration > 9 ? '<li>Avoid excessive sleep duration and maintain a regular sleep-wake cycle</li>' : ''}
+                ${maxFactor === 'Had Caffeine' ? '<li>Limit caffeine intake, especially in the afternoon and evening</li>' : ''}
+                ${maxFactor === 'Screen Time' ? '<li>Avoid electronic devices one hour before bedtime</li>' : ''}
+                ${maxFactor === 'Late-night Eating' ? '<li>Finish dinner at least 3 hours before bedtime</li>' : ''}
+                <li>Maintain a regular sleep schedule, including weekends</li>
+                <li>Create a comfortable, quiet, and dark sleep environment</li>
+            </ul>
+        `;
+        
+        // Update DOM
+        setTimeout(() => {
+            document.getElementById('summary-loading').classList.add('hidden');
+            const summaryTextElement = document.getElementById('summary-text');
+            summaryTextElement.innerHTML = summaryText;
+            summaryTextElement.classList.remove('hidden');
+        }, 1000); // Add 1 second delay to show loading effect
+    }
 </script>
         
     </div>

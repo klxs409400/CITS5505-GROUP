@@ -252,3 +252,89 @@ body {
         flex-basis: 100%;
     }
 }
+
+@media print {
+    .back-button, #exportPdfBtn, #toggleExplanation, #toggleReferences {
+        display: none !important;
+    }
+    
+    body {
+        background-color: white;
+        color: black;
+    }
+    
+    .container {
+        padding: 0;
+    }
+    
+    .chart-card, .summary-card, .references, .explanation-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+/* Sleep Data Comprehensive Summary Styles */
+.summary-analysis-card {
+    background: var(--dark-card, #252a4a);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card, 0 4px 20px rgba(0, 0, 0, 0.2));
+    padding: 20px;
+    margin: 30px auto;
+    max-width: 1200px;
+    transition: transform 0.3s ease;
+}
+
+.summary-analysis-card:hover {
+    transform: translateY(-5px);
+}
+
+.summary-analysis-content {
+    background-color: var(--dark-component, #1e2042);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+    color: var(--text-light, #f8f9fa);
+    line-height: 1.6;
+}
+
+.summary-analysis-content h3 {
+    color: var(--primary-light, #7a8cf8);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--primary, #5e72e4);
+    padding-bottom: 5px;
+}
+
+.summary-analysis-content p {
+    margin-bottom: 15px;
+}
+
+.summary-analysis-content strong {
+    color: var(--secondary, #2ecbba);
+    font-weight: 600;
+}
+
+.summary-analysis-content ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.summary-analysis-content li {
+    margin-bottom: 8px;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 30px;
+    font-size: 1.2rem;
+    color: var(--primary-light, #7a8cf8);
+}
+
+.loading-indicator i {
+    margin-right: 10px;
+}
+
+.hidden {
+    display: none;
+}
