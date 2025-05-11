@@ -254,7 +254,7 @@ body {
 }
 
 @media print {
-    .back-button, #exportPdfBtn, #toggleExplanation, #toggleReferences {
+    .back-button, #toggleExplanation, #toggleReferences {
         display: none !important;
     }
     
