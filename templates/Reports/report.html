@@ -8,9 +8,21 @@
     <!-- Theme JS -->
     <script src="{{ url_for('static', filename='js/Settings/theme.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">        
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
+    <style>
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 15px;
+            background-color: #1a1f3c;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        canvas {
+            max-height: 300px;
+        }
+    </style>
 </head>
 
 <body>
@@ -56,7 +68,9 @@
     <div class="chart-card">
         <h3>Daily Sleep Duration</h3>
         <p>This chart shows your total sleep hours recorded each day this week.</p>
-        <canvas id="sleepDurationChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+        <div class="chart-container">
+            <canvas id="sleepDurationChart" width="400" height="200"></canvas>
+        </div>
     </div>
     </div>
     
@@ -64,7 +78,9 @@
     <div class="chart-card">
         <h3>Sleep Quality Trend</h3>
         <p>This line graph illustrates how your sleep quality has varied across the week.</p>
-        <canvas id="sleepQualityChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>
+        <div class="chart-container">
+            <canvas id="sleepQualityChart" width="400" height="200"></canvas>
+        </div>
     </div>
     </div>
 
@@ -89,7 +105,9 @@
     <div class="chart-card">
         <h3>Sleep Quality Distribution</h3>
         <p>This pie chart summarizes the proportion of good, average, and poor sleep nights.</p>
-        <canvas id="sleepQualityPieChart" style="margin-top: 20px;" width="400" height="400"></canvas>
+        <div class="chart-container">
+            <canvas id="sleepQualityPieChart" style="margin-top: 20px;" width="400" height="400"></canvas>
+        </div>
     </div>
     </div>
 
@@ -97,7 +115,9 @@
     <div class="chart-card">
         <h3>Impact of Factors on Sleep Quality</h3>
         <p>This bar chart compares how different habits influenced your sleep quality.</p>
-        <canvas id="factorsImpactChart" width="400" height="200" style="background-color: #f4f4f4;"></canvas>    
+        <div class="chart-container">
+            <canvas id="factorsImpactChart" width="400" height="200"></canvas>
+        </div>
     </div>
     
     <div class="scoring-guide">
@@ -119,7 +139,14 @@
       
   </div>
   <script>
-    fetch('/api/sleep/duration')
+    // 设置全局Chart.js默认值，使所有图表的文字颜色为白色
+    Chart.defaults.color = '#ffffff';
+    Chart.defaults.font.weight = 'bold';
+    
+    // Initialize all charts when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Sleep Duration Chart
+      fetch('/api/sleep/duration')
       .then(res => res.json())
       .then(data => {
         const labels = data.map(d => d.date);        // ['Mon', 'Tue', ...]
@@ -141,6 +168,7 @@
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             animation: {
               duration: 2000,
               easing: 'easeOutQuart'
@@ -200,238 +228,285 @@
           }
         });
       });
-    </script>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          fetch('/api/sleep/score')
-            .then(response => response.json())
-            .then(data => {
-              const ctx2 = document.getElementById('sleepQualityChart').getContext('2d');
-        
-              new Chart(ctx2, {
-                type: 'line',
-                data: {
-                  labels: data.labels,
-                  datasets: [{
-                    label: 'Total Sleep Score (0–21)',
-                    data: data.data,
-                    borderWidth: 2,
-                    borderColor: 'rgba(255, 99, 132, 0.8)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 6,
-                    pointBackgroundColor: 'white',
-                    pointBorderColor: 'rgba(255, 99, 132, 0.8)',
-                    pointBorderWidth: 2
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  animation: {
-                    duration: 2000,
-                    easing: 'easeOutQuart'
-                  },
-                  plugins: {
-                    annotation: {
-                      annotations: {
-                        zone1: {
-                          type: 'box',
-                          yMin: 0,
-                          yMax: 8,
-                          backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                          borderColor: 'rgba(255, 99, 132, 0.3)',
-                          label: {
-                            content: 'Poor',
-                            display: true,
-                            position: 'start'
-                          }
-                        },
-                        zone2: {
-                          type: 'box',
-                          yMin: 9,
-                          yMax: 13,
-                          backgroundColor: 'rgba(255, 159, 64, 0.1)',
-                          borderColor: 'rgba(255, 159, 64, 0.3)',
-                          label: {
-                            content: 'Fair',
-                            display: true,
-                            position: 'start'
-                          }
-                        },
-                        zone3: {
-                          type: 'box',
-                          yMin: 14,
-                          yMax: 17,
-                          backgroundColor: 'rgba(255, 205, 86, 0.1)',
-                          borderColor: 'rgba(255, 205, 86, 0.3)',
-                          label: {
-                            content: 'Good',
-                            display: true,
-                            position: 'start'
-                          }
-                        },
-                        zone4: {
-                          type: 'box',
-                          yMin: 18,
-                          yMax: 21,
-                          backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                          borderColor: 'rgba(75, 192, 192, 0.3)',
-                          label: {
-                            content: 'Excellent',
-                            display: true,
-                            position: 'start'
-                          }
-                        }
-                      }
-                    },
-                    tooltip: {
-                      callbacks: {
-                        afterLabel: function(context) {
-                          const value = context.raw;
-                          if (value >= 18) return 'Quality: Excellent';
-                          if (value >= 14) return 'Quality: Good';
-                          if (value >= 9) return 'Quality: Fair';
-                          return 'Quality: Poor';
-                        }
+      // Sleep Quality Chart
+      fetch('/api/sleep/score')
+      .then(response => response.json())
+      .then(data => {
+        const ctx2 = document.getElementById('sleepQualityChart').getContext('2d');
+  
+        new Chart(ctx2, {
+          type: 'line',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: 'Sleep Quality Trend (0-21)',
+              data: data.data,
+              borderWidth: 2,
+              borderColor: 'rgba(255, 99, 132, 0.8)',
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 6,
+              pointBackgroundColor: 'white',
+              pointBorderColor: 'rgba(255, 99, 132, 0.8)',
+              pointBorderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+              duration: 2000,
+              easing: 'easeOutQuart'
+            },
+            plugins: {
+              annotation: {
+                annotations: {
+                  zone1: {
+                    type: 'box',
+                    yMin: 0,
+                    yMax: 8,
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    borderColor: 'rgba(255, 99, 132, 0.3)',
+                    label: {
+                      content: 'Poor',
+                      display: true,
+                      position: 'start',
+                      color: '#ffffff',
+                      font: {
+                        weight: 'bold'
                       }
                     }
                   },
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      max: 21,
-                      title: {
-                        display: true,
-                        text: 'Score'
+                  zone2: {
+                    type: 'box',
+                    yMin: 9,
+                    yMax: 13,
+                    backgroundColor: 'rgba(255, 159, 64, 0.1)',
+                    borderColor: 'rgba(255, 159, 64, 0.3)',
+                    label: {
+                      content: 'Fair',
+                      display: true,
+                      position: 'start',
+                      color: '#ffffff',
+                      font: {
+                        weight: 'bold'
+                      }
+                    }
+                  },
+                  zone3: {
+                    type: 'box',
+                    yMin: 14,
+                    yMax: 17,
+                    backgroundColor: 'rgba(255, 205, 86, 0.1)',
+                    borderColor: 'rgba(255, 205, 86, 0.3)',
+                    label: {
+                      content: 'Good',
+                      display: true,
+                      position: 'start',
+                      color: '#ffffff',
+                      font: {
+                        weight: 'bold'
+                      }
+                    }
+                  },
+                  zone4: {
+                    type: 'box',
+                    yMin: 18,
+                    yMax: 21,
+                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    borderColor: 'rgba(75, 192, 192, 0.3)',
+                    label: {
+                      content: 'Excellent',
+                      display: true,
+                      position: 'start',
+                      color: '#ffffff',
+                      font: {
+                        weight: 'bold'
                       }
                     }
                   }
                 }
-              });
-            });
-        });
-        </script>
-        
-    
-        <script>
-            fetch('/api/sleep/level-distribution')
-              .then(response => response.json())
-              .then(result => {
-                const ctx3 = document.getElementById('sleepQualityPieChart').getContext('2d');
-                new Chart(ctx3, {
-                  type: 'pie',
-                  data: {
-                    labels: result.labels,  // ['Excellent', 'Good', 'Fair', 'Poor']
-                    datasets: [{
-                      label: 'Sleep Quality Distribution',
-                      data: result.data,     // e.g., [2, 3, 1, 1]
-                      backgroundColor: [
-                        'rgba(75, 192, 192, 0.7)',   // Excellent
-                        'rgba(255, 205, 86, 0.7)',   // Good
-                        'rgba(255, 159, 64, 0.7)',   // Fair
-                        'rgba(255, 99, 132, 0.7)'    // Poor
-                      ],
-                      borderWidth: 1
-                    }]
-                  },
-                  options: {
-                    responsive: true,
-                    animation: {
-                      duration: 2000,
-                      animateRotate: true
-                    },
-                    plugins: {
-                      legend: {
-                        position: 'right',
-                        labels: {
-                          generateLabels: function (chart) {
-                            const original = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                            const mapping = {
-                              'Excellent': 'Excellent (18–21)',
-                              'Good': 'Good (14–17)',
-                              'Fair': 'Fair (9–13)',
-                              'Poor': 'Poor (0–8)'
-                            };
-                            return original.map(label => ({
-                              ...label,
-                              text: mapping[label.text] || label.text
-                            }));
-                          }
-                        }
-                      },
-                      tooltip: {
-                        callbacks: {
-                          label: function(context) {
-                            const label = context.label || '';
-                            const value = context.raw || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = Math.round((value / total) * 100);
-                            return `${label}: ${value} nights (${percentage}%)`;
-                          }
-                        }
-                      }
-                    }
+              },
+              tooltip: {
+                callbacks: {
+                  afterLabel: function(context) {
+                    const value = context.raw;
+                    if (value >= 18) return 'Quality: Excellent';
+                    if (value >= 14) return 'Quality: Good';
+                    if (value >= 9) return 'Quality: Fair';
+                    return 'Quality: Poor';
                   }
-                });
-              });
-          </script>
-          
-    
-    <script>
-fetch('/api/sleep/factor-impact')
-  .then(response => response.json())
-  .then(result => {
-    const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
-    new Chart(ctx4, {
-      type: 'bar',
-      data: {
-        labels: result.labels,  // ['Had Caffeine', 'Exercised', ...]
-        datasets: [{
-          label: 'Average Sleep Quality',
-          data: result.data,
-          backgroundColor: [
-            'rgba(255, 159, 64, 0.7)',
-            'rgba(75, 192, 192, 0.7)',
-            'rgba(153, 102, 255, 0.7)',
-            'rgba(255, 205, 86, 0.7)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        animation: {
-          duration: 2000
-        },
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return `Score: ${context.raw}/21`;
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 21,
+                title: {
+                  display: true,
+                  text: 'Score'
+                }
               }
             }
           }
-        },
-        scales: {
-          x: {
-            beginAtZero: true,
-            max: 21,
-            title: {
-              display: true,
-              text: 'Sleep Quality Score'
+        });
+      });
+        
+    
+      // Sleep Quality Distribution Pie Chart
+      fetch('/api/sleep/level-distribution')
+      .then(response => response.json())
+      .then(result => {
+        const ctx3 = document.getElementById('sleepQualityPieChart').getContext('2d');
+        new Chart(ctx3, {
+          type: 'pie',
+          data: {
+            labels: result.labels,
+            datasets: [{
+              data: result.data,
+              backgroundColor: [
+                'rgba(75, 192, 192, 0.7)',   // Excellent
+                'rgba(255, 205, 86, 0.7)',   // Good
+                'rgba(255, 159, 64, 0.7)',   // Fair
+                'rgba(255, 99, 132, 0.7)'    // Poor
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+              duration: 2000,
+              animateRotate: true
+            },
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  color: '#ffffff',
+                  font: {
+                    size: 14,
+                    weight: 'bold'
+                  },
+                  generateLabels: function(chart) {
+                    // 使用固定的标签
+                    const colors = [
+                      'rgba(75, 192, 192, 0.7)',   // Excellent
+                      'rgba(255, 205, 86, 0.7)',   // Good
+                      'rgba(255, 159, 64, 0.7)',   // Fair
+                      'rgba(255, 99, 132, 0.7)'    // Poor
+                    ];
+                    const labels = ['Excellent', 'Good', 'Fair', 'Poor'];
+                    
+                    return labels.map((text, i) => ({
+                      text: text,
+                      fillStyle: colors[i],
+                      strokeStyle: colors[i],
+                      lineWidth: 1,
+                      hidden: false,
+                      fontColor: '#ffffff'
+                    }));
+                  }
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.raw || 0;
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = Math.round((value / total) * 100);
+                    return `${label}: ${value} nights (${percentage}%)`;
+                  }
+                }
+              }
             }
           }
-        }
-      }
+        });
+      });
+          
+    
+      // Factors Impact Chart
+      fetch('/api/sleep/factor-impact')
+      .then(response => response.json())
+      .then(result => {
+        const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
+        new Chart(ctx4, {
+          type: 'bar',
+          data: {
+            labels: result.labels,
+            datasets: [{
+              label: 'Average Sleep Quality',
+              data: result.data,
+              backgroundColor: [
+                'rgba(255, 159, 64, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 205, 86, 0.7)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+              duration: 2000
+            },
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `Score: ${context.raw}/21`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                max: 21,
+                title: {
+                  display: true,
+                  text: 'Sleep Quality Score',
+                  color: '#ffffff'
+                },
+                ticks: {
+                  color: '#ffffff',
+                  font: {
+                    weight: 'bold'
+                  }
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              },
+              y: {
+                ticks: {
+                  color: '#ffffff',
+                  font: {
+                    weight: 'bold',
+                    size: 14
+                  }
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              }
+            }
+          }
+        });
+      });
     });
-  });
-</script>
+  </script>
     </div>
 
     <button onclick="scrollToTop()" class="top-button">↑ Top</button>
