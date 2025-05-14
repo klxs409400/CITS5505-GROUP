@@ -88,6 +88,58 @@ $(document).ready(function () {
     },
   });
 
+  // Add the following code to specifically handle edit and delete buttons
+  $(".edit-btn, .delete-btn").on("click", function (e) {
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Prevent event bubbling
+
+    // Determine which type of button was clicked
+    const buttonType = $(this).hasClass("edit-btn") ? "Edit" : "Delete";
+
+    // Display a notification message
+    toastMessage(
+      `This is demo mode, ${buttonType} functionality is not available.`
+    );
+
+    return false; // Ensure no navigation is triggered
+  });
+
+  // Handle delete confirmation form submission
+  $("#deleteEntryForm").on("submit", function (e) {
+    e.preventDefault(); // Prevent form submission
+
+    // Hide the modal
+    const deleteModal = bootstrap.Modal.getInstance(
+      document.getElementById("deleteConfirmModal")
+    );
+    if (deleteModal) {
+      deleteModal.hide();
+    }
+
+    // Display notification message
+    toastMessage("Delete functionality is not available in demo mode.");
+
+    return false; // Ensure form is not submitted
+  });
+
+  // Modify confirm delete button behavior
+  $("#confirmDeleteBtn").on("click", function (e) {
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Prevent event bubbling
+
+    // Hide the modal
+    const deleteModal = bootstrap.Modal.getInstance(
+      document.getElementById("deleteConfirmModal")
+    );
+    if (deleteModal) {
+      deleteModal.hide();
+    }
+
+    // Display notification message
+    toastMessage("Delete functionality is not available in demo mode.");
+
+    return false; // Ensure no navigation is triggered
+  });
   // Sleep Quality Chart
   const sleepQualityCtx = document
     .getElementById("sleepQualityChart")
