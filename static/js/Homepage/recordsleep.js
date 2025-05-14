@@ -22,6 +22,14 @@ $(document).ready(function () {
     calculateSleepDuration();
   });
 
+  // After submitting the add new sleep record form
+  $("#recordSleepForm").on("submit", function () {
+    // Delay execution to allow backend processing and page update
+    setTimeout(function () {
+      window.location.reload(); // Force a full page reload to fetch the latest data
+    }, 500);
+  });
+
   // Form submission validation
   $("#sleepEntryForm").on("submit", function (e) {
     // Basic validation
