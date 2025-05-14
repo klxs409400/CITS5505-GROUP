@@ -295,7 +295,7 @@
                       >
                         Total Entries
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">365</div>
+                      <div class="h5 mb-0 font-weight-bold">{{ total_entries }}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -315,7 +315,7 @@
                       >
                         Current Streak
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">28 days</div>
+                      <div class="h5 mb-0 font-weight-bold">{{ current_streak }} days</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-trophy fa-2x text-gray-300"></i>
@@ -335,7 +335,7 @@
                       >
                         Achievement Points
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">875</div>
+                      <div class="h5 mb-0 font-weight-bold">{{ achievement_points }}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-medal fa-2x text-gray-300"></i>
@@ -355,7 +355,7 @@
                       >
                         Goal Success Rate
                       </div>
-                      <div class="h5 mb-0 font-weight-bold">82%</div>
+                      <div class="h5 mb-0 font-weight-bold">{{ goal_success_rate }}%</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-bullseye fa-2x text-gray-300"></i>
@@ -377,70 +377,34 @@
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                      <div class="badge-card text-center">
-                        <div class="badge-icon">
-                          <i class="fas fa-star"></i>
+                    {% if achievements %}
+                      {% for achievement in achievements %}
+                      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="badge-card text-center">
+                          <div class="badge-icon {% if achievement.is_locked %}locked{% endif %}">
+                            <i class="fas {{ achievement.icon }}"></i>
+                          </div>
+                          <h5>{{ achievement.name }}</h5>
+                          <p>{{ achievement.description }}</p>
                         </div>
-                        <h5>Early Bird</h5>
-                        <p>Wake up before 6 AM for 7 days</p>
                       </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                      <div class="badge-card text-center">
-                        <div class="badge-icon">
-                          <i class="fas fa-moon"></i>
+                      {% endfor %}
+                    {% else %}
+                      {% for achievement in default_achievements %}
+                      <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="badge-card text-center">
+                          <div class="badge-icon locked">
+                            <i class="fas {{ achievement.icon }}"></i>
+                          </div>
+                          <h5>{{ achievement.name }}</h5>
+                          <p>{{ achievement.description }}</p>
                         </div>
-                        <h5>Sleep Master</h5>
-                        <p>Log 100 nights of excellent sleep</p>
                       </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                      <div class="badge-card text-center">
-                        <div class="badge-icon">
-                          <i class="fas fa-certificate"></i>
-                        </div>
-                        <h5>Goal Crusher</h5>
-                        <p>Meet sleep goal for 30 consecutive days</p>
+                      {% endfor %}
+                      <div class="col-12 text-center mt-3">
+                        <p class="text-muted">Start tracking your sleep to unlock these achievements!</p>
                       </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                      <div class="badge-card text-center">
-                        <div class="badge-icon">
-                          <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h5>Data Analyst</h5>
-                        <p>Track detailed sleep data for 50 days</p>
-                      </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                      <div class="badge-card text-center">
-                        <div class="badge-icon locked">
-                          <i class="fas fa-bed"></i>
-                        </div>
-                        <h5>Perfect Week</h5>
-                        <p>7 days of 8+ hour sleep</p>
-                      </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                      <div class="badge-card text-center">
-                        <div class="badge-icon locked">
-                          <i class="fas fa-clock"></i>
-                        </div>
-                        <h5>Consistent Sleeper</h5>
-                        <p>Same bed time (±15min) for 14 days</p>
-                      </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                      <div class="badge-card text-center">
-                        <div class="badge-icon locked">
-                          <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <h5>Yearly Tracker</h5>
-                        <p>Track sleep for 365 days</p>
-                      </div>
-                    </div>
-                    <!-- Community Guide badge removed as requested -->
+                    {% endif %}
                   </div>
                 </div>
               </div>

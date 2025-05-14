@@ -22,7 +22,7 @@ $(document).ready(function () {
   });
 
   // Profile form submission handler
-  $("#editProfileForm").on("submit", function(e) {
+  $("#editProfileForm").on("submit", function (e) {
     // Form already has action and method for server-side submission,
     // but we can add client-side validation here
     let form = this;
@@ -32,10 +32,10 @@ $(document).ready(function () {
       form.classList.add("was-validated");
       return false;
     }
-    
+
     // Display a loading indicator if desired
     showToast("Updating profile...", "info");
-    
+
     // Let the form submit naturally - no need to prevent default
     // The server will handle the submission and redirect
     return true;
@@ -100,8 +100,8 @@ $(document).ready(function () {
   }
 
   // Display flash messages as toasts if they exist
-  if (typeof flashes !== 'undefined' && flashes.length > 0) {
-    flashes.forEach(flash => {
+  if (typeof flashes !== "undefined" && flashes.length > 0) {
+    flashes.forEach((flash) => {
       showToast(flash.message, flash.category);
     });
   }
@@ -114,5 +114,20 @@ $(document).ready(function () {
       "margin-left": "0",
       width: "100%",
     });
+  }
+
+  // Refresh page when returning from other pages to ensure stats are up-to-date
+  // This helps when a user adds a sleep record and then views profile
+  if (performance && performance.navigation) {
+    // Check if page was reloaded via back/forward button
+    if (performance.navigation.type === 2) {
+      // 2 is TYPE_BACK_FORWARD
+      location.reload();
+    }
+  }
+
+  // Alternative method for modern browsers
+  if (window.navigation && window.navigation.type === "back_forward") {
+    location.reload();
   }
 });
