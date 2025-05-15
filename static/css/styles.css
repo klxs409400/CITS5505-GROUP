@@ -79,7 +79,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   font-family: "Segoe UI", sans-serif;
   background-color: var(--dark);
   color: var(--text-primary);
@@ -629,6 +630,7 @@ label {
 }
 
 .inner-circle span {
+  color: #000000;
   font-size: 18px;
   font-weight: bold;
 }
