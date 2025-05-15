@@ -65,11 +65,26 @@
           </li>
 
           <li>
+            <a href="{{ url_for('sleep.record_sleep') }}">
+              <i class="fas fa-plus-circle"></i>
+              Record Sleep
+            </a>
+          </li>
+
+          <li>
             <a href="#" class="active">
               <i class="fas fa-history"></i>
               Sleep History
             </a>
           </li>
+
+          <li>
+            <a href="{{ url_for('report.view_report') }}">
+              <i class="fas fa-chart-line"></i>
+              Sleep Reports
+            </a>
+          </li>
+
           <li>
             <a href="{{ url_for('settings.view_settings') }}">
               <i class="fas fa-cog"></i>
@@ -101,7 +116,7 @@
             </button>
 
             <ul class="navbar-nav flex-row ms-auto">
-                            <li class="nav-item dropdown">
+              <li class="nav-item dropdown">
                 <a
                   class="nav-link d-flex align-items-center"
                   href="#"
