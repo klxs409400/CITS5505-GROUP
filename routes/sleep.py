@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from models import db, SleepRecord, SleepGoal
 from datetime import datetime, date, time, timedelta
+from flask import jsonify 
 
 sleep = Blueprint('sleep', __name__)
 
@@ -261,13 +262,34 @@ def update_sleep_goal():
             
             db.session.add(sleep_goal)
             db.session.commit()
+
+            sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
+
+            today = datetime.now().date()
+            recent_records = [r for r in sleep_records if (today - r.date).days < 30]
+
+            goal_hours = sleep_goal_hours + (sleep_goal_minutes / 60)
+            achieved_days = sum(1 for r in recent_records if r.duration_hours >= goal_hours)
+            goal_achievement = f"{achieved_days}/30"
             
             flash('Sleep goal updated successfully!', 'success')
+            
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'success': True,
+                    'goal_achievement': goal_achievement
+                })
             
         except Exception as e:
             db.session.rollback()
             print(f"Error updating sleep goal: {str(e)}")
             flash(f'Error updating sleep goal: {str(e)}', 'danger')
+            
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'success': False,
+                    'error': str(e)
+                }), 400
             
     # Redirect back to the referring page
     return redirect(request.referrer or url_for('sleep.sleep_history'))
