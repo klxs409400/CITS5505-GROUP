@@ -380,6 +380,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Check if URL has #sharing hash and activate sharing tab
+        if (window.location.hash === '#sharing') {
+            const sharingTab = document.getElementById('sharing-tab');
+            if (sharingTab) {
+                const tabInstance = new bootstrap.Tab(sharingTab);
+                tabInstance.show();
+            }
+        }
+        
         // Theme toggle functionality - use theme.js functions
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
