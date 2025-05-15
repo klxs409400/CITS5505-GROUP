@@ -46,9 +46,3 @@ ENV/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Flask-Migrate specific files
-migrations/README
-migrations/alembic.ini
-migrations/env.py
-migrations/script.py.mako
