@@ -4,13 +4,25 @@ from flask_login import LoginManager, login_required, current_user
 from models import db, User, SleepRecord  
 import os
 import subprocess
+from dotenv import load_dotenv
 
-def create_app():
+# Load environment variables from .env file
+load_dotenv()
+
+def create_app(config_name=None):
     app = Flask(__name__)
     
     # Configuration
-    app.config['SECRET_KEY'] = 'your-secret-key-for-development'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sleeptracker.db'
+    if config_name == 'testing':
+        # Use in-memory SQLite for testing
+        app.config['SECRET_KEY'] = 'test-secret-key'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        app.config['TESTING'] = True
+    else:
+        # Use environment variables for production/development
+        app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback-secret-key')
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///sleeptracker.db')
+    
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # Initialize extensions

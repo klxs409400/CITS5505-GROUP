@@ -53,16 +53,29 @@ The application comes with pre-initialized test accounts for development and tes
 
 ## Installation Instructions
 
-_[To be completed as the project develops]_
-
 1. Clone the repository
 2. Create a virtual environment
 3. Install required packages using `pip install -r requirements.txt`
-4. Run the application using `python run.py`
+4. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Update the value for `SECRET_KEY` in the `.env` file with a secure random string
+5. Initialize the database:
+   - Run `flask db upgrade` to apply migrations
+6. Run the application using `python app.py`
 
 ## Running Tests
 
 _[To be completed as tests are developed]_
+
+## Security Practices
+
+This application follows these security best practices:
+
+1. **Environment Variables**: Sensitive configuration like secret keys and database URLs are stored in environment variables, not hard-coded in the application.
+2. **Password Hashing**: User passwords are hashed using strong algorithms before storage.
+3. **HTTPS**: In production, all traffic should be encrypted using HTTPS.
+4. **Input Validation**: User inputs are validated on both client and server sides.
+5. **Session Management**: Secure session handling to prevent session hijacking.
 
 ## Development Timeline
 
