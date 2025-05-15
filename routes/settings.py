@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_required, current_user, logout_user
 from models import db, User, DataSharing, SleepRecord, SleepGoal, Achievement
 from werkzeug.security import generate_password_hash, check_password_hash
+from utils.validation import validate_password
 
 settings = Blueprint('settings', __name__)
 
@@ -37,7 +38,13 @@ def update_password():
         flash('New password and confirmation do not match', 'danger')
         return redirect(url_for('settings.view_settings'))
     
-    # Update password - removed length validation
+    # Validate password strength
+    is_valid, message = validate_password(new_password)
+    if not is_valid:
+        flash(message, 'danger')
+        return redirect(url_for('settings.view_settings'))
+    
+    # Update password 
     current_user.password_hash = generate_password_hash(new_password)
     db.session.commit()
     
