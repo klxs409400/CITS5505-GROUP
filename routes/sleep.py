@@ -43,7 +43,17 @@ def record_sleep():
             sleep_date_obj = datetime.strptime(sleep_date, '%Y-%m-%d').date()
             sleep_time_obj = datetime.strptime(sleep_time, '%H:%M').time()
             wake_time_obj = datetime.strptime(wake_time, '%H:%M').time()
-            
+
+            # Check if a record already exists for this date for the current user
+            sleep_date_obj = datetime.strptime(sleep_date, '%Y-%m-%d').date()
+            existing_record = SleepRecord.query.filter_by(
+                user_id=current_user.id, 
+                date=sleep_date_obj
+            ).first()
+
+            if existing_record:
+                flash('A sleep record already exists for this date. Please edit the existing record instead.', 'warning')
+                return redirect(url_for('sleep.sleep_history'))
             # Combine date and time into datetime objects
             # If wake time is earlier than sleep time, it's the next day
             if wake_time_obj < sleep_time_obj:
@@ -107,7 +117,7 @@ def sleep_history():
     usual_bedtime = "23:00"
     usual_waketime = "07:00"
     sleep_goal_hours = 8.0
-    sleep_goal_percentage = 75
+    sleep_goal_percentage = 0
     
     if sleep_records:
         # Calculate average sleep duration
@@ -130,7 +140,7 @@ def sleep_history():
         usual_bedtime = bedtimes[len(bedtimes) // 2]
         usual_waketime = waketimes[len(waketimes) // 2]
     
-    # Get sleep goal
+   # Get sleep goal
     sleep_goal = SleepGoal.query.filter_by(user_id=current_user.id).order_by(SleepGoal.created_at.desc()).first()
     if sleep_goal:
         sleep_goal_hours = sleep_goal.target_hours + (sleep_goal.target_minutes / 60)
@@ -139,14 +149,10 @@ def sleep_history():
     now = datetime.now()
     date_strings = [(now - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(7)]
 
-  # Calculate the target achievement rate
-    if sleep_goal_hours > 0 and avg_duration > 0:
-      # If the average duration exceeds the target, 100% will be displayed
-        if avg_duration >= sleep_goal_hours:
-            sleep_goal_percentage = 100
-        else:
-            # Otherwise, the actual proportion will be displayed
-            sleep_goal_percentage = int((avg_duration / sleep_goal_hours) * 100)
+    # Calculate the target achievement rate - IMPROVED CALCULATION
+    if avg_duration > 0 and sleep_goal_hours > 0:
+        # Calculate what percentage of the goal the user is achieving on average
+        sleep_goal_percentage = min(100, int((avg_duration / sleep_goal_hours) * 100))
     
     return render_template('Historical/historical.html',
                           sleep_records=sleep_records,

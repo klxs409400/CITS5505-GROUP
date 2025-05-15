@@ -34,6 +34,50 @@ $(document).ready(function () {
     dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex"f>>t<"d-flex justify-content-between align-items-center mt-3"<"d-flex"i><"d-flex"p>>',
   });
 
+  // Force recalculation and update of the percentage display
+  function forceUpdateGoalCircle() {
+    try {
+      // Get the average sleep duration directly from the page
+      const durationText =
+        $('.card:contains("Average Sleep Duration")').find(".h5").text() ||
+        "0 hrs";
+      const averageDuration =
+        parseFloat(durationText.replace(/[^\d.-]/g, "")) || 0;
+
+      // Get the current goal value directly from the page
+      const goalText = $("#currentGoalValue").text() || "8.0";
+      const goalValue = parseFloat(goalText);
+
+      // Calculate the percentage
+      if (!isNaN(goalValue) && goalValue > 0 && !isNaN(averageDuration)) {
+        const percentage = Math.round((averageDuration / goalValue) * 100);
+
+        // Update the DOM directly
+        updateProgressCircle(percentage);
+        console.log("Forced update of goal circle to: " + percentage + "%");
+      } else {
+        console.log("Invalid values for calculation:", {
+          averageDuration,
+          goalValue,
+        });
+      }
+    } catch (err) {
+      console.error("Error in forceUpdateGoalCircle:", err);
+    }
+  }
+
+  // Trigger the force update function in different situations
+  setTimeout(forceUpdateGoalCircle, 500); // Run after page load with a short delay
+  $("#sleepHistoryTable").on("draw.dt", forceUpdateGoalCircle); // When the table data is re-rendered
+  $("body").on(
+    "DOMSubtreeModified",
+    ".card:contains('Average Sleep Duration') .h5",
+    forceUpdateGoalCircle
+  ); // When the average sleep duration changes
+
+  // Add a periodic check to ensure the display stays accurate
+  setInterval(forceUpdateGoalCircle, 2000); // Check every 2 seconds
+
   // Sidebar toggle functionality
   $("#sidebarToggle").on("click", function () {
     $(".sidebar").toggleClass("active");
@@ -75,6 +119,16 @@ $(document).ready(function () {
         : 24;
       let qualityFilter = $("#qualityFilter").val();
       let moodFilter = $("#moodFilter").val();
+
+      // Add page load event listener
+      $(window).on("load", function () {
+        setTimeout(forceUpdateGoalCircle, 500);
+      });
+
+      // Listen for AJAX completion events
+      $(document).ajaxComplete(function () {
+        setTimeout(forceUpdateGoalCircle, 300);
+      });
 
       console.log("Filter values:", {
         dateFrom,
@@ -357,10 +411,10 @@ $(document).ready(function () {
     // Add AJAX request or other logic here, e.g., update database or refresh UI
   }
 
-  // Function to update the progress circle - single optimized implementation
+  // Function to update the progress circle with correct calculation
   function updateProgressCircle(percentage) {
     // Get progress circle element with validation
-    const progressCircle = document.querySelector("#goalProgress");
+    const progressCircle = document.getElementById("goalProgress");
     if (!progressCircle) {
       console.error("Progress circle element not found");
       return;
@@ -369,108 +423,62 @@ $(document).ready(function () {
     const radius = 55; // Circle radius
     const circumference = 2 * Math.PI * radius;
 
+    // Ensure percentage is a valid number and capped at 100%
+    let validPercentage = percentage;
+    if (isNaN(validPercentage) || validPercentage < 0) {
+      validPercentage = 0;
+    } else if (validPercentage > 100) {
+      validPercentage = 100;
+    }
+
     // Calculate stroke-dashoffset based on percentage
-    const offset = circumference - (percentage / 100) * circumference;
+    const offset = circumference - (validPercentage / 100) * circumference;
 
     // Update SVG circle properties
     progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
     progressCircle.style.strokeDashoffset = offset;
 
     // Update percentage text
-    const percentageText = document.querySelector("#goalPercentage");
+    const percentageText = document.getElementById("goalPercentage");
     if (percentageText) {
-      percentageText.textContent = `${percentage}%`;
+      percentageText.textContent = `${Math.round(validPercentage)}%`;
     }
 
     // Update color based on percentage
-    if (percentage >= 100) {
+    if (validPercentage >= 100) {
       progressCircle.style.stroke = "#1cc88a"; // Success color
-    } else if (percentage >= 75) {
+    } else if (validPercentage >= 75) {
       progressCircle.style.stroke = "#36b9cc"; // Info color
-    } else if (percentage >= 50) {
+    } else if (validPercentage >= 50) {
       progressCircle.style.stroke = "#f6c23e"; // Warning color
     } else {
       progressCircle.style.stroke = "#e74a3b"; // Danger color
     }
   }
 
-  // Update entry button - Fixed to properly handle form validation
-  $("#updateEntryBtn").on("click", function (e) {
-    console.log("Update entry button clicked");
-
-    // Form validation
-    let form = $("#editEntryForm")[0];
-    if (form.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
-      form.classList.add("was-validated");
-      return;
-    }
-
-    // Form will be automatically submitted to edit-sleep route
-    // No need to prevent default - allow normal form submission
-  });
-
-  // Function to show toast notifications
-  function showToast(message, type = "info") {
-    // Create toast container if it doesn't exist
-    if ($("#toastContainer").length === 0) {
-      $("body").append(
-        '<div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"></div>'
-      );
-    }
-
-    // Create unique ID for toast
-    const toastId = "toast-" + Date.now();
-
-    // Set appropriate bg class based on type
-    let bgClass = "bg-primary";
-    if (type === "success") bgClass = "bg-success";
-    if (type === "warning") bgClass = "bg-warning";
-    if (type === "error") bgClass = "bg-danger";
-
-    // Create toast HTML
-    const toast = `
-      <div id="${toastId}" class="toast align-items-center ${bgClass} text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">
-            ${message}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-      </div>
-    `;
-
-    // Add toast to container
-    $("#toastContainer").append(toast);
-
-    // Initialize and show toast
-    const toastElement = new bootstrap.Toast(document.getElementById(toastId), {
-      delay: 3000,
-      animation: true,
-    });
-
-    toastElement.show();
-
-    // Remove toast from DOM after it's hidden
-    $(`#${toastId}`).on("hidden.bs.toast", function () {
-      $(this).remove();
-    });
-  }
-
-  // Enhanced function to update summary stats
+  // Enhanced function to update summary stats with proper goal calculation
   function updateSummaryStats() {
     try {
       let totalDuration = 0;
+      let recordCount = 0;
       let qualityCounts = { excellent: 0, good: 0, fair: 0, poor: 0 };
       let sleepTimes = [];
       let wakeTimes = [];
-      let recordCount = 0;
+      let dates = new Set(); // Track unique dates to prevent duplicates in calculations
 
       // Process visible rows in the table
       sleepTable.rows({ search: "applied" }).every(function () {
         let data = this.data();
         if (!data) return;
+
+        // Get date to check for duplicates
+        const dateStr = data[0]?.trim();
+        if (!dateStr) return;
+
+        // Skip if we've already processed this date (prevents duplicate counting)
+        if (dates.has(dateStr)) return;
+        dates.add(dateStr);
+
         recordCount++;
 
         // Duration - extract numeric value safely
@@ -480,8 +488,8 @@ $(document).ready(function () {
           totalDuration += duration;
         }
 
-        // Quality - count occurrences safely
-        let qualityText = data[4] ? data[4].toLowerCase() : "";
+        // Quality counting
+        let qualityText = data[4] ? $(data[4]).text().toLowerCase() : "";
         if (qualityText.includes("excellent")) qualityCounts.excellent++;
         if (qualityText.includes("good")) qualityCounts.good++;
         if (qualityText.includes("fair")) qualityCounts.fair++;
@@ -530,14 +538,19 @@ $(document).ready(function () {
             .text(medianWakeTime);
         }
 
-        // Update progress circle if a goal is set
+        // Update goal achievement percentage
         const goalValueText = $("#currentGoalValue").text() || "8.0";
         const goalValue = parseFloat(goalValueText);
-        if (!isNaN(goalValue) && goalValue > 0) {
-          const percentage = Math.min(
-            100,
-            Math.round((averageDuration / goalValue) * 100)
+        console.log("Current goal value:", goalValue);
+        console.log("Average duration:", averageDuration);
+
+        if (!isNaN(goalValue) && goalValue > 0 && !isNaN(averageDuration)) {
+          // Calculate percentage based on the user's actual average sleep divided by their goal
+          // This correctly reflects how close they are to meeting their goal on average
+          const percentage = Math.round(
+            (parseFloat(averageDuration) / goalValue) * 100
           );
+          console.log("Calculated percentage:", percentage);
           updateProgressCircle(percentage);
         }
       }
@@ -572,5 +585,5 @@ $(document).ready(function () {
   }
 
   // Initialize goal circle with default value
-  updateProgressCircle(75); // Default value until real data is calculated
+  updateProgressCircle(0); // Default value until real data is calculated
 });

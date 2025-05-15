@@ -87,3 +87,9 @@
     color: #ddd;
   }
   
+  .form-footer {
+    margin-top: 1rem; /* Or 1rem for more spacing */
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  

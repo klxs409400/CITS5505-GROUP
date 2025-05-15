@@ -356,7 +356,7 @@
 }
 
 .stats-card .text-muted {
-  color: var(--text-muted);
+  color: #cccccc !important;
   font-size: 0.8rem;
 }
 

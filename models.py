@@ -53,6 +53,9 @@ class SleepRecord(db.Model):
     mood = db.Column(db.String(20))          # "Refreshed", "Neutral", "Tired", "Exhausted"
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Add uniqueness constraint
+    __table_args__ = (db.UniqueConstraint('user_id', 'date', name='unique_user_date'),)
     
     # Additional fields - retrieved from recordsleep.html form
     sleep_disturbances = db.Column(db.String(20))
