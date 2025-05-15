@@ -1,6 +1,13 @@
 $(document).ready(function () {
   console.log("Dashboard.js loaded"); // Debug info
 
+  console.log("Checking Sleep Quality circles:", {
+    excellent: $(".quality-circle.excellent .inner-circle span").text(),
+    good: $(".quality-circle.good .inner-circle span").text(),
+    fair: $(".quality-circle.fair .inner-circle span").text(),
+    poor: $(".quality-circle.poor .inner-circle span").text(),
+  });
+
   // Sidebar toggle - simplified to match behavior in image 3
   $("#sidebarToggle").on("click", function () {
     console.log("Sidebar toggle clicked"); // Debug info
@@ -227,19 +234,22 @@ $(document).ready(function () {
     // Calculate total hours
     const totalHours = sleepGoalHours + sleepGoalMinutes / 60;
 
+    updateChartGoalLine(totalHours);
+
     // Show success message
     showToast(
       "Sleep goal updated successfully! Your goal is now " +
         totalHours.toFixed(1) +
-        " hours",
+        " hours. Refreshing...",
       "success"
     );
 
-    // Update the goal line in the chart
-    updateChartGoalLine(totalHours);
-
     // Close the modal
     $("#sleepGoalModal").modal("hide");
+
+    setTimeout(function () {
+      $("#sleepGoalForm").submit();
+    }, 500); // 0.5sec
   });
 
   // Function to update the goal line in the chart
