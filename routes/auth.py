@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, current_user
 from werkzeug.urls import url_parse
 from models import db, User
 from datetime import datetime
+from utils.validation import validate_password, validate_email, validate_username
 
 auth = Blueprint('auth', __name__)
 
@@ -36,16 +37,41 @@ def register():
     if request.method == 'POST':
         email = request.form['email']
         username = request.form['username']
+        password = request.form['password']
         print("Form submitted with:", request.form)
+        
+        # Server-side validation
+        is_valid = True
+        
+        # Validate email
+        email_valid, email_msg = validate_email(email)
+        if not email_valid:
+            flash(email_msg)
+            is_valid = False
+        
+        # Validate username
+        username_valid, username_msg = validate_username(username)
+        if not username_valid:
+            flash(username_msg)
+            is_valid = False
+        
+        # Validate password
+        password_valid, password_msg = validate_password(password)
+        if not password_valid:
+            flash(password_msg)
+            is_valid = False
         
         # Check if email already exists
         if User.query.filter_by(email=email).first():
             flash('Email already registered.')
-            return redirect(url_for('auth.register'))
+            is_valid = False
         
         # Check if username already exists
         if User.query.filter_by(username=username).first():
             flash('Username already taken.')
+            is_valid = False
+        
+        if not is_valid:
             return redirect(url_for('auth.register'))
         
         # Create new user with the provided username
@@ -55,7 +81,7 @@ def register():
             full_name=username,  # Using username as full_name for now
             date_joined=datetime.utcnow()
         )
-        user.set_password(request.form['password'])
+        user.set_password(password)
         
         db.session.add(user)
         db.session.commit()

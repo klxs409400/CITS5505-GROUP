@@ -69,6 +69,18 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (value.length < 8) {
       passwordError.textContent = "Password must be at least 8 characters";
       return false;
+    } else if (!/[A-Z]/.test(value)) {
+      passwordError.textContent = "Password must contain at least one uppercase letter";
+      return false;
+    } else if (!/[a-z]/.test(value)) {
+      passwordError.textContent = "Password must contain at least one lowercase letter";
+      return false;
+    } else if (!/\d/.test(value)) {
+      passwordError.textContent = "Password must contain at least one digit";
+      return false;
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+      passwordError.textContent = "Password must contain at least one special character";
+      return false;
     } else {
       passwordError.textContent = "";
       return true;

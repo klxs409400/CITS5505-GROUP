@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings | Sleep Tracker</title>
     
-    {% include 'theme_preload.html' %}
+    {% include 'Settings/theme_preload.html' %}
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -277,6 +277,10 @@
                                             <label for="newPassword">New Password</label>
                                             <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" required>
                                             <small id="newPasswordError" class="text-danger"></small>
+                                            <small class="form-text text-muted">
+                                                Password must be at least 8 characters and include: uppercase letter, 
+                                                lowercase letter, number, and special character (!@#$%^&*(),.?":{}|&lt;&gt;).
+                                            </small>
                                         </div>
                                         <div class="col-md-8 mt-3">
                                             <label for="confirmPassword">Confirm New Password</label>
@@ -376,6 +380,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Check if URL has #sharing hash and activate sharing tab
+        if (window.location.hash === '#sharing') {
+            const sharingTab = document.getElementById('sharing-tab');
+            if (sharingTab) {
+                const tabInstance = new bootstrap.Tab(sharingTab);
+                tabInstance.show();
+            }
+        }
+        
         // Theme toggle functionality - use theme.js functions
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
