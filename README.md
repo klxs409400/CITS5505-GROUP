@@ -1,4 +1,4 @@
-# CITS5505-GROUP
+# CITS5505-GROUP-65
 
 # Sleep Quality Analysis Application
 
@@ -19,7 +19,7 @@ This web application allows users to track and analyze their sleep patterns and 
 
 - User authentication system (register, login, account management)
 - Data entry interface for logging sleep details and influencing factors
-- Dashboard with visualizations of sleep metrics (charts showing trends and patterns)
+- Dashboard with visualizations of sleep metrics
 - Analysis tools identifying correlations between activities/factors and sleep quality
 - Sharing functionality to allow users to share specific reports with selected users
 - Personalized insights and recommendations for improving sleep quality
@@ -27,14 +27,14 @@ This web application allows users to track and analyze their sleep patterns and 
 ## Technologies
 
 - **Frontend**: HTML, CSS, JavaScript, Bootstrap, JQuery
-- **Backend**: Python Flask with plugins
+- **Backend**: Flask
 - **Database**: SQLite with SQLAlchemy
 - **Visualization**: Chart.js
-- **Communication**: AJAX/Websockets
+- **Communication**: AJAX
 
 ## Application Views
 
-1. **Introductory View**: Landing page explaining the application's purpose with registration/login functionality
+1. **Introductory View**: Landing page explaining the application's purpose with registration/login functionality, also provide a demo page for guest
 2. **Data Upload View**: Interface for users to record their sleep data and influencing factors
 3. **Visualization View**: Dashboard displaying sleep metrics, trends, and factor analysis
 4. **Share View**: Interface allowing users to share specific reports with other users
@@ -43,25 +43,59 @@ This web application allows users to track and analyze their sleep patterns and 
 
 The application comes with pre-initialized test accounts for development and testing purposes:
 
-| Username | Email | Password |
-|----------|-------|----------|
-| johndoe | john.doe@example.com | password123 |
-| janesmith | jane.smith@example.com | password456 |
+| Username   | Email                   | Password      |
+| ---------- | ----------------------- | ------------- |
+| johndoe    | john.doe@example.com    | password123   |
+| janesmith  | jane.smith@example.com  | password456   |
 | testdelete | delete.test@example.com | deletetest123 |
 
-*Note: These accounts are for development environment only and should not be used in production.*
+_Note: These accounts are for development environment only and should not be used in production._
 
 ## Installation Instructions
 
 1. Clone the repository
+
+```bash
+git clone git clone https://github.com/klxs409400/CITS5505-GROUP.git
+```
+
 2. Create a virtual environment
-3. Install required packages using `pip install -r requirements.txt`
+
+```bash
+# macOS/Linux
+python -m venv venv
+source venv/bin/activate
+```
+
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+```
+
+3. Install required packages
+
+```bash
+pip install -r requirements.txt
+```
+
 4. Set up environment variables:
+
    - Copy `.env.example` to `.env`
    - Update the value for `SECRET_KEY` in the `.env` file with a secure random string
+
 5. Initialize the database:
-   - Run `flask db upgrade` to apply migrations
-6. Run the application using `python app.py`
+
+```bash
+python init_db.py
+python app.py
+```
+
+6. Run the application
+
+```bash
+flask run
+```
 
 ## Running Tests
 
@@ -83,6 +117,20 @@ This application follows these security best practices:
 - 4.24-4.30: Basic functionality implementation (user authentication, data entry)
 - 5.1-5.10: Data visualization and analysis implementation
 - 5.11-5.16: Sharing functionality and final testing
+
+## References
+
+[1] "Flask Documentation," Flask, 2024. [Online]. Available: https://flask.palletsprojects.com/. [Accessed: 14-May-2025].
+
+[2] "SQLAlchemy Documentation," SQLAlchemy, 2024. [Online]. Available: https://docs.sqlalchemy.org/. [Accessed: 14-May-2025].
+
+[3] "Bootstrap Documentation," Bootstrap, 2024. [Online]. Available: https://getbootstrap.com/docs/. [Accessed: 14-May-2025].
+
+[4] "Chart.js Documentation," Chart.js, 2024. [Online]. Available: https://www.chartjs.org/docs/latest/. [Accessed: 14-May-2025].
+
+[5] OpenAI, "ChatGPT Assistance for Code Optimization and Debugging," ChatGPT, OpenAI, 2025. [Online]. Available: https://openai.com/chatgpt/. [Accessed: 14-May-2025].
+
+[6] Anthropic, "Claude 3.7 Sonnet Assistance for Code Analysis and UI Implementation," Claude AI Assistant, Anthropic, 2025. [Online]. Available: https://www.anthropic.com/claude. [Accessed: 16-May-2025].
 
 ---
 
