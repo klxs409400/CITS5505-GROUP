@@ -99,7 +99,56 @@ flask run
 
 ## Running Tests
 
-_[To be completed as tests are developed]_
+Include the following Python packages:
+Flask
+Flask-Login
+Flask-SQLAlchemy
+pytest
+selenium
+python-dotenv
+werkzeug
+
+Testing Guide
+
+This project includes both unit tests and end-to-end browser tests using Selenium.
+
+Setup Instructions
+
+1. Create and activate a virtual environment:
+
+   python3 -m venv venv
+   source venv/bin/activate
+
+2. Install required packages:
+
+   pip install -r requirements.txt
+
+3. Running Unit Tests (with Pytest):
+   
+   Make sure your Flask app and database are set up.
+
+   To run all unit tests:
+   pytest tests/unitTests.py
+
+4. Running Selenium Tests:
+
+   Make sure your Flask app is running locally at http://127.0.0.1:5000:
+
+   flask run
+   Then in a separate terminal run the following command:
+
+   pytest tests/selenium_test.py
+
+   Note : 
+   
+1. Make sure Chrome and ChromeDriver are installed and compatible. ChromeDriver has to be installed  
+   for the selenium tests to run.
+
+2. Selenium tests use webdriver.Chrome() by default.
+
+3. Ensure users exist before running login-related tests or add setup logic.
+
+
 
 ## Security Practices
 
