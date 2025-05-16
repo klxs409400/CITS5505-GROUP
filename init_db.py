@@ -130,13 +130,13 @@ with app.app_context():
 
     # Load test data from JSON file
     try:
-        with open('test_data.json', 'r') as f:
+        with open('tests/test_data.json', 'r') as f:  # Updated path
             test_users_data = json.load(f)
     except FileNotFoundError:
-        print("test_data.json not found. No test users will be created.")
+        print("tests/test_data.json not found. No test users will be created.")  # Updated path
         test_users_data = []
     except json.JSONDecodeError:
-        print("Error decoding test_data.json. No test users will be created.")
+        print("Error decoding tests/test_data.json. No test users will be created.")  # Updated path
         test_users_data = []
 
 
