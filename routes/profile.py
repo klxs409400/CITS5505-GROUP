@@ -5,24 +5,34 @@ from datetime import datetime, timedelta
 from sqlalchemy import func
 import os
 from werkzeug.utils import secure_filename
+from services.achievement_service import AchievementService  # Import achievement service
 
 profile = Blueprint('profile', __name__)
 
 @profile.route('/profile')
 @login_required
 def view_profile():
+    # Check achievements first to ensure they're up to date
+    AchievementService.check_achievements(current_user.id)
+    
     # Get user achievements
     achievements = Achievement.query.filter_by(user_id=current_user.id).all()
     
     # Add some default locked achievements for display if the user doesn't have any
     default_achievements = []
     if not achievements:
-        default_achievements = [
-            {"name": "Early Bird", "description": "Wake up before 6 AM for 7 days", "icon": "fa-star", "is_locked": True},
-            {"name": "Sleep Master", "description": "Log 100 nights of excellent sleep", "icon": "fa-moon", "is_locked": True},
-            {"name": "Perfect Week", "description": "7 days of 8+ hour sleep", "icon": "fa-bed", "is_locked": True},
-            {"name": "Data Analyst", "description": "Track detailed sleep data for 50 days", "icon": "fa-chart-line", "is_locked": True}
+        default_achievement_names = [
+            "Early Bird", "Sleep Master", "Perfect Week", 
+            "Night Owl", "Consistency King", "Sleep Marathon"
         ]
+        
+        for name in default_achievement_names:
+            default_achievements.append({
+                "name": name,
+                "description": AchievementService.get_description(name),
+                "icon": AchievementService.get_icon(name),
+                "is_locked": True
+            })
     
     return render_template(
         'Homepage/profile.html', 
