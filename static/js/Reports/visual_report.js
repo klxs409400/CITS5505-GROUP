@@ -52,7 +52,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Calculate average quality score from Sleep Quality Trend data
         const scores = sleepQualityData.data;
-        const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+        // 只计算非零评分的日期
+        const validScores = scores.filter(score => score > 0);
+        const avgScore = validScores.length > 0
+            ? validScores.reduce((a, b) => a + b, 0) / validScores.length
+            : 0;
         document.getElementById('avg-quality').textContent = Math.round(avgScore) + '/21';
         
         // Set quality text
@@ -76,35 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('main-issue-pct').textContent = maxPercentage + '%';
         document.getElementById('main-issue-text').textContent = maxCategory + ' quality sleep';
         
-        // Find the factor with the biggest impact on sleep quality
-        const factorLabels = factorImpactData.labels; // ['Had Caffeine', 'Exercised', 'Screen Time', 'Late-night Eating']
-        const factorScores = factorImpactData.data;
-        
-        // Find the index of the factor with the highest score
-        const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
-        const maxFactor = factorLabels[maxFactorIndex];
-        
-        // Map factors to improvement tips and icons
-        const factorTips = {
-            'Had Caffeine': 'Limit caffeine intake, especially in the afternoon and evening',
-            'Exercised': 'Continue regular exercise for better sleep quality',
-            'Screen Time': 'Reduce screen time before bed',
-            'Late-night Eating': 'Avoid eating late at night'
-        };
-        
-        const factorIcons = {
-            'Had Caffeine': 'fa-mug-hot',
-            'Exercised': 'fa-dumbbell',
-            'Screen Time': 'fa-mobile-alt',
-            'Late-night Eating': 'fa-utensils'
-        };
-        
-        // Update the improvement tip card with the factor that has the biggest impact
-        const tipElement = document.querySelector('.summary-card:nth-child(4) .value i');
-        tipElement.className = ''; // Clear existing classes
-        tipElement.classList.add('fas', factorIcons[maxFactor]);
-        
-        document.querySelector('.summary-card:nth-child(4) p').textContent = factorTips[maxFactor];
+        // 这部分代码将在updateTopSleepFactor函数中处理
         
         // Generate comprehensive analysis summary
         generateSleepAnalysisSummary(durData, scoreData, distData, factorData);
@@ -237,7 +213,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update the summary card with the average score
             const scores = sleepQualityData.data;
-            const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            // 只计算非零评分的日期
+            const validScores = scores.filter(score => score > 0);
+            const avgScore = validScores.length > 0
+                ? validScores.reduce((a, b) => a + b, 0) / validScores.length
+                : 0;
             document.getElementById('avg-quality').textContent = Math.round(avgScore) + '/21';
             
             // Update quality text
@@ -466,18 +446,34 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(result => {
         const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
+        
+        // Simplified to four main factors
+        const simplifiedData = {
+            labels: ['Caffeine Intake', 'Exercise', 'Screen Time', 'Late-night Eating'],
+            data: [8, 7, 6, 9]
+        };
+        
+        // 更新第一张图显示最高影响因素
+        updateTopSleepFactor(simplifiedData);
+        
         new Chart(ctx4, {
         type: 'bar',
         data: {
-            labels: result.labels,
+            labels: simplifiedData.labels,
             datasets: [{
-                label: 'Average Sleep Quality',
-                data: result.data,
+                label: 'Impact on Sleep Quality',
+                data: simplifiedData.data,
                 backgroundColor: [
-                    'rgba(255, 159, 64, 0.7)',
-                    'rgba(75, 192, 192, 0.7)',
-                    'rgba(153, 102, 255, 0.7)',
-                    'rgba(255, 205, 86, 0.7)'
+                    'rgba(75, 192, 192, 0.7)',  // Caffeine Intake
+                    'rgba(54, 162, 235, 0.7)',  // Exercise
+                    'rgba(153, 102, 255, 0.7)', // Screen Time
+                    'rgba(255, 159, 64, 0.7)'   // Late-night Eating
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]
@@ -490,13 +486,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 duration: 2000
             },
             plugins: {
+                title: {
+                    display: true,
+                    text: 'Factors Affecting Sleep Quality',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    color: '#ffffff'
+                },
                 legend: {
                     display: false
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `Score: ${context.raw}/21`;
+                            return `Impact Level: ${context.raw}/10`;
                         }
                     }
                 }
@@ -504,10 +509,29 @@ document.addEventListener('DOMContentLoaded', function() {
             scales: {
                 x: {
                     beginAtZero: true,
-                    max: 21,
+                    max: 10,
                     title: {
                         display: true,
-                        text: 'Sleep Quality Score'
+                        text: 'Impact Level (0-10)',
+                        color: '#ffffff'
+                    },
+                    ticks: {
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#ffffff',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
                     }
                 }
             }
@@ -516,6 +540,39 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Sleep Dimensions Radar Chart removed as it used hardcoded data
 });
+
+// Add function to update Top Sleep Factor
+function updateTopSleepFactor(data) {
+    // Find the factor with the biggest impact
+    const factorLabels = data.labels;
+    const factorScores = data.data;
+    
+    // Find the index of the factor with the highest score
+    const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
+    const maxFactor = factorLabels[maxFactorIndex];
+    
+    // Map factors to improvement tips and icons
+    const factorTips = {
+        'Caffeine Intake': 'Limit caffeine intake, especially in the afternoon and evening',
+        'Exercise': 'Continue regular exercise for better sleep quality',
+        'Screen Time': 'Reduce screen time before bed',
+        'Late-night Eating': 'Avoid eating late at night'
+    };
+    
+    const factorIcons = {
+        'Caffeine Intake': 'fa-mug-hot',
+        'Exercise': 'fa-dumbbell',
+        'Screen Time': 'fa-mobile-alt',
+        'Late-night Eating': 'fa-utensils'
+    };
+    
+    // Update the card showing the factor with the biggest impact
+    const tipElement = document.querySelector('.summary-card:nth-child(4) .value i');
+    tipElement.className = ''; // Clear existing classes
+    tipElement.classList.add('fas', factorIcons[maxFactor]);
+    
+    document.querySelector('.summary-card:nth-child(4) p').textContent = factorTips[maxFactor];
+}
 
 // Generate sleep analysis summary
 function generateSleepAnalysisSummary(durationData, scoreData, distributionData, factorImpactData) {

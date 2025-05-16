@@ -285,17 +285,37 @@ def get_sleep_factor_impact():
         factors['screen'][r.screen].append(score)
         factors['eating'][r.eating].append(score)
 
+    # Define labels for each factor level
+    factor_labels = {
+        'caffeine': {0: 'Nighttime', 1: 'Daytime only', 2: 'No intake'},
+        'exercise': {0: 'Intense night exercise', 1: 'No exercise', 2: 'Moderate daytime exercise'},
+        'screen': {0: '>60 min', 1: '15–60 min', 2: '≤15 min'},
+        'eating': {0: 'Often', 1: 'Occasionally', 2: 'None'}
+    }
+
     response = {
-        'labels': ['Had Caffeine', 'Exercised', 'Screen Time', 'Late-night Eating'],
+        'labels': [],
         'data': []
     }
 
+    # Factor display names for better readability
+    factor_display_names = {
+        'caffeine': 'Caffeine',
+        'exercise': 'Exercise',
+        'screen': 'Screen Time',
+        'eating': 'Late-night Eating'
+    }
+
+    # Calculate scores grouped by different levels
     for factor in ['caffeine', 'exercise', 'screen', 'eating']:
-        all_scores = []
-        for level_scores in factors[factor].values():
-            all_scores.extend(level_scores)
-        avg_score = round(mean(all_scores), 2) if all_scores else 0
-        response['data'].append(avg_score)
+        for level, level_scores in factors[factor].items():
+            if level_scores:  # If there's data for this level
+                avg_score = round(mean(level_scores), 2)
+                level_label = factor_labels[factor].get(level, f"Level {level}")
+                # Add factor name to the label
+                label = f"{factor_display_names[factor]}: {level_label}"
+                response['labels'].append(label)
+                response['data'].append(avg_score)
 
     return jsonify(response)
 
