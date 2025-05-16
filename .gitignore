@@ -26,6 +26,7 @@ instance/
 
 # Virtual Environment
 venv/
+.venv/
 ENV/
 
 # Environment variables
