@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Calculate average quality score from Sleep Quality Trend data
         const scores = sleepQualityData.data;
-        // 只计算非零评分的日期
+        // Only calculate for non-zero scores
         const validScores = scores.filter(score => score > 0);
         const avgScore = validScores.length > 0
             ? validScores.reduce((a, b) => a + b, 0) / validScores.length
@@ -89,8 +89,18 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/sleep/duration')
     .then(res => res.json())
     .then(data => {
-        const labels = data.map(d => d.date);        // ['Mon', 'Tue', ...]
-        const durations = data.map(d => d.duration); // [7, 6.5, ...]
+        // Define the week order starting from Monday
+        const daysOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        
+        // Create a mapping to store sleep duration for each day
+        const durationByDay = {};
+        data.forEach(d => {
+            durationByDay[d.date] = d.duration;
+        });
+        
+        // Create labels and data arrays in the specified order
+        const labels = daysOrder;
+        const durations = daysOrder.map(day => durationByDay[day] || 0); // Use 0 if no data available
         
         const ctx1 = document.getElementById('sleepDurationChart').getContext('2d');
         new Chart(ctx1, {
@@ -213,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update the summary card with the average score
             const scores = sleepQualityData.data;
-            // 只计算非零评分的日期
+            // Only calculate for non-zero scores
             const validScores = scores.filter(score => score > 0);
             const avgScore = validScores.length > 0
                 ? validScores.reduce((a, b) => a + b, 0) / validScores.length
