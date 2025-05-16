@@ -7,7 +7,7 @@ This script:
 3. Marks the migration as applied (since the database already exists)
 
 Usage:
-    python db_migration_setup.py
+    python -m migration_tools.db_migration_setup
 """
 
 import os

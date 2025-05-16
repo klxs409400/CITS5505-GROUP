@@ -7,7 +7,7 @@ This script:
 3. Provides guidance on applying migrations to the database
 
 Usage:
-    python db_migration_workflow.py
+    python -m migration_tools.db_migration_workflow
 """
 
 import os
