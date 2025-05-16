@@ -1,0 +1,299 @@
+[
+  {
+    "username": "johndoe",
+    "email": "john.doe@example.com",
+    "full_name": "John Anthony Doe",
+    "password": "password123",
+    "phone": "+1 (555) 123-4567",
+    "location": "New York, USA",
+    "timezone": "ET",
+    "bio": "Passionate about optimizing sleep patterns and sharing knowledge about sleep health.",
+    "profile_pic": "images/demo.jpg",
+    "sleep_goal": {
+      "target_hours": 8,
+      "target_minutes": 0
+    },
+    "achievements": [
+      {
+        "name": "Early Bird",
+        "description": "Wake up before 6 AM for 7 days",
+        "icon": "fa-star",
+        "is_locked": false
+      },
+      {
+        "name": "Sleep Master",
+        "description": "Log 100 nights of excellent sleep",
+        "icon": "fa-moon",
+        "is_locked": false
+      },
+      {
+        "name": "Perfect Week",
+        "description": "7 days of 8+ hour sleep",
+        "icon": "fa-bed",
+        "is_locked": true
+      }
+    ],
+    "sleep_records": [
+      {
+        "days_ago": 0,
+        "bedtime_hour": 23,
+        "bedtime_minute": 30,
+        "wake_time_hour": 7,
+        "wake_time_minute": 0,
+        "duration_hours": 7.5,
+        "quality": "Excellent",
+        "mood": "Refreshed",
+        "notes": "Sample sleep record",
+        "sleep_disturbances": "None",
+        "sleep_aid": "None",
+        "daytime_dysfunction": "None",
+        "caffeine": 1,
+        "exercise": 2,
+        "screen": 1,
+        "eating": 0
+      },
+      {
+        "days_ago": 1,
+        "bedtime_hour": 23,
+        "bedtime_minute": 30,
+        "wake_time_hour": 7,
+        "wake_time_minute": 0,
+        "duration_hours": 7.5,
+        "quality": "Good",
+        "mood": "Refreshed",
+        "notes": "Sample sleep record",
+        "sleep_disturbances": "None",
+        "sleep_aid": "None",
+        "daytime_dysfunction": "None",
+        "caffeine": 1,
+        "exercise": 2,
+        "screen": 1,
+        "eating": 0
+      },
+      {
+        "days_ago": 2,
+        "bedtime_hour": 23,
+        "bedtime_minute": 30,
+        "wake_time_hour": 7,
+        "wake_time_minute": 0,
+        "duration_hours": 7.5,
+        "quality": "Excellent",
+        "mood": "Refreshed",
+        "notes": "Sample sleep record",
+        "sleep_disturbances": "None",
+        "sleep_aid": "None",
+        "daytime_dysfunction": "None",
+        "caffeine": 1,
+        "exercise": 2,
+        "screen": 1,
+        "eating": 0
+      },
+      {
+        "days_ago": 3,
+        "bedtime_hour": 23,
+        "bedtime_minute": 30,
+        "wake_time_hour": 7,
+        "wake_time_minute": 0,
+        "duration_hours": 7.5,
+        "quality": "Fair",
+        "mood": "Tired",
+        "notes": "Sample sleep record",
+        "sleep_disturbances": "None",
+        "sleep_aid": "None",
+        "daytime_dysfunction": "None",
+        "caffeine": 1,
+        "exercise": 2,
+        "screen": 1,
+        "eating": 0
+      },
+      {
+        "days_ago": 4,
+        "bedtime_hour": 23,
+        "bedtime_minute": 30,
+        "wake_time_hour": 7,
+        "wake_time_minute": 0,
+        "duration_hours": 7.5,
+        "quality": "Excellent",
+        "mood": "Refreshed",
+        "notes": "Sample sleep record",
+        "sleep_disturbances": "None",
+        "sleep_aid": "None",
+        "daytime_dysfunction": "None",
+        "caffeine": 1,
+        "exercise": 2,
+        "screen": 1,
+        "eating": 0
+      }
+    ]
+  },
+  {
+    "username": "janesmith",
+    "email": "jane.smith@example.com",
+    "full_name": "Jane Elizabeth Smith",
+    "password": "password456",
+    "phone": "+1 (555) 987-6543",
+    "location": "San Francisco, USA",
+    "timezone": "PT",
+    "bio": "Sleep researcher and wellness advocate. Looking to improve my sleep quality and helping others do the same.",
+    "profile_pic": "images/demo.jpg",
+    "sleep_goal": {
+      "target_hours": 7,
+      "target_minutes": 30
+    },
+    "achievements": [
+      {
+        "name": "Night Owl",
+        "description": "Log 10 nights of going to bed after midnight but still getting good sleep",
+        "icon": "fa-owl",
+        "is_locked": false
+      },
+      {
+        "name": "Consistency King",
+        "description": "Go to bed within 30 minutes of your target time for 14 consecutive days",
+        "icon": "fa-crown",
+        "is_locked": false
+      },
+      {
+        "name": "Sleep Marathon",
+        "description": "Get 9+ hours of sleep for 5 consecutive days",
+        "icon": "fa-running",
+        "is_locked": true
+      }
+    ],
+    "sleep_records": [
+      {
+        "days_ago": 0,
+        "bedtime_hour": 0,
+        "bedtime_minute": 15,
+        "wake_time_hour": 7,
+        "wake_time_minute": 45,
+        "duration_hours": 7.5,
+        "quality": "Excellent",
+        "mood": "Refreshed",
+        "notes": "Jane's sleep record",
+        "sleep_disturbances": "Minor",
+        "sleep_aid": "Melatonin",
+        "daytime_dysfunction": "Slight",
+        "caffeine": 0,
+        "exercise": 1,
+        "screen": 2,
+        "eating": 1
+      },
+      {
+        "days_ago": 1,
+        "bedtime_hour": 0,
+        "bedtime_minute": 15,
+        "wake_time_hour": 7,
+        "wake_time_minute": 45,
+        "duration_hours": 7.5,
+        "quality": "Good",
+        "mood": "Neutral",
+        "notes": "Jane's sleep record",
+        "sleep_disturbances": "Minor",
+        "sleep_aid": "Melatonin",
+        "daytime_dysfunction": "Slight",
+        "caffeine": 0,
+        "exercise": 1,
+        "screen": 2,
+        "eating": 1
+      },
+      {
+        "days_ago": 2,
+        "bedtime_hour": 0,
+        "bedtime_minute": 15,
+        "wake_time_hour": 7,
+        "wake_time_minute": 45,
+        "duration_hours": 7.5,
+        "quality": "Excellent",
+        "mood": "Refreshed",
+        "notes": "Jane's sleep record",
+        "sleep_disturbances": "Minor",
+        "sleep_aid": "Melatonin",
+        "daytime_dysfunction": "Slight",
+        "caffeine": 0,
+        "exercise": 1,
+        "screen": 2,
+        "eating": 1
+      },
+      {
+        "days_ago": 3,
+        "bedtime_hour": 0,
+        "bedtime_minute": 15,
+        "wake_time_hour": 7,
+        "wake_time_minute": 45,
+        "duration_hours": 7.5,
+        "quality": "Fair",
+        "mood": "Tired",
+        "notes": "Jane's sleep record",
+        "sleep_disturbances": "Minor",
+        "sleep_aid": "Melatonin",
+        "daytime_dysfunction": "Slight",
+        "caffeine": 0,
+        "exercise": 1,
+        "screen": 2,
+        "eating": 1
+      },
+      {
+        "days_ago": 4,
+        "bedtime_hour": 0,
+        "bedtime_minute": 15,
+        "wake_time_hour": 7,
+        "wake_time_minute": 45,
+        "duration_hours": 7.5,
+        "quality": "Excellent",
+        "mood": "Refreshed",
+        "notes": "Jane's sleep record",
+        "sleep_disturbances": "Minor",
+        "sleep_aid": "Melatonin",
+        "daytime_dysfunction": "Slight",
+        "caffeine": 0,
+        "exercise": 1,
+        "screen": 2,
+        "eating": 1
+      }
+    ]
+  },
+  {
+    "username": "testdelete",
+    "email": "delete.test@example.com",
+    "full_name": "Test Delete User",
+    "password": "deletetest123",
+    "phone": "+1 (555) 111-2222",
+    "location": "Seattle, USA",
+    "timezone": "PT",
+    "bio": "Test user account created specifically to test the delete user functionality.",
+    "profile_pic": "images/demo.jpg",
+    "sleep_goal": {
+      "target_hours": 8,
+      "target_minutes": 30
+    },
+    "achievements": [
+      {
+        "name": "Test Achievement",
+        "description": "This is a test achievement for the delete user",
+        "icon": "fa-trash",
+        "is_locked": false
+      }
+    ],
+    "sleep_records": [
+      {
+        "days_ago": 1,
+        "bedtime_hour": 22,
+        "bedtime_minute": 30,
+        "wake_time_hour": 6,
+        "wake_time_minute": 30,
+        "duration_hours": 8.0,
+        "quality": "Good",
+        "mood": "Refreshed",
+        "notes": "Test delete user's sleep record",
+        "sleep_disturbances": "None",
+        "sleep_aid": "None",
+        "daytime_dysfunction": "None",
+        "caffeine": 0,
+        "exercise": 1,
+        "screen": 1,
+        "eating": 1
+      }
+    ]
+  }
+]
