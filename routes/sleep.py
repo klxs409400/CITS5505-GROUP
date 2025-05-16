@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from models import db, SleepRecord, SleepGoal
 from datetime import datetime, date, time, timedelta
 from flask import jsonify 
+from services.achievement_service import AchievementService  # Import achievement service
 
 sleep = Blueprint('sleep', __name__)
 
@@ -87,6 +88,9 @@ def record_sleep():
             # Add and commit to database
             db.session.add(sleep_record)
             db.session.commit()
+            
+            # Check for achievements after adding new sleep record
+            AchievementService.check_achievements(current_user.id)
             
             flash('Sleep record saved successfully!', 'success')
             return redirect(url_for('sleep.sleep_history'))
@@ -213,6 +217,10 @@ def edit_sleep(record_id):
             sleep_record.notes = notes
             
             db.session.commit()
+            
+            # Check for achievements after editing sleep record
+            AchievementService.check_achievements(current_user.id)
+            
             flash('Sleep record updated successfully!', 'success')
             
         except Exception as e:
@@ -262,6 +270,9 @@ def update_sleep_goal():
             
             db.session.add(sleep_goal)
             db.session.commit()
+
+            # Check for achievements after updating sleep goal
+            AchievementService.check_achievements(current_user.id)
 
             sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
 
