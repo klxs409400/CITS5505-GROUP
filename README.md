@@ -132,6 +132,18 @@ This application follows these security best practices:
 
 [6] Anthropic, "Claude 3.7 Sonnet Assistance for Code Analysis and UI Implementation," Claude AI Assistant, Anthropic, 2025. [Online]. Available: https://www.anthropic.com/claude. [Accessed: 16-May-2025].
 
+[7] Buysse, D. J., Reynolds, C. F., Monk, T. H., et al., "The Pittsburgh Sleep Quality Index (PSQI): A New Instrument for Psychiatric Practice and Research," Psychiatry Research, vol. 28, no. 2, pp. 193–213, 1989. [Online]. Available: https://doi.org/10.1016/0165-1781(89)90047-4. [Accessed: 16-May-2025].
+
+[8] Knutson, K. L., & Van Cauter, E., "Associations Between Sleep Loss and Increased Risk of Obesity and Diabetes," Annals of the New York Academy of Sciences, vol. 1129, pp. 287–304, 2008. [Online]. Available: https://doi.org/10.1196/annals.1417.033. [Accessed: 16-May-2025].
+
+[9] Grandner, M. A., et al., "Social and Behavioral Determinants of Perceived Insufficient Sleep," Frontiers in Neurology, vol. 1, p. 8, 2010. [Online]. Available: https://doi.org/10.3389/fneur.2010.00008. [Accessed: 16-May-2025].
+
+[10] Clark, I., & Landolt, H. P., "Coffee, caffeine, and sleep: A systematic review of epidemiological studies and randomized controlled trials," Sleep Medicine Reviews, vol. 31, pp. 70–78, 2017. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S1087079216000150. [Accessed: 16-May-2025].
+
+[11] Chang, A. M., et al., "Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness," Proceedings of the National Academy of Sciences, vol. 112, no. 4, pp. 1232–1237, 2015. [Online]. Available: https://www.pnas.org/content/112/4/1232. [Accessed: 16-May-2025].
+
+[12] St-Onge, M. P., et al., "Meal timing and frequency: Implications for cardiovascular disease prevention: A scientific statement from the American Heart Association," Circulation, vol. 135, no. 9, pp. e96–e121, 2016. [Online]. Available: https://www.ahajournals.org/doi/10.1161/CIR.0000000000000476. [Accessed: 16-May-2025].
+
 ---
 
 _This project is being developed as part of the CITS3403/CITS5505 unit at the University of Western Australia._
