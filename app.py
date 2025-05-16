@@ -44,6 +44,7 @@ def create_app(config_name=None):
     from routes.report import report
     from routes.settings import settings
     from routes.profile import profile
+    from routes.achievements import achievements  # Import the achievements blueprint
     
     app.register_blueprint(auth)
     app.register_blueprint(main)
@@ -51,6 +52,7 @@ def create_app(config_name=None):
     app.register_blueprint(report)
     app.register_blueprint(settings)
     app.register_blueprint(profile)
+    app.register_blueprint(achievements)  # Register the achievements blueprint
     
     # Add debug route
     @app.route('/debug-current-user')
