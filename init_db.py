@@ -3,12 +3,16 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Create the Flask application instance
 app = Flask(__name__, instance_relative_config=True)
 
 # Configure Flask using environment variables
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///sleeptracker.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

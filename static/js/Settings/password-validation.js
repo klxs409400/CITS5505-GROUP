@@ -43,15 +43,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Validate new password - simplified requirements
+    // Validate new password - enhanced requirements
     function validateNewPassword() {
         const value = newPassword.value;
         
         if (value === "") {
             newPasswordError.textContent = "Please enter a new password";
             return false;
-        } else if (value.length < 1) {
-            newPasswordError.textContent = "Password cannot be empty";
+        } else if (value.length < 8) {
+            newPasswordError.textContent = "Password must be at least 8 characters";
+            return false;
+        } else if (!/[A-Z]/.test(value)) {
+            newPasswordError.textContent = "Password must contain at least one uppercase letter";
+            return false;
+        } else if (!/[a-z]/.test(value)) {
+            newPasswordError.textContent = "Password must contain at least one lowercase letter";
+            return false;
+        } else if (!/\d/.test(value)) {
+            newPasswordError.textContent = "Password must contain at least one digit";
+            return false;
+        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+            newPasswordError.textContent = "Password must contain at least one special character";
             return false;
         } else {
             newPasswordError.textContent = "";

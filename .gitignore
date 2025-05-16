@@ -28,6 +28,9 @@ instance/
 venv/
 ENV/
 
+# Environment variables
+.env
+
 # Database
 *.db
 *.sqlite3
