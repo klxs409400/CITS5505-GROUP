@@ -31,6 +31,7 @@
         <div class="header">
             <h1>Sleep Data Visualization Report</h1>
             <p>Comprehensive analysis of your sleep patterns and quality</p>
+            <p class="report-period">Report from last week</p>
         </div>
         
         <div class="summary-cards" id="summary-cards">
@@ -74,7 +75,7 @@
                     <canvas id="sleepDurationChart"></canvas>
                 </div>
                 <div class="chart-notes">
-                    This chart shows your total sleep hours recorded each day this week.
+                    This chart shows your total sleep hours recorded each day of the week, from Monday to Sunday.
                 </div>
             </div>
             
@@ -94,7 +95,7 @@
             <!-- Sleep Quality Distribution -->
             <div class="chart-card">
                 <div class="chart-header">
-                    <h2 class="chart-title">Sleep Quality Distribution</h2>
+                    <h2 class="chart-title">Sleep Quality Distribution (Objective)</h2>
                 </div>
                 <div class="chart-container">
                     <canvas id="sleepQualityPieChart"></canvas>
@@ -107,13 +108,13 @@
             <!-- Impact Factors Chart -->
             <div class="chart-card">
                 <div class="chart-header">
-                    <h2 class="chart-title">Impact of Factors on Sleep Quality</h2>
+                    <h2 class="chart-title">Factors Affecting Sleep Quality</h2>
                 </div>
                 <div class="chart-container">
                     <canvas id="factorsImpactChart"></canvas>
                 </div>
                 <div class="chart-notes">
-                    This bar chart compares how different habits influenced your sleep quality.
+                    This chart shows the impact level of four main factors on sleep quality (0-10).
                 </div>
             </div>
             
@@ -194,7 +195,6 @@
         </div>
     </div>
     
-    <!-- 引用外部JavaScript文件 -->
     <script src="{{ url_for('static', filename='js/Reports/visual_report.js') }}"></script>
         
     </div>

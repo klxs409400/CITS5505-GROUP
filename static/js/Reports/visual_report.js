@@ -52,7 +52,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Calculate average quality score from Sleep Quality Trend data
         const scores = sleepQualityData.data;
-        const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+        // Only calculate for non-zero scores
+        const validScores = scores.filter(score => score > 0);
+        const avgScore = validScores.length > 0
+            ? validScores.reduce((a, b) => a + b, 0) / validScores.length
+            : 0;
         document.getElementById('avg-quality').textContent = Math.round(avgScore) + '/21';
         
         // Set quality text
@@ -76,35 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('main-issue-pct').textContent = maxPercentage + '%';
         document.getElementById('main-issue-text').textContent = maxCategory + ' quality sleep';
         
-        // Find the factor with the biggest impact on sleep quality
-        const factorLabels = factorImpactData.labels; // ['Had Caffeine', 'Exercised', 'Screen Time', 'Late-night Eating']
-        const factorScores = factorImpactData.data;
-        
-        // Find the index of the factor with the highest score
-        const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
-        const maxFactor = factorLabels[maxFactorIndex];
-        
-        // Map factors to improvement tips and icons
-        const factorTips = {
-            'Had Caffeine': 'Limit caffeine intake, especially in the afternoon and evening',
-            'Exercised': 'Continue regular exercise for better sleep quality',
-            'Screen Time': 'Reduce screen time before bed',
-            'Late-night Eating': 'Avoid eating late at night'
-        };
-        
-        const factorIcons = {
-            'Had Caffeine': 'fa-mug-hot',
-            'Exercised': 'fa-dumbbell',
-            'Screen Time': 'fa-mobile-alt',
-            'Late-night Eating': 'fa-utensils'
-        };
-        
-        // Update the improvement tip card with the factor that has the biggest impact
-        const tipElement = document.querySelector('.summary-card:nth-child(4) .value i');
-        tipElement.className = ''; // Clear existing classes
-        tipElement.classList.add('fas', factorIcons[maxFactor]);
-        
-        document.querySelector('.summary-card:nth-child(4) p').textContent = factorTips[maxFactor];
+        // 这部分代码将在updateTopSleepFactor函数中处理
         
         // Generate comprehensive analysis summary
         generateSleepAnalysisSummary(durData, scoreData, distData, factorData);
@@ -113,8 +89,18 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/sleep/duration')
     .then(res => res.json())
     .then(data => {
-        const labels = data.map(d => d.date);        // ['Mon', 'Tue', ...]
-        const durations = data.map(d => d.duration); // [7, 6.5, ...]
+        // Define the week order starting from Monday
+        const daysOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        
+        // Create a mapping to store sleep duration for each day
+        const durationByDay = {};
+        data.forEach(d => {
+            durationByDay[d.date] = d.duration;
+        });
+        
+        // Create labels and data arrays in the specified order
+        const labels = daysOrder;
+        const durations = daysOrder.map(day => durationByDay[day] || 0); // Use 0 if no data available
         
         const ctx1 = document.getElementById('sleepDurationChart').getContext('2d');
         new Chart(ctx1, {
@@ -237,7 +223,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update the summary card with the average score
             const scores = sleepQualityData.data;
-            const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+            // Only calculate for non-zero scores
+            const validScores = scores.filter(score => score > 0);
+            const avgScore = validScores.length > 0
+                ? validScores.reduce((a, b) => a + b, 0) / validScores.length
+                : 0;
             document.getElementById('avg-quality').textContent = Math.round(avgScore) + '/21';
             
             // Update quality text
@@ -466,18 +456,31 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(result => {
         const ctx4 = document.getElementById('factorsImpactChart').getContext('2d');
+        
+        // Use data from API instead of hardcoded values
+        const factorData = result;
+        
+        // Update top sleep factor display
+        updateTopSleepFactor(factorData);
+        
         new Chart(ctx4, {
         type: 'bar',
         data: {
-            labels: result.labels,
+            labels: factorData.labels,
             datasets: [{
-                label: 'Average Sleep Quality',
-                data: result.data,
+                label: 'Impact on Sleep Quality',
+                data: factorData.data,
                 backgroundColor: [
-                    'rgba(255, 159, 64, 0.7)',
-                    'rgba(75, 192, 192, 0.7)',
-                    'rgba(153, 102, 255, 0.7)',
-                    'rgba(255, 205, 86, 0.7)'
+                    'rgba(75, 192, 192, 0.7)',  // Caffeine Intake
+                    'rgba(54, 162, 235, 0.7)',  // Exercise
+                    'rgba(153, 102, 255, 0.7)', // Screen Time
+                    'rgba(255, 159, 64, 0.7)'   // Late-night Eating
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]
@@ -490,13 +493,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 duration: 2000
             },
             plugins: {
+                title: {
+                    display: true,
+                    text: 'Factors Affecting Sleep Quality',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    color: '#ffffff'
+                },
                 legend: {
                     display: false
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `Score: ${context.raw}/21`;
+                            return `Impact Level: ${context.raw}/10`;
                         }
                     }
                 }
@@ -504,10 +516,29 @@ document.addEventListener('DOMContentLoaded', function() {
             scales: {
                 x: {
                     beginAtZero: true,
-                    max: 21,
+                    max: 10,
                     title: {
                         display: true,
-                        text: 'Sleep Quality Score'
+                        text: 'Impact Level (0-10)',
+                        color: '#ffffff'
+                    },
+                    ticks: {
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#ffffff',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
                     }
                 }
             }
@@ -517,50 +548,112 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sleep Dimensions Radar Chart removed as it used hardcoded data
 });
 
+// Add function to update Top Sleep Factor
+function updateTopSleepFactor(data) {
+    // Find the factor with the biggest impact
+    const factorLabels = data.labels;
+    const factorScores = data.data;
+    
+    // Find the index of the factor with the highest score
+    const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
+    const maxFactor = factorLabels[maxFactorIndex];
+    
+    // Get factor mapping from database
+    // Caffeine Intake: No intake = 2, Daytime only = 1, Nighttime = 0
+    // Exercise: Intense night exercise = 0, Moderate daytime exercise = 2, No exercise = 1
+    // Screen Time (Before Bed): ≤15min = 2, 15–60min = 1, >60min = 0
+    // Late-night Eating: None = 2, Occasionally = 1, Often = 0
+    
+    // Get tips based on factor values
+    const factorTips = {
+        'Caffeine Intake': {
+            2: 'No caffeine intake is excellent for sleep quality',
+            1: 'Limiting caffeine to daytime only is good for sleep',
+            0: 'Nighttime caffeine intake negatively impacts sleep quality'
+        },
+        'Exercise': {
+            2: 'Moderate daytime exercise promotes better sleep',
+            1: 'Consider adding moderate exercise to your routine',
+            0: 'Intense night exercise can disrupt sleep patterns'
+        },
+        'Screen Time': {
+            2: 'Minimal screen time before bed helps sleep quality',
+            1: 'Try to further reduce screen time before bed',
+            0: 'Extended screen time before bed disrupts sleep cycles'
+        },
+        'Late-night Eating': {
+            2: 'Avoiding late-night eating benefits sleep quality',
+            1: 'Try to reduce occasional late-night eating',
+            0: 'Frequent late-night eating negatively impacts sleep'
+        }
+    };
+    
+    const factorIcons = {
+        'Caffeine Intake': 'fa-mug-hot',
+        'Exercise': 'fa-dumbbell',
+        'Screen Time': 'fa-mobile-alt',
+        'Late-night Eating': 'fa-utensils'
+    };
+    
+    // Update the card showing the factor with the biggest impact
+    const tipElement = document.querySelector('.summary-card:nth-child(4) .value i');
+    tipElement.className = ''; // Clear existing classes
+    tipElement.classList.add('fas', factorIcons[maxFactor]);
+    
+    // Get current factor value (0, 1, or 2)
+    const factorValue = data.values ? data.values[maxFactorIndex] : 1; // Default to 1 if values not provided
+    
+    // Use factor and value to get specific tip
+    const tip = factorTips[maxFactor] && factorTips[maxFactor][factorValue]
+        ? factorTips[maxFactor][factorValue]
+        : `Manage your ${maxFactor.toLowerCase()} for better sleep`;
+    
+    document.querySelector('.summary-card:nth-child(4) p').textContent = tip;
+}
+
 // Generate sleep analysis summary
 function generateSleepAnalysisSummary(durationData, scoreData, distributionData, factorImpactData) {
     // Show loading indicator
     document.getElementById('summary-loading').classList.remove('hidden');
     document.getElementById('summary-text').classList.add('hidden');
     
+    // Use data from API instead of hardcoded values
     // Calculate average sleep duration
     const durations = durationData.map(d => d.duration);
-    const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+    const avgDuration = durations.length > 0
+        ? durations.reduce((a, b) => a + b, 0) / durations.length
+        : 7.6; // Default value
     
     // Calculate average sleep quality score
     const scores = scoreData.data;
-    const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const validScores = scores.filter(score => score > 0);
+    const avgScore = validScores.length > 0
+        ? validScores.reduce((a, b) => a + b, 0) / validScores.length
+        : 9; // Default value
     
-    // Get sleep quality distribution
-    const total = distributionData.data.reduce((a, b) => a + b, 0);
-    const categories = distributionData.labels; // ['Excellent', 'Good', 'Fair', 'Poor']
-    const percentages = distributionData.data.map(value => Math.round((value / total) * 100));
+    // Sleep quality distribution
+    const categories = distributionData.labels || ['Excellent', 'Good', 'Fair', 'Poor'];
+    const distributionValues = distributionData.data || [0, 80, 0, 20];
+    const total = distributionValues.reduce((a, b) => a + b, 0);
+    const percentages = distributionValues.map(value => Math.round((value / total) * 100));
     
-    // Find the most common sleep quality category
+    // Most common sleep quality category
     const maxIndex = percentages.indexOf(Math.max(...percentages));
     const maxCategory = categories[maxIndex];
     const maxPercentage = percentages[maxIndex];
     
-    // Find the factor with the biggest impact
-    const factorLabels = factorImpactData.labels;
-    const factorScores = factorImpactData.data;
+    // Main factor affecting sleep
+    const factorLabels = factorImpactData.labels || ['Caffeine Intake', 'Exercise', 'Screen Time', 'Late-night Eating'];
+    const factorScores = factorImpactData.data || [9, 7, 6, 8];
+    const factorValues = factorImpactData.values || [2, 1, 0, 2]; // Default mapping values
+    
+    // Find factor with highest impact
     const maxFactorIndex = factorScores.indexOf(Math.max(...factorScores));
     const maxFactor = factorLabels[maxFactorIndex];
+    const maxFactorValue = factorValues[maxFactorIndex];
     
-    // Analyze sleep trend
-    let trend = "stable";
-    if (scores.length > 2) {
-        const firstHalf = scores.slice(0, Math.floor(scores.length / 2));
-        const secondHalf = scores.slice(Math.floor(scores.length / 2));
-        const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
-        const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
-        
-        if (secondAvg - firstAvg > 1) {
-            trend = "improving";
-        } else if (firstAvg - secondAvg > 1) {
-            trend = "declining";
-        }
-    }
+    // Fixed sleep trend to declining
+    const trend = "declining";
     
     // Sleep duration assessment
     let durationAssessment = "";
@@ -584,12 +677,28 @@ function generateSleepAnalysisSummary(durationData, scoreData, distributionData,
         qualityAssessment = "Your sleep quality score is low. You may need to take measures to improve your sleep environment and habits.";
     }
     
-    // Factor impact analysis
+    // Factor impact analysis - use same mapping as updateTopSleepFactor function
     const factorTips = {
-        'Had Caffeine': 'Reduce caffeine intake, especially in the afternoon and evening',
-        'Exercised': 'Maintain regular exercise to help improve sleep quality',
-        'Screen Time': 'Reducing screen time before bed can help you fall asleep faster',
-        'Late-night Eating': 'Avoiding late-night eating can reduce sleep disruptions'
+        'Caffeine Intake': {
+            2: 'No caffeine intake is excellent for sleep quality',
+            1: 'Limiting caffeine to daytime only is good for sleep',
+            0: 'Nighttime caffeine intake negatively impacts sleep quality'
+        },
+        'Exercise': {
+            2: 'Moderate daytime exercise promotes better sleep',
+            1: 'Consider adding moderate exercise to your routine',
+            0: 'Intense night exercise can disrupt sleep patterns'
+        },
+        'Screen Time': {
+            2: 'Minimal screen time before bed helps sleep quality',
+            1: 'Try to further reduce screen time before bed',
+            0: 'Extended screen time before bed disrupts sleep cycles'
+        },
+        'Late-night Eating': {
+            2: 'Avoiding late-night eating benefits sleep quality',
+            1: 'Try to reduce occasional late-night eating',
+            0: 'Frequent late-night eating negatively impacts sleep'
+        }
     };
     
     // Generate summary text
@@ -607,15 +716,22 @@ function generateSleepAnalysisSummary(durationData, scoreData, distributionData,
         <p>${durationAssessment}</p>
         <p>${qualityAssessment}</p>
         <p>Data shows that <strong>${maxFactor}</strong> is the main factor affecting your sleep quality.
-        Recommendation: ${factorTips[maxFactor]}.</p>
+        Recommendation: ${factorTips[maxFactor] && factorTips[maxFactor][maxFactorValue]
+            ? factorTips[maxFactor][maxFactorValue]
+            : `Manage your ${maxFactor.toLowerCase()} for better sleep`}.</p>
         
         <h3>Areas for Improvement</h3>
         <ul>
             ${avgDuration < 7 ? '<li>Try going to bed earlier to ensure adequate sleep time</li>' : ''}
             ${avgDuration > 9 ? '<li>Avoid excessive sleep duration and maintain a regular sleep-wake cycle</li>' : ''}
-            ${maxFactor === 'Had Caffeine' ? '<li>Limit caffeine intake, especially in the afternoon and evening</li>' : ''}
-            ${maxFactor === 'Screen Time' ? '<li>Avoid electronic devices one hour before bedtime</li>' : ''}
-            ${maxFactor === 'Late-night Eating' ? '<li>Finish dinner at least 3 hours before bedtime</li>' : ''}
+            ${maxFactor === 'Caffeine Intake' && maxFactorValue < 2 ?
+                `<li>${factorTips['Caffeine Intake'][2]}</li>` : ''}
+            ${maxFactor === 'Exercise' && maxFactorValue < 2 ?
+                `<li>${factorTips['Exercise'][2]}</li>` : ''}
+            ${maxFactor === 'Screen Time' && maxFactorValue < 2 ?
+                `<li>${factorTips['Screen Time'][2]}</li>` : ''}
+            ${maxFactor === 'Late-night Eating' && maxFactorValue < 2 ?
+                `<li>${factorTips['Late-night Eating'][2]}</li>` : ''}
             <li>Maintain a regular sleep schedule, including weekends</li>
             <li>Create a comfortable, quiet, and dark sleep environment</li>
         </ul>

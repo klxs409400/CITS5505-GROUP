@@ -271,31 +271,99 @@ def get_sleep_factor_impact():
         .all()
     )
 
-    factors = {
-        'caffeine': defaultdict(list),
-        'exercise': defaultdict(list),
-        'screen': defaultdict(list),
-        'eating': defaultdict(list)
+    # Factor display names for better readability
+    factor_display_names = {
+        'caffeine': 'Caffeine Intake',
+        'exercise': 'Exercise',
+        'screen': 'Screen Time',
+        'eating': 'Late-night Eating'
     }
 
+    # Define labels for each factor level
+    factor_labels = {
+        'caffeine': {0: 'Nighttime', 1: 'Daytime only', 2: 'No intake'},
+        'exercise': {0: 'Intense night exercise', 1: 'No exercise', 2: 'Moderate daytime exercise'},
+        'screen': {0: '>60 min', 1: '15–60 min', 2: '≤15 min'},
+        'eating': {0: 'Often', 1: 'Occasionally', 2: 'None'}
+    }
+    
+    # Scoring system for each factor's impact
+    # Caffeine Intake: No intake = 2, Daytime only = 1, Nighttime = 0
+    # Exercise: Intense night exercise = 0, Moderate daytime exercise = 2, No exercise = 1
+    # Screen Time (Before Bed): ≤15min = 2, 15–60min = 1, >60min = 0
+    # Late-night Eating: None = 2, Occasionally = 1, Often = 0
+    factor_impact_scores = {
+        'caffeine': {0: 0, 1: 5, 2: 10},  # Convert to 0-10 scale
+        'exercise': {0: 0, 1: 5, 2: 10},
+        'screen': {0: 0, 1: 5, 2: 10},
+        'eating': {0: 0, 1: 5, 2: 10}
+    }
+
+    # Initialize data structures for tracking factor values and counts
+    factor_value_counts = {
+        'caffeine': {0: 0, 1: 0, 2: 0},  # Count of each factor value
+        'exercise': {0: 0, 1: 0, 2: 0},
+        'screen': {0: 0, 1: 0, 2: 0},
+        'eating': {0: 0, 1: 0, 2: 0}
+    }
+    
+    # Track the most recent factor values (for the 'values' field in response)
+    latest_values = {
+        'caffeine': None,
+        'exercise': None,
+        'screen': None,
+        'eating': None
+    }
+
+    # Count occurrences of each factor value
     for r in records:
-        score = score_mapping(r)
-        factors['caffeine'][r.caffeine].append(score)
-        factors['exercise'][r.exercise].append(score)
-        factors['screen'][r.screen].append(score)
-        factors['eating'][r.eating].append(score)
+        if r.caffeine is not None:
+            factor_value_counts['caffeine'][r.caffeine] += 1
+            latest_values['caffeine'] = r.caffeine
+            
+        if r.exercise is not None:
+            factor_value_counts['exercise'][r.exercise] += 1
+            latest_values['exercise'] = r.exercise
+            
+        if r.screen is not None:
+            factor_value_counts['screen'][r.screen] += 1
+            latest_values['screen'] = r.screen
+            
+        if r.eating is not None:
+            factor_value_counts['eating'][r.eating] += 1
+            latest_values['eating'] = r.eating
+
+    # Calculate weighted average impact scores for each factor
+    labels = []
+    data = []
+    values = []
+
+    for factor, value_counts in factor_value_counts.items():
+        labels.append(factor_display_names[factor])
+        
+        # Calculate total count and weighted sum for this factor
+        total_count = sum(value_counts.values())
+        
+        if total_count > 0:
+            # Calculate weighted average of impact scores
+            weighted_sum = sum(factor_impact_scores[factor][value] * count
+                              for value, count in value_counts.items())
+            
+            # Average impact score = weighted sum / total count
+            avg_impact_score = round(weighted_sum / total_count, 1)
+            data.append(avg_impact_score)
+        else:
+            # Default value if no data
+            data.append(5)
+        
+        # Add the most recent factor value (0, 1, or 2) for UI display
+        values.append(latest_values[factor] if latest_values[factor] is not None else 1)
 
     response = {
-        'labels': ['Had Caffeine', 'Exercised', 'Screen Time', 'Late-night Eating'],
-        'data': []
+        'labels': labels,
+        'data': data,
+        'values': values
     }
-
-    for factor in ['caffeine', 'exercise', 'screen', 'eating']:
-        all_scores = []
-        for level_scores in factors[factor].values():
-            all_scores.extend(level_scores)
-        avg_score = round(mean(all_scores), 2) if all_scores else 0
-        response['data'].append(avg_score)
 
     return jsonify(response)
 

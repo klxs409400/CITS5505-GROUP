@@ -31,6 +31,14 @@ body {
     color: #666;
 }
 
+.header .report-period {
+    font-size: 1rem;
+    color: #7f5af0;
+    font-weight: 500;
+    margin-top: 5px;
+    font-style: italic;
+}
+
 .back-button {
     position: absolute;
     top: 20px;
