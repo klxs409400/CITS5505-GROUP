@@ -1,8 +1,9 @@
 import os
+import json  # Added import for json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
-from datetime import datetime
+from datetime import datetime, date, time, timedelta  # Added date, time, timedelta
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -127,258 +128,85 @@ with app.app_context():
     # Create all tables
     db.create_all()
 
-    # Add a test user (if not already present)
-    if not User.query.filter_by(username='johndoe').first():
-        test_user = User(
-            username='johndoe',
-            email='john.doe@example.com',
-            full_name='John Anthony Doe',
-            password_hash=generate_password_hash('password123'),
-            # Sample data for new fields
-            phone='+1 (555) 123-4567',
-            location='New York, USA',
-            timezone='ET',
-            bio='Passionate about optimizing sleep patterns and sharing knowledge about sleep health.',
-            profile_pic='images/demo.jpg'
-        )
-        db.session.add(test_user)
-        db.session.commit()  # Commit the user first to retrieve user ID
-        
-        # Add sleep goal
-        sleep_goal = SleepGoal(
-            user_id=test_user.id,
-            target_hours=8,
-            target_minutes=0
-        )
-        db.session.add(sleep_goal)
-        
-        # Add some achievements (some unlocked, some locked)
-        achievements = [
-            Achievement(
-                user_id=test_user.id,
-                name="Early Bird",
-                description="Wake up before 6 AM for 7 days",
-                icon="fa-star",
-                is_locked=False
-            ),
-            Achievement(
-                user_id=test_user.id,
-                name="Sleep Master",
-                description="Log 100 nights of excellent sleep",
-                icon="fa-moon",
-                is_locked=False
-            ),
-            Achievement(
-                user_id=test_user.id,
-                name="Perfect Week",
-                description="7 days of 8+ hour sleep",
-                icon="fa-bed",
-                is_locked=True
-            )
-        ]
-        db.session.add_all(achievements)
-        
-        # Add some sample sleep records
-        from datetime import date, time, timedelta
-        
-        # Create several sample entries
-        for i in range(5):
-            record_date = date.today() - timedelta(days=i)
-            bedtime = datetime.combine(record_date - timedelta(days=1), time(23, 30))
-            wake_time = datetime.combine(record_date, time(7, 0))
-            
-            quality = "Good"
-            mood = "Refreshed"
-            if i % 2 == 0:
-                quality = "Excellent"
-            elif i % 3 == 0:
-                quality = "Fair"
-                mood = "Tired"
-            
-            sleep_record = SleepRecord(
-                user_id=test_user.id,
-                date=record_date,
-                bedtime=bedtime,
-                wake_time=wake_time,
-                duration_hours=7.5,
-                quality=quality,
-                mood=mood,
-                notes="Sample sleep record",
-                sleep_disturbances="None",
-                sleep_aid="None",
-                daytime_dysfunction="None",
-                caffeine=1,   # Daytime only
-                exercise=2,   # Moderate daytime exercise
-                screen=1,     # 15–60 min
-                eating=0      # Often
-            )
-            db.session.add(sleep_record)
-        
-        db.session.commit()
-        print("Test user and sample data created.")
-    else:
-        print("Test user already exists.")
+    # Load test data from JSON file
+    try:
+        with open('tests/test_data.json', 'r') as f:  # Updated path
+            test_users_data = json.load(f)
+    except FileNotFoundError:
+        print("tests/test_data.json not found. No test users will be created.")  # Updated path
+        test_users_data = []
+    except json.JSONDecodeError:
+        print("Error decoding tests/test_data.json. No test users will be created.")  # Updated path
+        test_users_data = []
 
-    # Add a second test user (if not already present)
-    if not User.query.filter_by(username='janesmith').first():
-        second_user = User(
-            username='janesmith',
-            email='jane.smith@example.com',
-            full_name='Jane Elizabeth Smith',
-            password_hash=generate_password_hash('password456'),
-            # Sample data for new fields
-            phone='+1 (555) 987-6543',
-            location='San Francisco, USA',
-            timezone='PT',
-            bio='Sleep researcher and wellness advocate. Looking to improve my sleep quality and helping others do the same.',
-            profile_pic='images/demo.jpg'
-        )
-        db.session.add(second_user)
-        db.session.commit()  # Commit the user first to retrieve user ID
-        
-        # Add sleep goal
-        sleep_goal = SleepGoal(
-            user_id=second_user.id,
-            target_hours=7,
-            target_minutes=30
-        )
-        db.session.add(sleep_goal)
-        
-        # Add some achievements (some unlocked, some locked)
-        achievements = [
-            Achievement(
-                user_id=second_user.id,
-                name="Night Owl",
-                description="Log 10 nights of going to bed after midnight but still getting good sleep",
-                icon="fa-owl",
-                is_locked=False
-            ),
-            Achievement(
-                user_id=second_user.id,
-                name="Consistency King",
-                description="Go to bed within 30 minutes of your target time for 14 consecutive days",
-                icon="fa-crown",
-                is_locked=False
-            ),
-            Achievement(
-                user_id=second_user.id,
-                name="Sleep Marathon",
-                description="Get 9+ hours of sleep for 5 consecutive days",
-                icon="fa-running",
-                is_locked=True
-            )
-        ]
-        db.session.add_all(achievements)
-        
-        # Add some sample sleep records
-        from datetime import date, time, timedelta
-        
-        # Create several sample entries
-        for i in range(5):
-            record_date = date.today() - timedelta(days=i)
-            bedtime = datetime.combine(record_date - timedelta(days=1), time(0, 15))  # 12:15 AM
-            wake_time = datetime.combine(record_date, time(7, 45))  # 7:45 AM
-            
-            quality = "Good"
-            mood = "Neutral"
-            if i % 2 == 0:
-                quality = "Excellent"
-                mood = "Refreshed"
-            elif i % 3 == 0:
-                quality = "Fair"
-                mood = "Tired"
-            
-            sleep_record = SleepRecord(
-                user_id=second_user.id,
-                date=record_date,
-                bedtime=bedtime,
-                wake_time=wake_time,
-                duration_hours=7.5,
-                quality=quality,
-                mood=mood,
-                notes="Jane's sleep record",
-                sleep_disturbances="Minor",
-                sleep_aid="Melatonin",
-                daytime_dysfunction="Slight",
-                caffeine=0,   # None
-                exercise=1,   # Light exercise
-                screen=2,     # >60 min
-                eating=1      # Sometimes
-            )
-            db.session.add(sleep_record)
-        
-        db.session.commit()
-        print("Second test user and sample data created.")
-    else:
-        print("Second test user already exists.")
 
-    # Add a third test user (if not already present)
-    if not User.query.filter_by(username='testdelete').first():
-        third_user = User(
-            username='testdelete',
-            email='delete.test@example.com',
-            full_name='Test Delete User',
-            password_hash=generate_password_hash('deletetest123'),
-            # Sample data for new fields
-            phone='+1 (555) 111-2222',
-            location='Seattle, USA',
-            timezone='PT',
-            bio='Test user account created specifically to test the delete user functionality.',
-            profile_pic='images/demo.jpg'
-        )
-        db.session.add(third_user)
-        db.session.commit()  # Commit the user first to retrieve user ID
-        
-        # Add sleep goal
-        sleep_goal = SleepGoal(
-            user_id=third_user.id,
-            target_hours=8,
-            target_minutes=30
-        )
-        db.session.add(sleep_goal)
-        
-        # Add some achievements (some unlocked, some locked)
-        achievements = [
-            Achievement(
-                user_id=third_user.id,
-                name="Test Achievement",
-                description="This is a test achievement for the delete user",
-                icon="fa-trash",
-                is_locked=False
+    for user_data in test_users_data:
+        if not User.query.filter_by(username=user_data['username']).first():
+            new_user = User(
+                username=user_data['username'],
+                email=user_data['email'],
+                full_name=user_data['full_name'],
+                password_hash=generate_password_hash(user_data['password']),
+                phone=user_data.get('phone'),
+                location=user_data.get('location'),
+                timezone=user_data.get('timezone'),
+                bio=user_data.get('bio'),
+                profile_pic=user_data.get('profile_pic', 'images/demo.jpg')
             )
-        ]
-        db.session.add_all(achievements)
-        
-        # Add a sample sleep record
-        from datetime import date, time, timedelta
-        
-        # Create a sample entry
-        record_date = date.today() - timedelta(days=1)
-        bedtime = datetime.combine(record_date - timedelta(days=1), time(22, 30))  # 10:30 PM
-        wake_time = datetime.combine(record_date, time(6, 30))  # 6:30 AM
-        
-        sleep_record = SleepRecord(
-            user_id=third_user.id,
-            date=record_date,
-            bedtime=bedtime,
-            wake_time=wake_time,
-            duration_hours=8.0,
-            quality="Good",
-            mood="Refreshed",
-            notes="Test delete user's sleep record",
-            sleep_disturbances="None",
-            sleep_aid="None",
-            daytime_dysfunction="None",
-            caffeine=0,   # None
-            exercise=1,   # Light exercise
-            screen=1,     # 15-60 min
-            eating=1      # Sometimes
-        )
-        db.session.add(sleep_record)
-        
-        db.session.commit()
-        print("Third test user for deletion testing created.")
-    else:
-        print("Third test user already exists.")
+            db.session.add(new_user)
+            db.session.commit()  # Commit user to get ID
+
+            # Add sleep goal
+            if 'sleep_goal' in user_data:
+                goal_data = user_data['sleep_goal']
+                sleep_goal = SleepGoal(
+                    user_id=new_user.id,
+                    target_hours=goal_data.get('target_hours', 8),
+                    target_minutes=goal_data.get('target_minutes', 0)
+                )
+                db.session.add(sleep_goal)
+
+            # Add achievements
+            if 'achievements' in user_data:
+                for ach_data in user_data['achievements']:
+                    achievement = Achievement(
+                        user_id=new_user.id,
+                        name=ach_data['name'],
+                        description=ach_data.get('description'),
+                        icon=ach_data.get('icon'),
+                        is_locked=ach_data.get('is_locked', True)
+                    )
+                    db.session.add(achievement)
+            
+            # Add sleep records
+            if 'sleep_records' in user_data:
+                for rec_data in user_data['sleep_records']:
+                    record_date = date.today() - timedelta(days=rec_data.get('days_ago', 0))
+                    bedtime = datetime.combine(record_date - timedelta(days=1 if rec_data.get('bedtime_hour', 23) >=12 else 0), time(rec_data.get('bedtime_hour', 23), rec_data.get('bedtime_minute', 0)))
+                    wake_time = datetime.combine(record_date, time(rec_data.get('wake_time_hour', 7), rec_data.get('wake_time_minute', 0)))
+                    
+                    sleep_record = SleepRecord(
+                        user_id=new_user.id,
+                        date=record_date,
+                        bedtime=bedtime,
+                        wake_time=wake_time,
+                        duration_hours=rec_data.get('duration_hours', 0.0),
+                        quality=rec_data.get('quality', 'Good'),
+                        mood=rec_data.get('mood', 'Neutral'),
+                        notes=rec_data.get('notes', ''),
+                        sleep_disturbances=rec_data.get('sleep_disturbances'),
+                        sleep_aid=rec_data.get('sleep_aid'),
+                        daytime_dysfunction=rec_data.get('daytime_dysfunction'),
+                        caffeine=rec_data.get('caffeine'),
+                        exercise=rec_data.get('exercise'),
+                        screen=rec_data.get('screen'),
+                        eating=rec_data.get('eating')
+                    )
+                    db.session.add(sleep_record)
+            
+            db.session.commit()
+            print(f"Test user {user_data['username']} and sample data created.")
+        else:
+            print(f"Test user {user_data['username']} already exists.")
 
 print("Database initialized.")

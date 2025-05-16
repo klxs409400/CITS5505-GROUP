@@ -14,50 +14,6 @@ def view_profile():
     # Get user achievements
     achievements = Achievement.query.filter_by(user_id=current_user.id).all()
     
-    # Count total sleep entries
-    total_entries = SleepRecord.query.filter_by(user_id=current_user.id).count()
-    
-    # Calculate current streak
-    # Get dates of all records
-    sleep_dates_query = db.session.query(func.date(SleepRecord.date)).filter_by(user_id=current_user.id).order_by(SleepRecord.date.desc()).all()
-    sleep_dates = [date[0] for date in sleep_dates_query]
-    
-    # Calculate streak
-    current_streak = 0
-    if sleep_dates:
-        today = datetime.now().date()
-        # Check if there's a record for today or yesterday
-        if today in sleep_dates or (today - timedelta(days=1)) in sleep_dates:
-            current_streak = 1  # Start with 1 for the most recent day
-            check_date = today - timedelta(days=1)
-            
-            # Count back consecutively
-            for i in range(1, len(sleep_dates)):
-                if check_date in sleep_dates:
-                    current_streak += 1
-                    check_date = check_date - timedelta(days=1)
-                else:
-                    break
-    
-    # Calculate achievement points (10 points per achievement)
-    achievement_points = len([a for a in achievements if not a.is_locked]) * 10
-    
-    # Calculate goal success rate
-    latest_goal = SleepGoal.query.filter_by(user_id=current_user.id).order_by(SleepGoal.created_at.desc()).first()
-    goal_success_rate = 0
-    
-    if latest_goal and total_entries > 0:
-        goal_hours = latest_goal.target_hours + (latest_goal.target_minutes / 60)
-        
-        # Get all records to calculate average
-        sleep_records = SleepRecord.query.filter_by(user_id=current_user.id).all()
-        if sleep_records:
-            total_duration = sum(record.duration_hours for record in sleep_records)
-            avg_duration = total_duration / len(sleep_records)
-            
-            # Goal success rate as percentage of average duration vs goal
-            goal_success_rate = int(min(100, (avg_duration / goal_hours) * 100))
-    
     # Add some default locked achievements for display if the user doesn't have any
     default_achievements = []
     if not achievements:
@@ -72,11 +28,7 @@ def view_profile():
         'Homepage/profile.html', 
         user=current_user,
         achievements=achievements,
-        default_achievements=default_achievements,
-        total_entries=total_entries,
-        current_streak=current_streak,
-        achievement_points=achievement_points,
-        goal_success_rate=goal_success_rate
+        default_achievements=default_achievements
     )
 
 @profile.route('/profile/edit', methods=['GET', 'POST'])

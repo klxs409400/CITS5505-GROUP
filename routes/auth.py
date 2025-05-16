@@ -24,7 +24,7 @@ def login():
                 next_page = url_for('main.dashboard')
             return redirect(next_page)
         else:
-            flash('Invalid email or password.')
+            flash('Invalid email or password.','error')
 
     # Render the login page for GET requests
     return render_template('Homepage/login.html')
@@ -87,7 +87,7 @@ def register():
         db.session.commit()
         
         print("Registration successful, redirecting to login page")
-        flash('Registration successful! Please log in.')
+        flash('Registration successful! Please log in.','Success')
         return redirect(url_for('auth.login'))
 
     return render_template('Homepage/register.html')

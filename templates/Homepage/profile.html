@@ -26,48 +26,8 @@
     <!-- Theme JS -->
     <script src="{{ url_for('static', filename='js/Settings/theme.js') }}"></script>
     
-    <!-- Pass flash messages to JavaScript -->
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const flashMessages = JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson }}');
-        
-        // Display flash messages if any
-        if (flashMessages && flashMessages.length > 0) {
-          flashMessages.forEach(function(flash) {
-            const category = flash[0] !== 'message' ? flash[0] : 'info';
-            const message = flash[1];
-            
-            // Use toastr or any other notification library you're using
-            // This example assumes you're using Bootstrap alerts
-            showAlert(category, message);
-          });
-        }
-        
-        function showAlert(category, message) {
-          const alertContainer = document.createElement('div');
-          alertContainer.className = `alert alert-${category} alert-dismissible fade show`;
-          alertContainer.setAttribute('role', 'alert');
-          
-          alertContainer.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          `;
-          
-          // Insert at the top of the content area
-          const mainContent = document.querySelector('.main-content');
-          if (mainContent) {
-            mainContent.insertBefore(alertContainer, mainContent.firstChild);
-          }
-          
-          // Auto-dismiss after 5 seconds
-          setTimeout(function() {
-            alertContainer.classList.remove('show');
-            setTimeout(function() {
-              alertContainer.remove();
-            }, 150);
-          }, 5000);
-        }
-      });
+       window.flashes = JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson }}');
     </script>
   </head>
   <body class="profile-page">
@@ -96,12 +56,28 @@
               Dashboard
             </a>
           </li>
+
+          <li>
+            <a href="{{ url_for('sleep.record_sleep') }}">
+              <i class="fas fa-plus-circle"></i>
+              Record Sleep
+            </a>
+          </li>
+
           <li>
             <a href="{{ url_for('sleep.sleep_history') }}">
               <i class="fas fa-history"></i>
               Sleep History
             </a>
           </li>
+
+          <li>
+            <a href="{{ url_for('report.view_report') }}">
+              <i class="fas fa-chart-line"></i>
+              Sleep Reports
+            </a>
+          </li>
+
           <li>
             <a href="{{ url_for('settings.view_settings') }}">
               <i class="fas fa-cog"></i>
@@ -133,53 +109,8 @@
             </button>
 
             <ul class="navbar-nav flex-row ms-auto">
-              <li class="nav-item me-3">
-                <a class="nav-link" href="#">
-                  <i class="fas fa-search"></i>
-                </a>
-              </li>
-              <li class="nav-item dropdown me-3">
-                <a
-                  class="nav-link"
-                  href="#"
-                  id="navbarDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-bell"></i>
-                  <span
-                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                  >
-                    3
-                  </span>
-                </a>
-                <ul
-                  class="dropdown-menu dropdown-menu-end"
-                  aria-labelledby="navbarDropdown"
-                >
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      ><i class="fas fa-trophy me-2"></i> Sleep goal
-                      achieved!</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      ><i class="fas fa-exclamation-circle me-2"></i> Record
-                      yesterday's sleep</a
-                    >
-                  </li>
-                  <li><hr class="dropdown-divider" /></li>
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      ><i class="fas fa-envelope me-2"></i> Weekly report
-                      ready</a
-                    >
-                  </li>
-                </ul>
-              </li>
               <li class="nav-item dropdown">
+                </li>
                 <a
                   class="nav-link d-flex align-items-center"
                   href="#"
@@ -276,89 +207,6 @@
                           <p>{{ current_user.bio }}</p>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sleep Stats Cards -->
-          <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div
-                        class="text-xs font-weight-bold text-primary text-uppercase mb-1"
-                      >
-                        Total Entries
-                      </div>
-                      <div class="h5 mb-0 font-weight-bold">{{ total_entries }}</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div
-                        class="text-xs font-weight-bold text-success text-uppercase mb-1"
-                      >
-                        Current Streak
-                      </div>
-                      <div class="h5 mb-0 font-weight-bold">{{ current_streak }} days</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-trophy fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div
-                        class="text-xs font-weight-bold text-info text-uppercase mb-1"
-                      >
-                        Achievement Points
-                      </div>
-                      <div class="h5 mb-0 font-weight-bold">{{ achievement_points }}</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-medal fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div
-                        class="text-xs font-weight-bold text-warning text-uppercase mb-1"
-                      >
-                        Goal Success Rate
-                      </div>
-                      <div class="h5 mb-0 font-weight-bold">{{ goal_success_rate }}%</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-bullseye fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>

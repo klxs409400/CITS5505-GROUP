@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | Sleep Tracker</title>
-    
+
     {% include 'Settings/theme_preload.html' %}
-    
+
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
@@ -111,7 +111,7 @@
             </button>
 
             <ul class="navbar-nav flex-row ms-auto">
-                           <li class="nav-item dropdown">
+              <li class="nav-item dropdown">
                 <a
                   class="nav-link d-flex align-items-center"
                   href="#"
@@ -136,12 +136,16 @@
                   aria-labelledby="userDropdown"
                 >
                   <li>
-                    <a class="dropdown-item" href="{{ url_for('profile.view_profile') }}"
+                    <a
+                      class="dropdown-item"
+                      href="{{ url_for('profile.view_profile') }}"
                       ><i class="fas fa-user me-2"></i> Profile</a
                     >
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ url_for('settings.view_settings') }}"
+                    <a
+                      class="dropdown-item"
+                      href="{{ url_for('settings.view_settings') }}"
                       ><i class="fas fa-cog me-2"></i> Settings</a
                     >
                   </li>
@@ -180,7 +184,7 @@
                 </div>
                 <h2>{{ avg_duration if avg_duration else 'No input data' }}</h2>
                 <p>Average Sleep Duration</p>
-                <small class="text-muted">Last 30 days</small>
+                <small class="text-muted">Total</small>
               </div>
             </div>
 
@@ -194,10 +198,7 @@
                   'No input data' }}
                 </h2>
                 <p>Sleep Quality</p>
-                <small class="text-muted"
-                  >Up {{ quality_change if quality_change else 'No input data'
-                  }} from last week</small
-                >
+                <small class="text-muted">Total</small>
               </div>
             </div>
 
@@ -224,7 +225,7 @@
                   {{ usual_bedtime if usual_bedtime else 'No input data' }}
                 </h2>
                 <p>Average Bedtime</p>
-                <small class="text-muted">Last 7 days</small>
+                <small class="text-muted">Total</small>
               </div>
             </div>
           </div>
@@ -234,7 +235,9 @@
             <div
               class="card-header py-3 d-flex justify-content-between align-items-center"
             >
-              <h6 class="m-0 font-weight-bold">Sleep Trend</h6>
+              <h6 class="m-0 font-weight-bold">
+                Sleep Trend (subjective judgment)
+              </h6>
               <div class="btn-group" role="group">
                 <button
                   type="button"
@@ -370,7 +373,7 @@
                     <div class="feature-icon">
                       <i class="fas fa-chart-pie"></i>
                     </div>
-                    <h3>Sleep Quality</h3>
+                    <h3>Sleep Quality (subjective judgment)</h3>
                     <div class="row">
                       <div class="col-md-3 text-center mb-3">
                         <div class="quality-circle excellent">
