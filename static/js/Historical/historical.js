@@ -32,6 +32,8 @@ $(document).ready(function () {
       },
     ],
     dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex"f>>t<"d-flex justify-content-between align-items-center mt-3"<"d-flex"i><"d-flex"p>>',
+    lengthChange: false, // Hide "Show entries per page"
+    pageLength: 5, // Only show 5 records per page
   });
 
   // Force recalculation and update of the percentage display

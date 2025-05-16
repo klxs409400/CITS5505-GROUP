@@ -226,7 +226,8 @@
                 <div class="card-body">
                   <div class="row">
                     {% if achievements %}
-                      {% for achievement in achievements %}
+                    {% for achievement in achievements %}
+                      {% if achievement.name != "Sleep Master" %}
                       <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="badge-card text-center">
                           <div class="badge-icon {% if achievement.is_locked %}locked{% endif %}">
@@ -236,9 +237,11 @@
                           <p>{{ achievement.description }}</p>
                         </div>
                       </div>
-                      {% endfor %}
-                    {% else %}
-                      {% for achievement in default_achievements %}
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    {% for achievement in default_achievements %}
+                      {% if achievement.name != "Sleep Master" %}
                       <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="badge-card text-center">
                           <div class="badge-icon locked">
@@ -248,11 +251,12 @@
                           <p>{{ achievement.description }}</p>
                         </div>
                       </div>
-                      {% endfor %}
-                      <div class="col-12 text-center mt-3">
-                        <p class="text-muted">Start tracking your sleep to unlock these achievements!</p>
-                      </div>
-                    {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    <div class="col-12 text-center mt-3">
+                      <p class="text-muted">Start tracking your sleep to unlock these achievements!</p>
+                    </div>
+                  {% endif %}
                   </div>
                 </div>
               </div>

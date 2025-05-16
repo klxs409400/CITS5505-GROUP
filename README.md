@@ -124,7 +124,7 @@ Setup Instructions
    pip install -r requirements.txt
 
 3. Running Unit Tests (with Pytest):
-   
+
    Make sure your Flask app and database are set up.
 
    To run all unit tests:
@@ -139,16 +139,14 @@ Setup Instructions
 
    pytest tests/selenium_test.py
 
-   Note : 
-   
-1. Make sure Chrome and ChromeDriver are installed and compatible. ChromeDriver has to be installed  
+   Note :
+
+5. Make sure Chrome and ChromeDriver are installed and compatible. ChromeDriver has to be installed  
    for the selenium tests to run.
 
-2. Selenium tests use webdriver.Chrome() by default.
+6. Selenium tests use webdriver.Chrome() by default.
 
-3. Ensure users exist before running login-related tests or add setup logic.
-
-
+7. Ensure users exist before running login-related tests or add setup logic.
 
 ## Security Practices
 
@@ -169,17 +167,17 @@ This application follows these security best practices:
 
 ## References
 
-[1] "Flask Documentation," Flask, 2024. [Online]. Available: https://flask.palletsprojects.com/. [Accessed: 14-May-2025].
+[1] Flask, "Flask Documentation," Flask, 2024. [Online]. Available: https://flask.palletsprojects.com/. [Accessed: 14-May-2025].
 
-[2] "SQLAlchemy Documentation," SQLAlchemy, 2024. [Online]. Available: https://docs.sqlalchemy.org/. [Accessed: 14-May-2025].
+[2] SQLAlchemy, "SQLAlchemy Documentation," SQLAlchemy, 2024. [Online]. Available: https://docs.sqlalchemy.org/. [Accessed: 14-May-2025].
 
-[3] "Bootstrap Documentation," Bootstrap, 2024. [Online]. Available: https://getbootstrap.com/docs/. [Accessed: 14-May-2025].
+[3] Bootstrap, "Bootstrap Documentation," Bootstrap, 2024. [Online]. Available: https://getbootstrap.com/docs/. [Accessed: 14-May-2025].
 
-[4] "Chart.js Documentation," Chart.js, 2024. [Online]. Available: https://www.chartjs.org/docs/latest/. [Accessed: 14-May-2025].
+[4] Chart.js, "Chart.js Documentation," Chart.js, 2024. [Online]. Available: https://www.chartjs.org/docs/latest/. [Accessed: 14-May-2025].
 
-[5] OpenAI, "ChatGPT Assistance for Code Optimization and Debugging," ChatGPT, OpenAI, 2025. [Online]. Available: https://openai.com/chatgpt/. [Accessed: 14-May-2025].
+[5] OpenAI, "ChatGPT Assistance for Code Optimization and Debugging," OpenAI, 2025. [Online]. Available: https://openai.com/chatgpt/. [Accessed: 14-May-2025].
 
-[6] Anthropic, "Claude 3.7 Sonnet Assistance for Code Analysis and UI Implementation," Claude AI Assistant, Anthropic, 2025. [Online]. Available: https://www.anthropic.com/claude. [Accessed: 16-May-2025].
+[6] Anthropic, "Claude 3.7 Sonnet Assistance for Code Analysis and UI Implementation," Anthropic, 2025. [Online]. Available: https://www.anthropic.com/claude. [Accessed: 16-May-2025].
 
 [7] Buysse, D. J., Reynolds, C. F., Monk, T. H., et al., "The Pittsburgh Sleep Quality Index (PSQI): A New Instrument for Psychiatric Practice and Research," Psychiatry Research, vol. 28, no. 2, pp. 193–213, 1989. [Online]. Available: https://doi.org/10.1016/0165-1781(89)90047-4. [Accessed: 16-May-2025].
 
