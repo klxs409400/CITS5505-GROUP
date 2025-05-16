@@ -130,4 +130,73 @@ $(document).ready(function () {
   if (window.navigation && window.navigation.type === "back_forward") {
     location.reload();
   }
+
+  // Check for achievements on profile page load
+  $.ajax({
+    url: "/check-achievements",
+    type: "GET",
+    success: function (response) {
+      if (response.success) {
+        console.log("Achievements checked successfully");
+
+        // Optionally refresh achievements display if needed
+        // You could add an AJAX call to get the latest achievements
+        // or simply reload the page if any new achievements were unlocked
+      } else {
+        console.error("Error checking achievements:", response.error);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("AJAX error checking achievements:", error);
+    },
+  });
+
+  // Style the achievement cards
+  $(".badge-card").each(function () {
+    // Add hover effects
+    $(this).hover(
+      function () {
+        $(this).css({
+          transform: "translateY(-5px)",
+          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+          "box-shadow": "0 10px 20px rgba(0, 0, 0, 0.2)",
+        });
+      },
+      function () {
+        $(this).css({
+          transform: "translateY(0)",
+          "box-shadow": $(this).find(".badge-icon").hasClass("locked")
+            ? "none"
+            : "0 0 10px rgba(78, 115, 223, 0.2)",
+        });
+      }
+    );
+
+    // Apply different styling based on locked status
+    if ($(this).find(".badge-icon").hasClass("locked")) {
+      $(this).css({
+        opacity: "0.7",
+        "background-color": "#f8f9fc",
+        "border-color": "#e3e6f0",
+      });
+      $(this).find(".badge-icon").css({
+        "background-color": "#858796",
+        color: "#f8f9fc",
+      });
+    } else {
+      $(this).css({
+        "border-color": "#4e73df",
+        "box-shadow": "0 0 10px rgba(78, 115, 223, 0.2)",
+      });
+
+      // Apply specific color to unlocked achievement icons based on type
+      const icon = $(this).find(".badge-icon i");
+      if (icon.hasClass("fa-star")) icon.css("color", "#f6c23e");
+      if (icon.hasClass("fa-moon")) icon.css("color", "#36b9cc");
+      if (icon.hasClass("fa-bed")) icon.css("color", "#1cc88a");
+      if (icon.hasClass("fa-owl")) icon.css("color", "#4e73df");
+      if (icon.hasClass("fa-crown")) icon.css("color", "#f6c23e");
+      if (icon.hasClass("fa-running")) icon.css("color", "#e74a3b");
+    }
+  });
 });
